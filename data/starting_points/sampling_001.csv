@@ -6,6 +6,6 @@ x,y,role
 7,3,interior,
 11,5,interior,
 0,0,border,
-0,6,border,
-12,0,border,
-12,6,border
+0,12,border,
+15,0,border,
+15,12,border

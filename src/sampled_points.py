@@ -11,23 +11,20 @@ def load_sampling_csv(path):
     return df_points_interior,df_points_border
 
 
+def get_border_dim(df_border):
+    return (df_border["x"]).max(),(df_border["y"]).max()
+
 def df_to_array(df):
     return [tuple(row) for row in df.to_numpy()]
 
-def plot_sampled_point(x_interior_points, y_interior_points,
-                        border_width, border_height,border_start_point=(1,1)):
-    shifted_x = [p+1 for p in x_interior_points]
-    shifted_y = [p+1 for p in y_interior_points]
+def plot_sampled_point(fig,ax,x_interior_points, y_interior_points,
+                        x_border_length, y_border_length):
+                        #border_width, border_height,border_start_point=(1,1)):
+                      
+    ax.scatter(x_interior_points, y_interior_points)    
 
-    fig, ax = plt.subplots()                        
-    ax.scatter(shifted_x, shifted_y)    
-    #plt.scatter(x_border_points,y_border_points,c="black")
-
-    border_frame = patches.Rectangle(border_start_point, border_height, border_width, linewidth=1,
+    # This is hard coded
+    border_frame = patches.Rectangle((0,0), x_border_length, y_border_length, linewidth=1,
                         edgecolor='r', facecolor="none")
+
     ax.add_patch(border_frame)
-
-    plt.show()
-
-#def plot_line()
-# plt.plot(interior_points[0], interior_points[1], 'bo-')
