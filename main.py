@@ -1,5 +1,5 @@
 import src.sampled_points as sampled_points
-from src.hypothesis.rgon_1988 import Rgon1988
+from src.hypothesis import rgon_1988 as Rgon1988
 import matplotlib.pyplot as plt
 
 def load_csv_and_scatter():
@@ -8,15 +8,8 @@ def load_csv_and_scatter():
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
-    x_interior_points = [point[0] for point in interior_points]
-    y_interior_points = [point[1] for point in interior_points]
-    x_border_points = [point[0] for point in border_points]
-    y_border_points = [point[1] for point in border_points]
-
-    shifted_x = [p+1 for p in x_interior_points]
-    shifted_y = [p+1 for p in y_interior_points]
-    shifted_border_x = [p+1 for p in x_border_points]
-    shifted_border_y = [p+1 for p in y_border_points]
+    x_interior_points = [point.x for point in interior_points]
+    y_interior_points = [point.y for point in interior_points]
 
     fig, ax = plt.subplots()
     sampled_points.plot_sampled_point(fig,ax,x_interior_points,y_interior_points,x_border_length,y_border_length)
@@ -30,14 +23,14 @@ def draw_stared_shaped_polygon():
 
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
-    x_interior_points = [point[0] for point in interior_points]
-    y_interior_points = [point[1] for point in interior_points]
+    x_interior_points = [point.x for point in interior_points]
+    y_interior_points = [point.y for point in interior_points]
 
-    rgons_algo = Rgon1988(interior_points,border_points)
+
     space_points = interior_points +  border_points
     interior_point = interior_points[0]
-    points_ahead = rgons_algo.get_points_horizontal_ahead(interior_point,space_points)            
-    stared_polygon = rgons_algo.get_stared_shape_polygon(interior_point,points_ahead)
+    points_ahead = Rgon1988.get_points_horizontal_ahead(interior_point,space_points)            
+    stared_polygon = Rgon1988.get_stared_shape_polygon(interior_point,points_ahead)
 
     fig, ax = plt.subplots()
     
@@ -52,20 +45,29 @@ def draw_visualization_graph():
 
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
-    x_interior_points = [point[0] for point in interior_points]
-    y_interior_points = [point[1] for point in interior_points]
+    x_interior_points = [point.x for point in interior_points]
+    y_interior_points = [point.y for point in interior_points]
 
-    rgons_algo = Rgon1988(interior_points,[])
     space_points = interior_points 
     interior_point = interior_points[0]
-    points_ahead = rgons_algo.get_points_horizontal_ahead(interior_point,space_points)            
-    stared_polygon = rgons_algo.get_stared_shape_polygon(interior_point,points_ahead)
+    points_ahead = Rgon1988.get_points_horizontal_ahead(interior_point,space_points)            
+    stared_polygon = Rgon1988.get_stared_shape_polygon(interior_point,points_ahead)
 
     fig, axs = plt.subplots(1,2)
-    
     stared_polygon.plot(fig,axs[0])
     sampled_points.plot_sampled_point(fig,axs[0],x_interior_points,y_interior_points,x_border_length,y_border_length)
+
+    graph = Rgon1988.get_visualization_graph(interior_point,stared_polygon)
+    
+    # x_vertecies = [point.x for point in graph.vertecies]
+    # y_vertecies = [point.y for point in graph.vertecies]
+    
+    # sampled_points.plot_sampled_point(fig,axs[1],x_vertecies,y_vertecies,x_border_length,y_border_length)
+    graph.plot(axs[1])
+
     plt.show()
+
+    # pass
 
 
 
