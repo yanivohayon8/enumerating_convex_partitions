@@ -53,17 +53,13 @@ def draw_visualization_graph():
     points_ahead = Rgon1988.get_points_horizontal_ahead(interior_point,space_points)            
     stared_polygon = Rgon1988.get_stared_shape_polygon(interior_point,points_ahead)
 
-    fig, axs = plt.subplots(1,2)
+    fig, axs = plt.subplots(1,3)
     stared_polygon.plot(fig,axs[0])
     sampled_points.plot_sampled_point(fig,axs[0],x_interior_points,y_interior_points,x_border_length,y_border_length)
 
     graph = Rgon1988.get_visualization_graph(interior_point,stared_polygon)
-    
-    # x_vertecies = [point.x for point in graph.vertecies]
-    # y_vertecies = [point.y for point in graph.vertecies]
-    
-    # sampled_points.plot_sampled_point(fig,axs[1],x_vertecies,y_vertecies,x_border_length,y_border_length)
-    graph.plot(axs[1])
+    graph.plot_undirected(axs[1])
+    graph.plot_directed(axs[2])
 
     plt.show()
 

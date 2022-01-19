@@ -25,6 +25,11 @@ class Edge():
     def plot(self,ax):
         ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],"o-")
 
+    def plot_directed(self,ax):
+        dx = self.dst_point.x - self.src_point.x
+        dy = self.dst_point.y - self.src_point.y
+        ax.arrow(self.src_point.x,self.src_point.y,dx,dy,head_width=0.2)
+
 class Graph():
     def __init__(self):
         self.edges = set()
@@ -38,10 +43,14 @@ class Graph():
         self.insert_vertex(edge.dst_point)
         self.edges.add(edge)
 
-    def plot(self,ax):
+    def plot_undirected(self,ax):
         for e in self.edges:
             e.plot(ax)
+        Point.scatter_points(ax,self.vertecies)
 
+    def plot_directed(self,ax):
+        for e in self.edges:
+            e.plot_directed(ax)
         Point.scatter_points(ax,self.vertecies)
 
 
