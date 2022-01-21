@@ -104,7 +104,6 @@ def get_convex_chain_connectivity(visual_graph):
         Assumption - we get the visualizatin graph from the visualizatin method above 
         and the vertecies are sorted clockwise as demanded
     '''
-    chain_lengths = {}
     continuity_edges = {}
 
     for edge in visual_graph.edges:
@@ -116,15 +115,6 @@ def get_convex_chain_connectivity(visual_graph):
 
     return continuity_edges
 
-
-
-# def is_on_line(m,  c, x, y):
-#     return abs(y - (m*x +c)) < 0.00001
-
-# def calc_line(point1,point2):
-#     m = (point1.y-point2.y)/(point1.x-point2.x)
-#     c = point1.y -m * point1.x
-#     return m,c
 
 def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_edges):
     '''
@@ -139,24 +129,32 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
     output_edge_vertcies  = sort_points_clockwise(junction_vertex,output_edge_vertcies)
 
     for input_vertex in input_edges_vertcies:
-        
-        # find the output edges that forms convex angle with current input edge
-        widest_angle_out_vertex_index = -1 # the edge that forms the widest angle
         for out_vertex_index in range(len(output_edge_vertcies)-1,-1,-1):
 
-            out_vert = output_edge_vertcies[out_vertex_index] #output_edge_vertcies[out_vertex_index-1]
-            if turn(input_vertex,junction_vertex,out_vert) >= 0:# or \
-                # widest_angle_out_vertex_index = out_vertex_index
-                # break
+            out_vert = output_edge_vertcies[out_vertex_index] 
+            if turn(input_vertex,junction_vertex,out_vert) >= 0:
                 src_edge = Edge(junction_vertex,out_vert)
                 dst_edge = Edge(input_vertex,junction_vertex)                    
                 continuity_edges[str(dst_edge)].append(src_edge)
-        
-        # All the outer edges will make also convex angle with the current input edge
-        # if widest_angle_out_vertex_index !=-1:
-        #     for out_edge_dst_vert in output_edge_vertcies[:widest_angle_out_vertex_index+1]:
-        #         src_edge = Edge(junction_vertex,out_edge_dst_vert)
-        #         dst_edge = Edge(input_vertex,junction_vertex)                    
-        #         continuity_edges[str(dst_edge)].append(src_edge)
                     
     return continuity_edges
+
+
+def get_edges_max_chain_length(visual_graph,continuity_edges):
+    edges_max_chain_length = {}
+
+    for edge in visual_graph.edges:
+        edges_max_chain_length[str(edge)] = 0
+
+
+    for vertex in visual_graph.vertecies:
+        input_edges = visual_graph.get_input_edges(vertex)
+
+        for input_edge in input_edges:
+            max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])
+            edges_max_chain_length[str(input_edge)] = max_length + 1
+    
+    return edges_max_chain_length
+
+
+        

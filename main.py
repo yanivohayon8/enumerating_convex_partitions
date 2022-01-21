@@ -63,7 +63,7 @@ def draw_visualization_graph():
     plt.show()
 
 def draw_convex_chain():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_001.csv")
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
@@ -85,9 +85,13 @@ def draw_convex_chain():
         for e in continuity_edges[rel]:
             print(rel + ":\t"+ str(e))
 
+    edges_max_chain_length = Rgon1988.get_edges_max_chain_length(graph,continuity_edges)
+    for e in edges_max_chain_length.keys():
+        print(str(e) +" : " + str(edges_max_chain_length[e]))
+
+
     graph.plot_undirected(axs[0])
     graph.plot_directed(axs[1])
-
     plt.show()
 
 
