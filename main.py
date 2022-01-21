@@ -15,7 +15,6 @@ def load_csv_and_scatter():
     sampled_points.plot_sampled_point(fig,ax,x_interior_points,y_interior_points,x_border_length,y_border_length)
     plt.show()
 
-
 def draw_stared_shaped_polygon():
     df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
     
@@ -63,12 +62,38 @@ def draw_visualization_graph():
 
     plt.show()
 
-    # pass
+def draw_convex_chain():
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
+    interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
+    border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
+    x_interior_points = [point.x for point in interior_points]
+    y_interior_points = [point.y for point in interior_points]
 
+    space_points = interior_points 
+    kernel_point = interior_points[0]
+    points_ahead = Rgon1988.get_points_horizontal_ahead(kernel_point,space_points)            
+    stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_ahead)
+
+    fig, axs = plt.subplots(1,2)
+
+    graph = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
+
+    continuity_edges = Rgon1988.get_convex_chain_connectivity(graph)
+
+    for rel in continuity_edges:
+        for e in continuity_edges[rel]:
+            print(rel + ":\t"+ str(e))
+
+    graph.plot_undirected(axs[0])
+    graph.plot_directed(axs[1])
+
+    plt.show()
 
 
 if __name__ == "__main__":
     #load_csv_and_scatter()
     #draw_stared_shaped_polygon()
-    draw_visualization_graph()
+    #draw_visualization_graph()
+    draw_convex_chain()
     pass

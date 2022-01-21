@@ -1,21 +1,18 @@
+from asyncio.windows_events import NULL
+from urllib.parse import ParseResultBytes
 from ..hypothesis import HypothesisAlgo
 import numpy as np
 from ..data_structure import Polygon,Point,Edge,Graph
 
 
-''' Maybe transfer'''
-
-
-def get_stared_shape_polygon(kernel_point,subspace_points):
-    polygon = Polygon()
-    polygon.add_vertex(kernel_point)
-    points = {}
+def sort_points_clockwise(center_point,subspace_points):
     pos_angles = []
     pos_angle_points = []
     neg_angles = []
     neg_angle_points = []
+    epsilon = 0.00001
     for point in subspace_points: 
-        angle = np.degrees(np.arctan((point.y- kernel_point.y)/abs(kernel_point.x-point.x)))
+        angle = np.degrees(np.arctan((point.y- center_point.y)/abs(center_point.x-point.x + epsilon)))
 
         if angle >0:
             pos_angles.append(angle)
@@ -24,9 +21,16 @@ def get_stared_shape_polygon(kernel_point,subspace_points):
             neg_angles.append(-angle)
             neg_angle_points.append(point.get_as_tuple())
 
-    pos_angle_points = [polygon.add_vertex(Point(point[0],point[1])) for _,point in sorted(zip(pos_angles,pos_angle_points),reverse=True)]
-    neg_angle_points = [polygon.add_vertex(Point(point[0],point[1])) for _,point in sorted(zip(neg_angles,neg_angle_points))]
-    
+    pos_angle_points = [Point(point[0],point[1]) for _,point in sorted(zip(pos_angles,pos_angle_points),reverse=True)]
+    neg_angle_points = [Point(point[0],point[1]) for _,point in sorted(zip(neg_angles,neg_angle_points))]
+    return pos_angle_points + neg_angle_points
+
+def get_stared_shape_polygon(kernel_point,subspace_points):
+    polygon = Polygon()
+    polygon.add_vertex(kernel_point)
+    [polygon.add_vertex(Point(point.x,point.y)) for point in sort_points_clockwise(kernel_point,
+                                                                                    subspace_points)]
+
     return polygon
 
 def get_points_horizontal_ahead(src_point,space_points,direction="left"):
@@ -58,18 +62,21 @@ def get_visualization_graph(kernel_point,stared_polygon):
     
     return grph
     
+def turn(_i,_j,_k):
+    '''
+        The turn method described in the paper:
+        Determines wheter point k is in the right or the left of the vector i ot j
+    '''
+    i_to_j  = _j -_i 
+    i_to_k = _k - _i
+    determinant = i_to_j.x*i_to_k.y - i_to_k.x*i_to_j.y
+    return np.sign(determinant)
     
 def get_visualization_graph_proceed(i_index,j_index,stared_polygon,points_queues,grph):
     '''
         This method implement the proceed method in  "Visibility" procedure in the rgon paper
     '''
     
-    def turn(_i,_j,_k):
-        i_to_j  = _j -_i 
-        i_to_k = _k - _i
-        determinant = i_to_j.x*i_to_k.y - i_to_k.x*i_to_j.y
-        return np.sign(determinant)
-
 
     while len(points_queues[i_index])>0:
         k_index = points_queues[i_index][0]
@@ -88,6 +95,68 @@ def get_visualization_graph_proceed(i_index,j_index,stared_polygon,points_queues
     points_queues[j_index] =  points_queues[j_index] + [i_index]
 
     return grph,points_queues
-    #verticies = stared_polygon.
 
+
+def get_convex_chain_connectivity(visual_graph):
+    '''
+        This method implements the idea of finding the longest convex chain for an edge
+
+        Assumption - we get the visualizatin graph from the visualizatin method above 
+        and the vertecies are sorted clockwise as demanded
+    '''
+    chain_lengths = {}
+    continuity_edges = {}
+
+    for edge in visual_graph.edges:
+        # chain_lengths[str(vertex)] = 0
+        continuity_edges[str(edge)] = []
     
+    for vertex in visual_graph.vertecies:
+        continuity_edges = get_convex_chain_connectivity_treat(vertex,visual_graph,continuity_edges)
+
+    return continuity_edges
+
+
+
+# def is_on_line(m,  c, x, y):
+#     return abs(y - (m*x +c)) < 0.00001
+
+# def calc_line(point1,point2):
+#     m = (point1.y-point2.y)/(point1.x-point2.x)
+#     c = point1.y -m * point1.x
+#     return m,c
+
+def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_edges):
+    '''
+        This method implements the treat procedure described in the paper
+    '''
+    input_edges = visual_graph.get_input_edges(junction_vertex)
+    input_edges_vertcies = [edge.src_point for edge in input_edges]
+    output_edges = visual_graph.get_output_edges(junction_vertex)
+    output_edge_vertcies = [edge.dst_point for edge in output_edges]
+
+    input_edges_vertcies  = sort_points_clockwise(junction_vertex,input_edges_vertcies)
+    output_edge_vertcies  = sort_points_clockwise(junction_vertex,output_edge_vertcies)
+
+    for input_vertex in input_edges_vertcies:
+        
+        # find the output edges that forms convex angle with current input edge
+        widest_angle_out_vertex_index = -1 # the edge that forms the widest angle
+        for out_vertex_index in range(len(output_edge_vertcies)-1,-1,-1):
+
+            out_vert = output_edge_vertcies[out_vertex_index] #output_edge_vertcies[out_vertex_index-1]
+            if turn(input_vertex,junction_vertex,out_vert) >= 0:# or \
+                # widest_angle_out_vertex_index = out_vertex_index
+                # break
+                src_edge = Edge(junction_vertex,out_vert)
+                dst_edge = Edge(input_vertex,junction_vertex)                    
+                continuity_edges[str(dst_edge)].append(src_edge)
+        
+        # All the outer edges will make also convex angle with the current input edge
+        # if widest_angle_out_vertex_index !=-1:
+        #     for out_edge_dst_vert in output_edge_vertcies[:widest_angle_out_vertex_index+1]:
+        #         src_edge = Edge(junction_vertex,out_edge_dst_vert)
+        #         dst_edge = Edge(input_vertex,junction_vertex)                    
+        #         continuity_edges[str(dst_edge)].append(src_edge)
+                    
+    return continuity_edges

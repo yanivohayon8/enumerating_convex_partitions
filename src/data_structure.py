@@ -17,6 +17,9 @@ class Point():
         if isinstance(p, Point):
             return Point(self.x-p.x,self.y-p.y)
 
+    def __str__(self):
+        return "(" + str(self.x) +","+str(self.y)+")"
+
 class Edge():
     def __init__(self,src_point,dst_point):
         self.src_point = src_point
@@ -29,6 +32,9 @@ class Edge():
         dx = self.dst_point.x - self.src_point.x
         dy = self.dst_point.y - self.src_point.y
         ax.arrow(self.src_point.x,self.src_point.y,dx,dy,head_width=0.2)
+
+    def __str__(self):
+        return str(self.src_point) + "->" + str(self.dst_point)
 
 class Graph():
     def __init__(self):
@@ -51,7 +57,13 @@ class Graph():
     def plot_directed(self,ax):
         for e in self.edges:
             e.plot_directed(ax)
-        Point.scatter_points(ax,self.vertecies)
+        # Point.scatter_points(ax,self.vertecies)
+
+    def get_input_edges(self,dst_vertex):
+        return [edge for edge in self.edges if edge.dst_point == dst_vertex]
+
+    def get_output_edges(self,src_vertex):
+        return [edge for edge in self.edges if edge.src_point == src_vertex]
 
 
 class Polygon():
