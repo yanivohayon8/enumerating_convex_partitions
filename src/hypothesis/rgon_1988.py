@@ -3,7 +3,7 @@ from urllib.parse import ParseResultBytes
 from ..hypothesis import HypothesisAlgo
 import numpy as np
 from ..data_structure import Polygon,Point,Edge,Graph
-
+import random
 
 def sort_points_clockwise(center_point,subspace_points):
     pos_angles = []
@@ -132,7 +132,7 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
         for out_vertex_index in range(len(output_edge_vertcies)-1,-1,-1):
 
             out_vert = output_edge_vertcies[out_vertex_index] 
-            if turn(input_vertex,junction_vertex,out_vert) >= 0:
+            if turn(input_vertex,junction_vertex,out_vert) > 0: # >=0
                 src_edge = Edge(junction_vertex,out_vert)
                 dst_edge = Edge(input_vertex,junction_vertex)                    
                 continuity_edges[str(dst_edge)].append(src_edge)
@@ -141,6 +141,9 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
 
 
 def get_edges_max_chain_length(visual_graph,continuity_edges):
+    '''
+        This method implements the procedure for finding the longest convex chain for an edge L_e
+    '''
     edges_max_chain_length = {}
 
     for edge in visual_graph.edges:
@@ -156,5 +159,28 @@ def get_edges_max_chain_length(visual_graph,continuity_edges):
     
     return edges_max_chain_length
 
+def create_rgon(kernel_point,r,edges_max_chain_length,continuity_edges):
+    rgon = Polygon()
+    rgon.add_vertex(kernel_point)
+    r = r - 2
 
+    potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
+
+    if len(potential_start_edges)==0:
+        raise ("Can't create polygon sized " +str(r) + " from point " + str(kernel_point))
+    
+    next_edge = Edge(random.choice(potential_start_edges))
+
+    while True:
+        rgon.add_vertex(next_edge.src_point)
+        rgon.add_vertex(next_edge.dst_point)
+        r-=1
+
+        if r <= 0:
+            break
         
+        potential_start_edges = list(filter(lambda e: edges_max_chain_length[str(e)] >=r ,
+                                            continuity_edges[str(next_edge)]))
+        next_edge = random.choice(potential_start_edges)
+
+    return rgon

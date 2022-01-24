@@ -1,6 +1,8 @@
+from turtle import color
 import src.sampled_points as sampled_points
 from src.hypothesis import rgon_1988 as Rgon1988
 import matplotlib.pyplot as plt
+from  src.consts import PLOT_COLORS
 
 def load_csv_and_scatter():
     df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_001.csv")
@@ -63,7 +65,7 @@ def draw_visualization_graph():
     plt.show()
 
 def draw_convex_chain():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_001.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
@@ -75,7 +77,7 @@ def draw_convex_chain():
     points_ahead = Rgon1988.get_points_horizontal_ahead(kernel_point,space_points)            
     stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_ahead)
 
-    fig, axs = plt.subplots(1,2)
+    fig, axs = plt.subplots(1,4,sharex=True,sharey=True)
 
     graph = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
 
@@ -90,8 +92,16 @@ def draw_convex_chain():
         print(str(e) +" : " + str(edges_max_chain_length[e]))
 
 
-    graph.plot_undirected(axs[0])
-    graph.plot_directed(axs[1])
+
+    num_shapes = 3
+    triangles = [Rgon1988.create_rgon(kernel_point,3,edges_max_chain_length,continuity_edges) for i in range(num_shapes)]
+    poly4s = [Rgon1988.create_rgon(kernel_point,4,edges_max_chain_length,continuity_edges) for i in range(num_shapes)]
+    
+    stared_polygon.plot(axs[0])
+    [triangles[i].plot(axs[1],color=PLOT_COLORS[i]) for i in range(len(triangles))]
+    [poly4s[i].plot(axs[2],color=PLOT_COLORS[i]) for i in range(len(poly4s))]
+    graph.plot_directed(axs[3])
+
     plt.show()
 
 

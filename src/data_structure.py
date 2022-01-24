@@ -1,7 +1,16 @@
+
+
 class Point():
-    def __init__(self,x,y):
+    def __init__(self,x,y): #*args):
         self.x = x 
         self.y = y
+        # if len(args) == 2:
+        #     self.x = args[0]
+        #     self.y = args[1]
+        # if len(args) == 1:
+        #     tuple_ = eval(args[0])
+        #     self.x = args[tuple_[0]]
+        #     self.y = args[tuple_[1]]
 
     def get_as_tuple(self):
         return (self.x,self.y)
@@ -21,9 +30,15 @@ class Point():
         return "(" + str(self.x) +","+str(self.y)+")"
 
 class Edge():
-    def __init__(self,src_point,dst_point):
-        self.src_point = src_point
-        self.dst_point = dst_point
+    def __init__(self,*args):
+        if len(args)==2: # (src_point,dst_point)dsf
+            self.src_point = args[0]#.src_point
+            self.dst_point = args[1]#.dst_point
+        if len(args) == 1: # ("(x_src,y_src)->(x_dst,y_dst)")
+            tuple_0 =  eval(args[0].split("->")[0])
+            tuple_1 = eval(args[0].split("->")[1])
+            self.src_point = Point(tuple_0[0],tuple_0[1])
+            self.dst_point = Point(tuple_1[0],tuple_1[1])
     
     def plot(self,ax):
         ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],"o-")
@@ -76,9 +91,12 @@ class Polygon():
     def add_vertex(self,point):
         self.vertcies.append(point)
 
-    def plot(self,fig,ax):
+    def plot(self,ax,color="blue"):
         verts = self.vertcies + [self.vertcies[0]]
-        ax.plot([p.x for p in verts], [p.y for p in verts])
+        xs = [p.x for p in verts]
+        ys = [p.y for p in verts]
+        ax.plot( xs,ys,color=color )
+        ax.scatter(xs,ys,color=color)
 
     def remove_vertex(self,point):
         self.vertcies = list(filter(lambda p: not (p.x==point.x and p.y==point.y),self.vertcies))
