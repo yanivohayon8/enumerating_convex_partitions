@@ -1,1 +1,1 @@
-PLOT_COLORS = ["blue","green","red","black","yellow","magneta","cyan"]
+PLOT_COLORS = ["blue","green","red","black","yellow","magenta","cyan"]

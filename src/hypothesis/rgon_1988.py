@@ -5,14 +5,23 @@ import numpy as np
 from ..data_structure import Polygon,Point,Edge,Graph
 import random
 
+def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
+    '''         |    p
+                | 
+        ------- c ------
+                |
+        calculate the angle between cp to the horizontal axis through c
+    '''
+    return np.degrees(np.arctan((peripheral_point.y-center_point.y)/abs(center_point.x-peripheral_point.x + epsilon)))
+
 def sort_points_clockwise(center_point,subspace_points):
     pos_angles = []
     pos_angle_points = []
     neg_angles = []
     neg_angle_points = []
-    epsilon = 0.00001
+    # epsilon = 0.00001
     for point in subspace_points: 
-        angle = np.degrees(np.arctan((point.y- center_point.y)/abs(center_point.x-point.x + epsilon)))
+        angle = calc_angle_around_point(center_point,point) #np.degrees(np.arctan((point.y- center_point.y)/abs(center_point.x-point.x + epsilon)))
 
         if angle >0:
             pos_angles.append(angle)
