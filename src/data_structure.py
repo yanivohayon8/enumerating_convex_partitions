@@ -1,6 +1,6 @@
 
 
-class Point():
+class Point(object):
     def __init__(self,x,y): #*args):
         self.x = x 
         self.y = y
@@ -15,6 +15,12 @@ class Point():
     def get_as_tuple(self):
         return (self.x,self.y)
 
+    def __eq__(self,p):
+        return self.x==p.x and self.y==p.y
+    
+    def __hash__(self):
+        return hash(self.get_as_tuple())
+
     @staticmethod
     def scatter_points(ax,points):
         xs = [point.x for point in points]
@@ -27,9 +33,9 @@ class Point():
             return Point(self.x-p.x,self.y-p.y)
 
     def __str__(self):
-        return "(" + str(self.x) +","+str(self.y)+")"
+        return "({0},{1})".format(self.x,self.y) #"(" + str(self.x) +","+str(self.y)+")"
 
-class Edge():
+class Edge(object):
     def __init__(self,*args):
         if len(args)==2: # (src_point,dst_point)dsf
             self.src_point = args[0]#.src_point
@@ -51,7 +57,13 @@ class Edge():
     def __str__(self):
         return str(self.src_point) + "->" + str(self.dst_point)
 
-class Graph():
+    # def __eq__(self,edge):
+    #     return self.src_point == edge.src_point and self.dst_point == edge.dst_point
+    
+    # def __hash__(self):
+    #     return str(self)
+
+class Graph(object):
     def __init__(self):
         self.edges = set()
         self.vertecies = set()
@@ -81,7 +93,7 @@ class Graph():
         return [edge for edge in self.edges if edge.src_point == src_vertex]
 
 
-class Polygon():
+class Polygon(object):
     def __init__(self,*args):
         if len(args) == 1:
             self.vertcies = args[0]

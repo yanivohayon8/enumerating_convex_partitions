@@ -120,6 +120,6 @@ def draw_convex_chain():
 if __name__ == "__main__":
     # load_csv_and_scatter()
     #draw_stared_shaped_polygon()
-    draw_visualization_graph()
-    #draw_convex_chain()
+    #draw_visualization_graph()
+    draw_convex_chain()
     pass
