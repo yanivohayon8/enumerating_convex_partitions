@@ -1,45 +1,50 @@
 import bisect
 from functools import cmp_to_key, reduce
-import binarytree
+# import binarytree
+from src.hypothesis.rgon_1988 import turn
+from src.data_structures.binary_tree  import Node
+from src.data_structures import binary_tree  as binary_tree
 
 
 class SweepLine():
     
-    def __init__(self,segments):
-        self.line_status = []
+    def __init__(self):
+        self.line_status = binary_tree.AVL_Tree() # None
+        self.line_status_root = None
         self.event_queue = []
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
         self.interior_point_segments = {}
-        self.segments = segments
+        self.segments = []
         self.intersection = []
 
-    def preprocess(self):
+    def preprocess(self,edges):
         
-        for seg in self.segments:
-            self.upper_endpoint_segments[str(seg.src_point)] = []
-            self.upper_endpoint_segments[str(seg.dst_point)] = []
-            self.lower_endpoint_segments[str(seg.src_point)] = []
-            self.lower_endpoint_segments[str(seg.dst_point)] = []
-            self.interior_point_segments[str(seg.src_point)] = []
-            self.interior_point_segments[str(seg.dst_point)] = []
-            self.event_queue.append(seg.src_point)            
-            self.event_queue.append(seg.dst_point) 
+        for edge in edges:
+            self.upper_endpoint_segments[str(edge.src_point)] = []
+            self.upper_endpoint_segments[str(edge.dst_point)] = []
+            self.lower_endpoint_segments[str(edge.src_point)] = []
+            self.lower_endpoint_segments[str(edge.dst_point)] = []
+            self.interior_point_segments[str(edge.src_point)] = []
+            self.interior_point_segments[str(edge.dst_point)] = []
+            self.event_queue.append(edge.src_point)            
+            self.event_queue.append(edge.dst_point) 
 
-        for seg in self.segments:
+        for edge in edges:
             '''
                 Initialize the lower and upper endpoints DB
                 if the dst point is above the src point
                 it will be the upper endpoint
             '''
-            upper_endpoint = seg.src_point
-            lower_endpoint = seg.dst_point
+            upper_endpoint = edge.src_point
+            lower_endpoint = edge.dst_point
             
-            if sorting_order(seg.src_point,seg.dst_point) > 0:
+            if sorting_order(edge.src_point,edge.dst_point) > 0:
                 tmp = upper_endpoint
                 upper_endpoint = lower_endpoint
                 lower_endpoint=tmp
 
+            seg = Segment(upper_endpoint,lower_endpoint)
             self.upper_endpoint_segments[str(upper_endpoint)].append(seg)
             self.lower_endpoint_segments[str(lower_endpoint)].append(seg)
 
@@ -70,39 +75,81 @@ class SweepLine():
             )
         
         # Delete C(p) and L(p)
-        [self.line_status.remove(segment) for segment in lower_endpoint_segments]
-        [self.line_status.remove(segment) for segment in interior_point_segments]
+        # [self.line_status.remove(segment) for segment in lower_endpoint_segments]
+        # [self.line_status.remove(segment) for segment in interior_point_segments]
 
         # insert U(p) and C(p) (flip their position)
-        # [bisect.insort_left(self.line_status,segment) for segment in upper_endpoint_segments]
-        # [bisect.insort_left(self.line_status,segment)for segment in interior_point_segments]
-        # [self.line_status.append(segment) for segment in upper_endpoint_segments]
-        # [self.line_status.append(segment) for segment in interior_point_segments]
+        [self.insert_to_status(segment) for segment in upper_endpoint_segments]
+        [self.insert_to_status(segment) for segment in interior_point_segments]
 
-        # self.line_status = sorted(self.line_status,key=cmp_to_key(sorting_order))
+        binary_tree.print_pre_order(self.line_status)
 
         if len(interior_point_segments + upper_endpoint_segments)==0:
             pass
 
+    def insert_to_status(self,segment):
+        self.line_status_root = self.line_status.insert(self.line_status_root,segment)
 
 
 
+    def insert_to_status_old(self,segment):
+        self.insert_to_status_rec(self.line_status,segment)
+    
+    def insert_to_status_rec_old(self,root,segment):
+        if root is None:
+            self.line_status = Node(segment)
+            return 1
         
+        is_seg_left_to_root = (-1) * turn(root.value.upper_point,root.value.lower_point,segment.upper_point)
+
+        if is_seg_left_to_root < 0:
+            # if the segment is right to the root segment - go right
+
+            if root.right is None:
+                root.right = Node(segment)
+                root.left = Node(root.value)
+                return 1
+            
+            self.insert_to_status_rec(root.right,segment)
+        else:
+            if is_seg_left_to_root > 0:
+                # if the inserted segment is to the left of the root go left
+                if root.left is None:
+                    root.left = Node(segment)
+                    root.right = Node(root.value)                
+                    root.value = segment
+                    return 1
+
+                self.insert_to_status_rec(root.left,segment)
+            else:    
+                if is_seg_left_to_root == 0:
+                    pass
+
+    def remove_from_status(self,segment):
+        self.remove_from_status_rec(self.line_status,segment)
         
-    # def remove_from_status(self,segment):
-    #     if self.line_status is not None:
-    #         segment_index = self.line_status.values.index(segment)
-    #         del self.line_status[segment_index]
+    
+    def remove_from_status_rec(self,root,segment):
+        if root is None: 
+            return
+        
+        if root.value.lower_point == segment.lower_point:
+            if root.right.value == root.value:
+                pass
 
+            if root.left.value == root.value:
+                pass
+            return
+        
+        is_seg_left_to_root = (-1) * turn(root.value.upper_point,root.value.lower_point,segment.lower_point)
 
-    # def insert_to_status(self,segment):
-    #     if self.line_status is None:
-    #         self.line_status = binarytree.Node(segment)
+        if is_seg_left_to_root < 0:
+            self.remove_from_status_rec(root.right,segment)
+        
+        if is_seg_left_to_root > 0:
+            self.remove_from_status_rec(root.left,segment)
+        
 
-    def print_line_status(self):
-        tree = binarytree.build(self.line_status)
-        tree.pprint(index=True)
-        pass
 
 def is_segments_intersects(segment1,segment2):
     '''
@@ -189,3 +236,35 @@ def sorting_order(point1,point2):
         return point1.x-point2.x
     else:
         return point2.y-point1.y
+
+
+class Segment(object):
+
+    def __init__(self,upper_point,lower_point):
+        self.upper_point = upper_point
+        self.lower_point = lower_point
+
+    def __eq__(self,segment):
+        return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
+
+    def __lt__(self,other):
+        is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
+        return is_seg_left_to_root
+
+    def __hash__(self):
+        return str(self)
+
+    def __str__(self):
+        return "{0}--{1}".format(self.upper_point,self.lower_point)
+
+class LineStatus(binary_tree.AVL_Tree):
+
+    def __init__(self):
+        super().__init__()
+        self.root = None
+
+    def insert(self, key):
+        self.root = super().insert(self.root, key)
+
+    def print(self):
+        pass

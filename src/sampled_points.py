@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from .data_structure import Point
+from .data_structures import Point
 
 def load_sampling_csv(path):
     df = pd.read_csv(path,index_col=False)

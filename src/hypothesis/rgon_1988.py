@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from urllib.parse import ParseResultBytes
 from ..hypothesis import HypothesisAlgo
 import numpy as np
-from ..data_structure import Polygon,Point,Edge,Graph
+from ..data_structures import Polygon,Point,Edge,Graph
 import random
 
 def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
