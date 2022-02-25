@@ -1,4 +1,4 @@
-import lxml.etree as etree
+from src.data_types import XmlWrapper
 
 class Node(object):
 
@@ -58,7 +58,7 @@ class TreeNode(object):
 # deletion operations
 class AVL_Tree(object):
  
-    def insert(self, root, key):
+    def insert(self,root, key):
          
         # Step 1 - Perform normal BST
         if not root:
@@ -229,26 +229,26 @@ class AVL_Tree(object):
     
     def convert_to_lxml(self,root,prefix="_",att="node"):
         if root is not None:
-            element_root = etree.Element(f"{prefix}")
-            element_root.set(att,str(root.val))
+            element_root = XmlWrapper(prefix=prefix)
+            element_root.set_att(att,str(root.val))
             element_left = self.convert_to_lxml(root.left,prefix="left")
 
             if element_left is not None:
-                element_root.append(element_left)
+                element_root.add_child(element_left)
 
             element_right = self.convert_to_lxml(root.right,prefix="right")
 
             if element_right is not None:
-                element_root.append(element_right)
+                element_root.add_child(element_right)
             
             return element_root
         return None
     
-    def print_as_xml(self,xml):
-        '''
-            xml : the output from the convert_to_lxml method
-        '''
-        etree.indent(xml,space="\t")
-        # print(etree.tostring(xml, pretty_print=True))
-        print(etree.tostring(xml).decode("UTF-8"))
+    # def print_as_xml(self,xml):
+    #     '''
+    #         xml : the output from the convert_to_lxml method
+    #     '''
+    #     xml.indent()
+    #     # print(etree.tostring(xml, pretty_print=True))
+    #     print(xml.toString())
 

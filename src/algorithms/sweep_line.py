@@ -54,7 +54,6 @@ class SweepLine():
         self.event_queue = list(set(self.event_queue)) 
         self.event_queue = sorted(self.event_queue,key=cmp_to_key(sorting_order))
             
-
     def run_algo(self):
         while len(self.event_queue)>0:
             event_point = self.event_queue.pop(0)
@@ -84,8 +83,6 @@ class SweepLine():
         [self.insert_to_status(segment) for segment in upper_endpoint_segments]
         [self.insert_to_status(segment) for segment in interior_point_segments]
 
-        binary_tree.print_pre_order(self.line_status)
-
         if len(interior_point_segments + upper_endpoint_segments)==0:
             pass
 
@@ -98,63 +95,27 @@ class SweepLine():
         '''
 
         '''Step 1'''
-        self.line_status.insert(segment)
+        self.line_status.insert_segment(segment)
 
         '''Step 2'''
         parents_single_child = self.line_status.find_parent_with_single_child(self.line_status.root)
 
-        if isinstance(parents_single_child, list):
-            if len(parents_single_child) > 2:
+        if len(parents_single_child) >= 2:
                 raise("By the planningn of the algorith, This should not happen")
         
-        if isinstance(parents_single_child,binary_tree.TreeNode):
+        if len(parents_single_child)  == 1:
             # Adding the missing son
-            if not parents_single_child.left:
-                parents_single_child.left = binary_tree.TreeNode(parents_single_child.val)
+            if not parents_single_child[0].left:
+                parents_single_child[0].left = binary_tree.TreeNode(parents_single_child[0].val)
             else:
-                parents_single_child.right = binary_tree.TreeNode(parents_single_child.val)
+                parents_single_child[0].right = binary_tree.TreeNode(parents_single_child[0].val)
 
         '''Step 3'''
         self.line_status.update_internal_nodes_val(self.line_status.root)
 
-
-    def insert_to_status_old(self,segment):
-        self.insert_to_status_rec(self.line_status,segment)
-    
-    def insert_to_status_rec_old(self,root,segment):
-        if root is None:
-            self.line_status = Node(segment)
-            return 1
-        
-        is_seg_left_to_root = (-1) * turn(root.value.upper_point,root.value.lower_point,segment.upper_point)
-
-        if is_seg_left_to_root < 0:
-            # if the segment is right to the root segment - go right
-
-            if root.right is None:
-                root.right = Node(segment)
-                root.left = Node(root.value)
-                return 1
-            
-            self.insert_to_status_rec(root.right,segment)
-        else:
-            if is_seg_left_to_root > 0:
-                # if the inserted segment is to the left of the root go left
-                if root.left is None:
-                    root.left = Node(segment)
-                    root.right = Node(root.value)                
-                    root.value = segment
-                    return 1
-
-                self.insert_to_status_rec(root.left,segment)
-            else:    
-                if is_seg_left_to_root == 0:
-                    pass
-
     def remove_from_status(self,segment):
         self.remove_from_status_rec(self.line_status,segment)
         
-    
     def remove_from_status_rec(self,root,segment):
         if root is None: 
             return
@@ -273,13 +234,16 @@ class Segment(object):
     def __eq__(self,segment):
         return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
 
-    def __lt__(self,other):
-        is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
-        return is_seg_left_to_root
+    # def __lt__(self,other):
+    #     is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
+    #     return is_seg_left_to_root
 
     def __le__(self,other):
-        is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
-        return is_seg_left_to_root
+        is_other_left_to = turn(self.upper_point,self.lower_point,other.upper_point)  >= 0
+        return is_other_left_to
+
+    def __gt__(self,other):
+        return turn(self.upper_point,self.lower_point,other.upper_point)  < 0
 
     def __hash__(self):
         return str(self)
@@ -293,8 +257,8 @@ class LineStatus(binary_tree.AVL_Tree):
         super().__init__()
         self.root = None
 
-    def insert(self, key):
-        self.root = binary_tree.AVL_Tree.insert(super(),self.root, key)
+    def insert_segment(self, key):
+        self.root = self.insert(self.root, key)
 
 
     def is_leaf(self,node):
@@ -305,10 +269,10 @@ class LineStatus(binary_tree.AVL_Tree):
     def find_parent_with_single_child(self,root):
         if root is not None:
             if (not root.right and root.left is not None) or (not root.left and root.right is not None):
-                return root
+                return [root]
             
-            left = [self.find_parent_with_single_child(self.root.left)]
-            right = [self.find_parent_with_single_child(self.root.right)]
+            left = self.find_parent_with_single_child(root.left)
+            right = self.find_parent_with_single_child(root.right)
 
             return left+right
         return []
@@ -325,6 +289,6 @@ class LineStatus(binary_tree.AVL_Tree):
                 return root.val
             return self.get_internal_node_val(root.right)
 
-    def print(self):
-        xml = self.convert_to_lxml(self.root)
-        super().print_as_xml(xml)
+    # def print(self):
+    #     xml = self.convert_to_lxml(self.root)
+    #     super().print_as_xml(xml)
