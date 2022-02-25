@@ -63,7 +63,7 @@ class AVL_Tree(object):
         # Step 1 - Perform normal BST
         if not root:
             return TreeNode(key)
-        elif key < root.val:
+        elif key <= root.val:
             root.left = self.insert(root.left, key)
         else:
             root.right = self.insert(root.right, key)
@@ -226,16 +226,11 @@ class AVL_Tree(object):
         print("{0} ".format(root.val), end="")
         self.preOrder(root.left)
         self.preOrder(root.right)
-
-
-    # def convert_to_lxml(self,root):
-    #     if root is not None:
-    #         element_root = etree.Element("root")
-    #         element_root.text = str(root.val)
     
-    def convert_to_lxml(self,root,prefix="_"):
+    def convert_to_lxml(self,root,prefix="_",att="node"):
         if root is not None:
-            element_root = etree.Element(f"{prefix}_{str(root.val)}")
+            element_root = etree.Element(f"{prefix}")
+            element_root.set(att,str(root.val))
             element_left = self.convert_to_lxml(root.left,prefix="left")
 
             if element_left is not None:

@@ -1,21 +1,23 @@
 import bisect
 from functools import cmp_to_key, reduce
+# from typing_extensions import Self
+
+
 # import binarytree
 from src.hypothesis.rgon_1988 import turn
 from src.data_structures.binary_tree  import Node
 from src.data_structures import binary_tree  as binary_tree
+# from src.data_structures.binary_tree import AVL_Tree
 
 
 class SweepLine():
     
     def __init__(self):
-        self.line_status = binary_tree.AVL_Tree() # None
-        self.line_status_root = None
+        self.line_status = LineStatus() # None
         self.event_queue = []
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
         self.interior_point_segments = {}
-        self.segments = []
         self.intersection = []
 
     def preprocess(self,edges):
@@ -88,8 +90,32 @@ class SweepLine():
             pass
 
     def insert_to_status(self,segment):
-        self.line_status_root = self.line_status.insert(self.line_status_root,segment)
+        '''
+            This is the procedure
+            1. Insert to the status the new node
+            2. Find parent with only one child and add to him a child with its value (In the planning it should be the left)
+            3. Update all the internal nodes values
+        '''
 
+        '''Step 1'''
+        self.line_status.insert(segment)
+
+        '''Step 2'''
+        parents_single_child = self.line_status.find_parent_with_single_child(self.line_status.root)
+
+        if isinstance(parents_single_child, list):
+            if len(parents_single_child) > 2:
+                raise("By the planningn of the algorith, This should not happen")
+        
+        if isinstance(parents_single_child,binary_tree.TreeNode):
+            # Adding the missing son
+            if not parents_single_child.left:
+                parents_single_child.left = binary_tree.TreeNode(parents_single_child.val)
+            else:
+                parents_single_child.right = binary_tree.TreeNode(parents_single_child.val)
+
+        '''Step 3'''
+        self.line_status.update_internal_nodes_val(self.line_status.root)
 
 
     def insert_to_status_old(self,segment):
@@ -251,6 +277,10 @@ class Segment(object):
         is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
         return is_seg_left_to_root
 
+    def __le__(self,other):
+        is_seg_left_to_root = (-1) * turn(self.upper_point,self.lower_point,other.upper_point) # > 0
+        return is_seg_left_to_root
+
     def __hash__(self):
         return str(self)
 
@@ -264,7 +294,37 @@ class LineStatus(binary_tree.AVL_Tree):
         self.root = None
 
     def insert(self, key):
-        self.root = super().insert(self.root, key)
+        self.root = binary_tree.AVL_Tree.insert(super(),self.root, key)
+
+
+    def is_leaf(self,node):
+        if node is not None:
+            return node.left==None and node.right == None
+        return False
+
+    def find_parent_with_single_child(self,root):
+        if root is not None:
+            if (not root.right and root.left is not None) or (not root.left and root.right is not None):
+                return root
+            
+            left = [self.find_parent_with_single_child(self.root.left)]
+            right = [self.find_parent_with_single_child(self.root.right)]
+
+            return left+right
+        return []
+
+    def update_internal_nodes_val(self,root):
+        if root is not None and  not self.is_leaf(root):
+            root.val = self.get_internal_node_val(root.left)
+            self.update_internal_nodes_val(root.left)
+            self.update_internal_nodes_val(root.right)
+
+    def get_internal_node_val(self,root):
+        if root is not None:
+            if self.is_leaf(root):
+                return root.val
+            return self.get_internal_node_val(root.right)
 
     def print(self):
-        pass
+        xml = self.convert_to_lxml(self.root)
+        super().print_as_xml(xml)

@@ -48,12 +48,6 @@ class TestSweepLine(unittest.TestCase):
 
         sweep_line.run_algo()
 
-        scan = sweep_line.line_status.in_order_scan()
-        for s in scan:
-            print(str(s) + ","),
-        print()
-
-
         pass
 
     def test_line_status_insert(self):
@@ -75,6 +69,7 @@ class TestSweepLine(unittest.TestCase):
 
         upper_endpoint_segments = sweep_line.upper_endpoint_segments[str(event_queue[1])] 
         sweep_line.insert_to_status(upper_endpoint_segments[0])
+        sweep_line.line_status.print()
 
 
         
@@ -85,5 +80,6 @@ class TestSweepLine(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # TestSweepLine.test_line_status_insert()
     pass
     
