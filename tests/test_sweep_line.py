@@ -51,7 +51,7 @@ class TestSweepLine(unittest.TestCase):
 
         pass
 
-    def test_line_status_insert(self):
+    def test_line_status_insert_delete(self):
         df = pd.read_csv('data/algo_test/sweep_line/002.csv',index_col=False)
         segments = []
         df_list = df.values.tolist()
@@ -89,6 +89,11 @@ class TestSweepLine(unittest.TestCase):
         is_equal = xml_root.element == sl_xml.element
 
         #self.assertTrue(is_equal)
+
+        sweep_line.line_status.delete_segment(upper_endpoint_segments_1[0])
+        # sweep_line.line_status.delete_segment(upper_endpoint_segments_0[0])
+        sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
+        sl_xml.print()
 
 
         
