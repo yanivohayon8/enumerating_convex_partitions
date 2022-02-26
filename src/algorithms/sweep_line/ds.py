@@ -3,7 +3,6 @@ from src.hypothesis.rgon_1988 import turn
 
 
 class Segment(object):
-
     def __init__(self,upper_point,lower_point):
         self.upper_point = upper_point
         self.lower_point = lower_point
@@ -54,7 +53,7 @@ class LineStatus(binary_tree.AVL_Tree):
 
     def find_parent_with_single_child(self,root):
         if root is not None:
-            if not self.is_have_single_child(root):
+            if self.is_have_single_child(root) and not self.is_leaf(root):
                 return [root]
             
             left = self.find_parent_with_single_child(root.left)

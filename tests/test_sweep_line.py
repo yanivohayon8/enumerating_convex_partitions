@@ -7,7 +7,8 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 import src.data_structures as ds
 import matplotlib.pyplot as plt
 import pandas as pd
-from  src.algorithms.sweep_line import SweepLine
+# from  algorithms.sweep_line.sweep_line import SweepLine
+from src.algorithms.sweep_line.sweep_line import SweepLine
 import unittest
 from src.data_types import XmlWrapper
 

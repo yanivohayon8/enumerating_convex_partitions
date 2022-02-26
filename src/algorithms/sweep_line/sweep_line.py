@@ -1,9 +1,6 @@
 import bisect
-from functools import cmp_to_key, reduce
-from tkinter.tix import Tree
-# from typing_extensions import Self
-
-from sweep_line.ds import Segment,LineStatus
+from functools import cmp_to_key
+from  src.algorithms.sweep_line.ds import Segment,LineStatus #.sweep_line.ds import Segment,LineStatus
 # import binarytree
 
 from src.data_structures import binary_tree 
@@ -78,13 +75,11 @@ class SweepLine():
         [self.remove_from_status(segment) for segment in lower_endpoint_segments]
         [self.remove_from_status(segment) for segment in interior_point_segments]
 
-        
-
         # insert U(p) and C(p) (flip their position)
         [self.insert_to_status(segment) for segment in upper_endpoint_segments]
         [self.insert_to_status(segment) for segment in interior_point_segments]
 
-        # self.line_status.is_valid()
+        self.line_status.is_valid()
 
         if len(interior_point_segments + upper_endpoint_segments)==0:
             pass
@@ -124,8 +119,6 @@ class SweepLine():
         '''
         self.line_status.delete_segment(segment)
         self.line_status.delete_segment(segment)
-
-
 
 
 def sorting_order(point1,point2):
