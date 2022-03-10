@@ -1,5 +1,6 @@
 from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order
 from src.data_structures.segment import Segment
+from functools import cmp_to_key
 # import binarytree
 # from src.data_structures import binary_tree 
 
@@ -74,11 +75,11 @@ class SweepLine():
         
         # Delete C(p) and L(p)
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
-        [self.line_status.delete_segment(segment) for segment in interior_point_segments]
+        [self.line_status.delete_segment(segment) for segment in reversed(interior_point_segments)]
 
         # insert U(p) and C(p) (flip their position)
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
-        [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
+        [self.line_status.insert_segment(segment) for segment in reversed(interior_point_segments)] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
 
         left_segment,right_segment = self.line_status.get_neighbors(event_point)
         
@@ -121,7 +122,9 @@ class SweepLine():
     def _get_point_segments(self,dict_point_segment,event_point):
         if not str(event_point) in dict_point_segment:
             return []
-        return dict_point_segment[str(event_point)] 
+        # lst = dict_point_segment[str(event_point)]
+        # return sorted(lst,key=cmp_to_key(sorting_order)) # lst
+        return dict_point_segment[str(event_point)]
 
     def is_point_endpoint(self,dict_upper_lower,point,segment):
         if point in dict_upper_lower:

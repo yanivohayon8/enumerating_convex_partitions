@@ -24,7 +24,22 @@ class LineStatus(binary_tree.AVL_Tree):
         self._update_internal_nodes_val(self.root)
 
     def delete_segment(self,segment):
-        self.root = self.delete(self.root,segment)
+        right_neighbor = self.get_right_neighbor(segment)
+        if right_neighbor is not None:
+            new_val = right_neighbor
+            self._delete_leaf(self.root,right_neighbor)
+            self._replace_leaf_val(self.root,segment,new_val)
+            self.root = self.delete(self.root,segment) 
+            self._update_internal_nodes_val(self.root)
+        else:
+            # This code is not checked yet
+            # the segment leaf value is the most right leaf
+            left_neighbor = self.get_left_neighbor(segment)
+            if left_neighbor is not None:
+                self._delete_leaf(self.root,left_neighbor)
+                self.root = self.delete(self.root,segment)
+                self._update_internal_nodes_val(self.root)
+        
 
     def get_segment_on_line(self):
         return self._get_leafs(self.root)#super().in_order(self.root)
@@ -76,6 +91,16 @@ class LineStatus(binary_tree.AVL_Tree):
             return self._get_internal_node_expected_val(root.right)
         return None
 
+    def _delete_leaf(self,root,segment):
+        if root is not None and not self._is_leaf(root):
+            if root.left.val == segment and self._is_leaf(root.left):
+                root.left = None
+            elif root.right.val == segment and self._is_leaf(root.right):
+                root.right = None
+            else:
+                self._delete_leaf(root.left,segment)
+                self._delete_leaf(root.right,segment)
+    
     def get_neighbors(self,event_point):
         leafs = self.get_segment_on_line()
         neighbor_right,neighbor_left = None,None
@@ -91,6 +116,34 @@ class LineStatus(binary_tree.AVL_Tree):
                 break
 
         return neighbor_left,neighbor_right
+
+    def get_right_neighbor(self,segment_source):
+        leafs = self.get_segment_on_line()
+        neighbor_right = None
+        for seg in leafs:
+            if seg > segment_source:
+                neighbor_right = seg
+                break
+        return neighbor_right
+    
+    def get_left_neighbor(self,segment_source):
+        leafs = self.get_segment_on_line()
+        neighbor_left = None
+
+        for seg in list(reversed(leafs)):
+            if seg < segment_source:
+                neighbor_left = seg
+                break
+        return neighbor_left
+
+
+    def _replace_leaf_val(self,root,old_val,new_val):
+        if root is not None:
+            if root.val == old_val and self._is_leaf(root):
+                root.val = new_val
+            else:
+                self._replace_leaf_val(root.left,old_val,new_val)
+                self._replace_leaf_val(root.right,old_val,new_val)
 
     def print(self):
         print("Line Status:", end="\t")
