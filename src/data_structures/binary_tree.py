@@ -33,20 +33,24 @@ class AVL_Tree(object):
         # Step 4 - If the node is unbalanced,
         # then try out the 4 cases
         # Case 1 - Left Left
-        if balance > 1 and key < root.left.val:
+        # if balance > 1 and key < root.left.val:
+        if balance > 1 and key <= root.left.val:
             return self.rightRotate(root)
  
         # Case 2 - Right Right
-        if balance < -1 and key > root.right.val:
+        # if balance < -1 and key > root.right.val:
+        if balance < -1 and key >= root.right.val:
             return self.leftRotate(root)
  
         # Case 3 - Left Right
-        if balance > 1 and key > root.left.val:
+        # if balance > 1 and key > root.left.val:
+        if balance > 1 and key >= root.left.val:
             root.left = self.leftRotate(root.left)
             return self.rightRotate(root)
  
         # Case 4 - Right Left
-        if balance < -1 and key < root.right.val:
+        # if balance < -1 and key < root.right.val:
+        if balance < -1 and key <= root.right.val:
             root.right = self.rightRotate(root.right)
             return self.leftRotate(root)
  

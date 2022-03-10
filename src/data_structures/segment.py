@@ -69,6 +69,13 @@ class Segment(object):
         if isinstance(other,Point):
             return turn(self.lower_point,self.upper_point,other)  < 0   
 
+    def __ge__(self,other):
+        if isinstance(other,Segment):
+            return turn(self.upper_point,self.lower_point,other.upper_point)  <= 0   
+        
+        if isinstance(other,Point):
+            return turn(self.lower_point,self.upper_point,other)  <= 0  
+
     def __hash__(self):
         return str(self)
 
