@@ -1,51 +1,5 @@
 from src.data_types import XmlWrapper
 
-class Node(object):
-
-    def __init__(self,value,right=None,left=None):
-        self.value = value
-        self.right = right
-        self.left = left
-
-
-def get_leafs(root):
-    if root.right is None and root.left is None:
-        return [root.value]
-    return 
-
-
-
-# def get_height(self):
-#     if self is None:
-#         return 0
-#     return 1 + max(self.get_height(self.right),self.get_height(self.left))
-
-
-# def in_order_scan(self,root):
-#     if not root is None:
-#         return root.in_order_scan(root.left) + [root.value] + root.in_order_scan(root.right)
-#     return []
-
-def print_pre_order(root):
-    nodes = pre_order_rec(root,0)
-    level = -1
-    for node in nodes:
-        if node["level"] !=level:
-            level=node["level"]
-            print()
-            print("Nodes at level {0}: ".format(level) , end=" ")
-        print(str(node["value"]), end=",")
-
-    print()
-
-def pre_order_rec(root,level):
-    if not root is None:
-        level_up=level+1
-        return [{"value":root.value,"level":level}]  + pre_order_rec(root.left,level_up) +  pre_order_rec(root.right,level_up)
-    return []
-
-
-
 class TreeNode(object):
     def __init__(self, val):
         self.val = val
@@ -244,11 +198,8 @@ class AVL_Tree(object):
             return element_root
         return None
     
-    # def print_as_xml(self,xml):
-    #     '''
-    #         xml : the output from the convert_to_lxml method
-    #     '''
-    #     xml.indent()
-    #     # print(etree.tostring(xml, pretty_print=True))
-    #     print(xml.toString())
-
+    def in_order(self,root):
+        if root is not None:
+            return self.in_order(root.left) + [root.val] + self.in_order(root.right)
+        return []
+            

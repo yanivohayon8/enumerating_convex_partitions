@@ -1,16 +1,14 @@
-import bisect
-from functools import cmp_to_key
-from  src.algorithms.sweep_line.ds import Segment,LineStatus #.sweep_line.ds import Segment,LineStatus
+from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order
+from src.data_structures.segment import Segment
 # import binarytree
-
-from src.data_structures import binary_tree 
+# from src.data_structures import binary_tree 
 
 
 class SweepLine():
     
     def __init__(self):
         self.line_status = LineStatus() # None
-        self.event_queue = []
+        self.event_queue = EventQueue()
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
         self.interior_point_segments = {}
@@ -18,15 +16,15 @@ class SweepLine():
 
     def preprocess(self,edges):
         
-        for edge in edges:
-            self.upper_endpoint_segments[str(edge.src_point)] = []
-            self.upper_endpoint_segments[str(edge.dst_point)] = []
-            self.lower_endpoint_segments[str(edge.src_point)] = []
-            self.lower_endpoint_segments[str(edge.dst_point)] = []
-            self.interior_point_segments[str(edge.src_point)] = []
-            self.interior_point_segments[str(edge.dst_point)] = []
-            self.event_queue.append(edge.src_point)            
-            self.event_queue.append(edge.dst_point) 
+        # for edge in edges:
+        #     # self.upper_endpoint_segments[str(edge.src_point)] = []
+        #     # self.upper_endpoint_segments[str(edge.dst_point)] = []
+        #     # self.lower_endpoint_segments[str(edge.src_point)] = []
+        #     # self.lower_endpoint_segments[str(edge.dst_point)] = []
+        #     # self.interior_point_segments[str(edge.src_point)] = []
+        #     # self.interior_point_segments[str(edge.dst_point)] = []
+        #     self.event_queue.append(edge.src_point)            
+        #     self.event_queue.append(edge.dst_point) 
 
         for edge in edges:
             '''
@@ -36,6 +34,8 @@ class SweepLine():
             '''
             upper_endpoint = edge.src_point
             lower_endpoint = edge.dst_point
+            self.event_queue.append(upper_endpoint)
+            self.event_queue.append(lower_endpoint)
             
             if sorting_order(edge.src_point,edge.dst_point) > 0:
                 tmp = upper_endpoint
@@ -43,22 +43,23 @@ class SweepLine():
                 lower_endpoint=tmp
 
             seg = Segment(upper_endpoint,lower_endpoint)
-            self.upper_endpoint_segments[str(upper_endpoint)].append(seg)
-            self.lower_endpoint_segments[str(lower_endpoint)].append(seg)
+            self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
+            self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
 
-        # remove duplicates and sort
-        self.event_queue = list(set(self.event_queue)) 
-        self.event_queue = sorted(self.event_queue,key=cmp_to_key(sorting_order))
+        # # remove duplicates and sort
+        # self.event_queue = list(set(self.event_queue)) 
+        # self.event_queue = sorted(self.event_queue,key=cmp_to_key(sorting_order))
             
     def run_algo(self):
-        while len(self.event_queue)>0:
-            event_point = self.event_queue.pop(0)
+        while len(self.event_queue.queue)>0:
+            event_point = self.event_queue.pop()
             self.handle_event_point(event_point)
+            yield event_point
     
     def handle_event_point(self,event_point):
-        lower_endpoint_segments = self.lower_endpoint_segments[str(event_point)]
-        upper_endpoint_segments = self.upper_endpoint_segments[str(event_point)]
-        interior_point_segments = self.interior_point_segments[str(event_point)]
+        lower_endpoint_segments = self._get_point_segments(self.lower_endpoint_segments,event_point)
+        upper_endpoint_segments = self._get_point_segments(self.upper_endpoint_segments,event_point)
+        interior_point_segments = self._get_point_segments(self.interior_point_segments,event_point)
 
         segment_involved = lower_endpoint_segments + upper_endpoint_segments + interior_point_segments
 
@@ -72,63 +73,59 @@ class SweepLine():
             )
         
         # Delete C(p) and L(p)
-        [self.remove_from_status(segment) for segment in lower_endpoint_segments]
-        [self.remove_from_status(segment) for segment in interior_point_segments]
+        [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
+        [self.line_status.delete_segment(segment) for segment in interior_point_segments]
 
         # insert U(p) and C(p) (flip their position)
-        [self.insert_to_status(segment) for segment in upper_endpoint_segments]
-        [self.insert_to_status(segment) for segment in interior_point_segments]
+        [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
+        [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
 
-        self.line_status.is_valid()
-
-        if len(interior_point_segments + upper_endpoint_segments)==0:
-            pass
-
-    def insert_to_status(self,segment):
-        '''
-            This is the procedure
-            1. Insert to the status the new node
-            2. Find parent with only one child and add to him a child with its value (In the planning it should be the left)
-            3. Update all the internal nodes values
-        '''
-
-        '''Step 1'''
-        self.line_status.insert_segment(segment)
-
-        '''Step 2'''
-        parents_single_child = self.line_status.find_parent_with_single_child(self.line_status.root)
-
-        if len(parents_single_child) >= 2:
-                raise("By the planning of the algorithm, This should not happen")
+        left_segment,right_segment = self.line_status.get_neighbors(event_point)
         
-        if len(parents_single_child)  == 1:
-            # Adding the missing son
-            if not parents_single_child[0].left:
-                parents_single_child[0].left = binary_tree.TreeNode(parents_single_child[0].val)
-            else:
-                parents_single_child[0].right = binary_tree.TreeNode(parents_single_child[0].val)
+        '''if segments ends at the event point maybe the neighbors of the surronding segments are intersects'''
+        if len(interior_point_segments + upper_endpoint_segments)==0:
 
-        '''Step 3'''
-        self.line_status.update_internal_nodes_val(self.line_status.root)
+            if left_segment is not None and right_segment is not None:
+                self.find_new_event(left_segment,right_segment,event_point)
+        else:
+            for seg in upper_endpoint_segments+interior_point_segments:
+                if left_segment is not None:
+                    self.find_new_event(seg,left_segment,event_point)
+                if right_segment is not None:
+                    self.find_new_event(seg,right_segment,event_point)
+    
+    def find_new_event(self,segment_1,segment_2,event_point):
+        if not segment_1.is_intersects(segment_2):
+            return None
+        intersec_point = segment_1.find_intersection_point(segment_2)
 
-    def remove_from_status(self,segment):
-        '''
-            1. Remove the value from the leaf
-            2. If internal node contains this value then delete also. 
-                else, delete the leaf next to him also
-        '''
-        self.line_status.delete_segment(segment)
-        self.line_status.delete_segment(segment)
+        if sorting_order(intersec_point,event_point) > 0:
+            if not intersec_point in self.event_queue.queue:
+                self.event_queue.append(intersec_point)
+            if not self.is_point_endpoint(self.upper_endpoint_segments,intersec_point,segment_1) and \
+                not self.is_point_endpoint(self.lower_endpoint_segments,intersec_point,segment_1):
+                if segment_1.is_point_in_segment(intersec_point):
+                    self._append_event_point(self.interior_point_segments,segment_1,intersec_point)
+            if not self.is_point_endpoint(self.upper_endpoint_segments,intersec_point,segment_2) and \
+                not self.is_point_endpoint(self.lower_endpoint_segments,intersec_point,segment_2):
+                if segment_2.is_point_in_segment(intersec_point):
+                    self._append_event_point(self.interior_point_segments,segment_2,intersec_point)
+    
 
+    def _append_event_point(self,dict_point_segment,segment,event_point):
+        if not str(event_point) in dict_point_segment:
+            dict_point_segment[str(event_point)] = []
 
-def sorting_order(point1,point2):
-    '''
-        Sorting mechanism for the event points
-        if one have higher y-coordinated it will be sorted first.
-        if the y-coordinates are equal, then the one with smaller x-coordinate will be count first
-    '''
-    if point1.y == point2.y:
-        return point1.x-point2.x
-    else:
-        return point2.y-point1.y
+        dict_point_segment[str(event_point)].append(segment)
 
+    def _get_point_segments(self,dict_point_segment,event_point):
+        if not str(event_point) in dict_point_segment:
+            return []
+        return dict_point_segment[str(event_point)] 
+
+    def is_point_endpoint(self,dict_upper_lower,point,segment):
+        if point in dict_upper_lower:
+            return segment in dict_upper_lower[str(point)]
+        return False
+
+   

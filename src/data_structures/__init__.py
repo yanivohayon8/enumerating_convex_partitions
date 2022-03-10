@@ -1,5 +1,8 @@
 
 
+# from src.data_structures.segment import Segment
+
+
 class Point(object):
     def __init__(self,x,y): #*args):
         self.x = x 
@@ -34,6 +37,9 @@ class Point(object):
 
     def __str__(self):
         return "({0},{1})".format(self.x,self.y) #"(" + str(self.x) +","+str(self.y)+")"
+
+
+
 
 class Edge(object):
     def __init__(self,*args):

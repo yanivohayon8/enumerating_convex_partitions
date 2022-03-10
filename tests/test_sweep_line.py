@@ -48,7 +48,18 @@ class TestSweepLine(unittest.TestCase):
         # self.assertEquals(lower_event,expect_lower_event)
         # self.assertEquals(interior_events,expect_interior_event)
 
-        sweep_line.run_algo()
+        print("Starting point:")
+        sweep_line.line_status.print()
+        sweep_line.event_queue.print()
+
+        for event_point in sweep_line.run_algo():
+            print(f"Handled Event point: {event_point}")
+            sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
+            sl_xml.print()
+            sweep_line.line_status.print()
+            sweep_line.event_queue.print()
+            print("\n",end="\n\n")
+           
 
         pass
 
@@ -72,27 +83,16 @@ class TestSweepLine(unittest.TestCase):
 
         upper_endpoint_segments_1 = sweep_line.upper_endpoint_segments[str(event_queue[1])] 
         sweep_line.insert_to_status(upper_endpoint_segments_1[0])
+
+
         sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
         sl_xml.print()
 
-        # Creating the desired result: 
-        #   i 
-        # i   k
-        xml_root.set_att("node",str(upper_endpoint_segments_1[0]))
-        xml_child1_left = XmlWrapper(prefix="left")
-        xml_child1_left.set_att("node",str(upper_endpoint_segments_1[0]))
-        xml_child1_right = XmlWrapper(prefix="right")
-        xml_child1_right.set_att("node",str(upper_endpoint_segments_0[0]))
-        xml_root.add_child(xml_child1_left)
-        xml_root.add_child(xml_child1_right)
-        xml_root.print()
+        segment_on_line = sweep_line.line_status.get_segment_on_line()
 
         is_equal = xml_root.element == sl_xml.element
 
-        #self.assertTrue(is_equal)
-
         sweep_line.line_status.delete_segment(upper_endpoint_segments_1[0])
-        # sweep_line.line_status.delete_segment(upper_endpoint_segments_0[0])
         sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
         sl_xml.print()
 
