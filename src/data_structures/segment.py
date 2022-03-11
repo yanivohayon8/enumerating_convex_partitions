@@ -50,36 +50,42 @@ class Segment(object):
     def __ne__(self,segment):
         return self.upper_point != segment.upper_point or self.lower_point != segment.lower_point
 
-    def __lt__(self,other):
+    def _calc_turn(self,other):
         if isinstance(other,Segment):
-            return turn(self.upper_point,self.lower_point,other.upper_point) > 0
+            _i = self.lower_point
+            _j = self.upper_point
+            _k = other.upper_point
+            if self.upper_point == other.upper_point:
+                _k = other.lower_point
+            return turn(_i,_j,_k)
         
         if isinstance(other,Point):
-            return turn(self.lower_point,self.upper_point,other) > 0
+            return turn(self.lower_point,self.upper_point,other) 
+
+    def __lt__(self,other):
+        '''
+            Is segment\point is left to self segment
+        '''
+        return self._calc_turn(other) < 0 
         
         
     def __le__(self,other):
-        if isinstance(other,Segment):
-            is_other_left_to = turn(self.upper_point,self.lower_point,other.upper_point)  >= 0
-            return is_other_left_to
-
-        if isinstance(other,Point):
-            is_other_left_to = turn(self.lower_point,self.upper_point,other)  >= 0
-            return is_other_left_to
+        '''
+            Is segment\point is left or in to self segment
+        '''
+        return self._calc_turn(other) <=0
 
     def __gt__(self,other):
-        if isinstance(other,Segment):
-            return turn(self.upper_point,self.lower_point,other.upper_point)  < 0   
-        
-        if isinstance(other,Point):
-            return turn(self.lower_point,self.upper_point,other)  < 0   
+        '''
+            Is segment\point is right to self segment
+        '''
+        return self._calc_turn(other) > 0 
 
     def __ge__(self,other):
-        if isinstance(other,Segment):
-            return turn(self.upper_point,self.lower_point,other.upper_point)  <= 0   
-        
-        if isinstance(other,Point):
-            return turn(self.lower_point,self.upper_point,other)  <= 0  
+        '''
+            Is segment\point is right to self segment
+        '''
+        return self._calc_turn(other) >=0
 
     def __hash__(self):
         return str(self)

@@ -101,37 +101,21 @@ class LineStatus(binary_tree.AVL_Tree):
                 self._delete_leaf(root.left,segment)
                 self._delete_leaf(root.right,segment)
     
-    def get_neighbors(self,event_point):
-        leafs = self.get_segment_on_line()
-        neighbor_right,neighbor_left = None,None
-
-        for seg in leafs:
-            if seg < event_point:
-                neighbor_right = seg
-                break
-        
-        for seg in list(reversed(leafs)):
-            if seg > event_point:
-                neighbor_left = seg
-                break
-
-        return neighbor_left,neighbor_right
-
-    def get_right_neighbor(self,segment_source):
+    def get_right_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
         neighbor_right = None
         for seg in leafs:
-            if seg > segment_source:
+            if seg > point_or_seg:
                 neighbor_right = seg
                 break
         return neighbor_right
     
-    def get_left_neighbor(self,segment_source):
+    def get_left_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
         neighbor_left = None
 
         for seg in list(reversed(leafs)):
-            if seg < segment_source:
+            if seg < point_or_seg:
                 neighbor_left = seg
                 break
         return neighbor_left

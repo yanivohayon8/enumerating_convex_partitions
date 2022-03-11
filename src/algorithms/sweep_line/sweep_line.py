@@ -77,11 +77,19 @@ class SweepLine():
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
         [self.line_status.delete_segment(segment) for segment in reversed(interior_point_segments)]
 
+        # Cut the segemnt for a new upper endpoint (the intersection)
+        for segment in interior_point_segments:
+            segment.upper_point = event_point
+            # self._append_event_point(upper_endpoint_segments,segment,event_point)
+
+        # interior_point_segments.clear()
+
         # insert U(p) and C(p) (flip their position)
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
         [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
 
-        left_segment,right_segment = self.line_status.get_neighbors(event_point)
+        left_segment = self.line_status.get_left_neighbor(event_point)
+        right_segment = self.line_status.get_right_neighbor(event_point)
         
         '''if segments ends at the event point maybe the neighbors of the surronding segments are intersects'''
         if len(interior_point_segments + upper_endpoint_segments)==0:
