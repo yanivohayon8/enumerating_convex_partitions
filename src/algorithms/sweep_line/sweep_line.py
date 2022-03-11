@@ -1,10 +1,14 @@
 from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order,Segment
 from functools import cmp_to_key
-# from src.data_structures.lines import Segment as GeneralSegment
 
 
 class SweepLine():
+    '''
+        Implementing This 
+        https://people.inf.elte.hu/fekete/algoritmusok_msc/terinfo_geom/konyvek/Computational%20Geometry%20-%20Algorithms%20and%20Applications,%203rd%20Ed.pdf
+        page 25~
     
+    '''
     def __init__(self):
         self.line_status = LineStatus() # None
         self.event_queue = EventQueue()

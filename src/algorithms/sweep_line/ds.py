@@ -124,7 +124,6 @@ class LineStatus(binary_tree.AVL_Tree):
                 break
         return neighbor_left
 
-
     def _replace_leaf_val(self,root,old_val,new_val):
         if root is not None:
             if root.val == old_val and self._is_leaf(root):
@@ -139,6 +138,36 @@ class LineStatus(binary_tree.AVL_Tree):
         [print(seg, end=";") for seg in segments]
         print()
 
+    def check_sanity(self):
+        '''
+            Makes sure several things:
+            1. Each internal node is equal to its most right leaf in the left subtree
+            2. The tree is binary, full, balanced search tree
+            3. The leaves represent the segments on the line.
+                Make sure the order of them is correct based on the sorting_order fucntion
+                and that there is no duplicates
+        '''
+        is_internal_ok = self._check_sanity_internal(self.root)
+        
+        leafs = self.get_segment_on_line()
+        is_leafs_ok = all(leafs[i] < leafs[i + 1] for i in range(len(leafs)-1))
+
+        return is_internal_ok and is_leafs_ok
+    
+    def _check_sanity_internal(self,root):
+        if self._is_leaf(root):
+            return True
+
+        if self._is_have_single_child(root):
+            return False
+
+        expected_val = self._get_internal_node_expected_val(root.left)
+        if expected_val != root.val:
+            return False
+        
+        return self._check_sanity_internal(root.left) and self._check_sanity_internal(root.right)
+
+        
 
 class EventQueue():
 

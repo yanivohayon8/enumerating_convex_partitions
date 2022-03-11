@@ -11,6 +11,7 @@ import pandas as pd
 from src.algorithms.sweep_line.sweep_line import SweepLine
 import unittest
 from src.data_types import XmlWrapper
+from src.data_structures.lines import Segment 
 
 class TestSweepLine(unittest.TestCase):
     def test_simple_example(self):
@@ -33,21 +34,6 @@ class TestSweepLine(unittest.TestCase):
         sweep_line = SweepLine()
         sweep_line.preprocess(segments)
 
-        # event_queue = list(map(lambda p: p.get_as_tuple(),sweep_line.event_queue))
-        # upper_event = list(map(lambda s: str(s),sweep_line.upper_endpoint_segments))
-        # lower_event = list(map(lambda p: p.get_as_tuple(),sweep_line.lower_endpoint_segments))
-        # interior_events = list(map(lambda p: p.get_as_tuple(),sweep_line.interior_point_segments))
-
-        # expect_event_queue = [(1,6),(7,6),(3,5),(4,4),(3,2),(5,1.5),(2,1)] 
-        # expect_upper_event = [(1,6),(7,6),(3,5),(4,4)]
-        # expect_lower_event = [(3,2),(5,1.5),(2,1)]
-        # expect_interior_event = []
-
-        # self.assertEqual(event_queue,expect_event_queue)
-        # self.assertEquals(upper_event,expect_upper_event)
-        # self.assertEquals(lower_event,expect_lower_event)
-        # self.assertEquals(interior_events,expect_interior_event)
-
         print("Starting point:")
         sweep_line.line_status.print()
         sweep_line.event_queue.print()
@@ -59,9 +45,18 @@ class TestSweepLine(unittest.TestCase):
             sweep_line.line_status.print()
             sweep_line.event_queue.print()
             print("\n",end="\n\n")
-           
+            self.assertTrue(sweep_line.line_status.check_sanity())
 
-        pass
+        # The expected results 
+        seg_1 = Segment(ds.Point(5,10),ds.Point(5.5,2.5))
+        seg_2 = Segment(ds.Point(6,6),ds.Point(5,2))
+        inter_point = seg_1.find_intersection_point(seg_2)
+        expected_intersections = [{
+            "point": inter_point,
+            "segments":[seg_2,seg_1]
+        }]
+        
+        #self.assertEqual(expected_intersections,sweep_line.intersections)
 
     def test_line_status_insert_delete(self):
         df = pd.read_csv('data/algo_test/sweep_line/002.csv',index_col=False)
