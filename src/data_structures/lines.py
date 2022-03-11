@@ -1,11 +1,4 @@
-from src.hypothesis.rgon_1988 import turn
 from src.data_structures import Point
-
-'''
-
-MAYBE THIS MODULE BELONGS UNDER SWEEP LINE PACKAGE 
-'''
-
 
 class Line(object):
     def __init__(self,*args):
@@ -44,56 +37,9 @@ class Segment(object):
         self.upper_point = upper_point
         self.lower_point = lower_point
 
-    def __eq__(self,segment):
-        return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
-
-    def __ne__(self,segment):
-        return self.upper_point != segment.upper_point or self.lower_point != segment.lower_point
-
-    def _calc_turn(self,other):
-        if isinstance(other,Segment):
-            _i = self.lower_point
-            _j = self.upper_point
-            _k = other.upper_point
-            if self.upper_point == other.upper_point:
-                _k = other.lower_point
-            return turn(_i,_j,_k)
-        
-        if isinstance(other,Point):
-            return turn(self.lower_point,self.upper_point,other) 
-
-    def __lt__(self,other):
-        '''
-            Is segment\point is left to self segment
-        '''
-        return self._calc_turn(other) < 0 
-        
-        
-    def __le__(self,other):
-        '''
-            Is segment\point is left or in to self segment
-        '''
-        return self._calc_turn(other) <=0
-
-    def __gt__(self,other):
-        '''
-            Is segment\point is right to self segment
-        '''
-        return self._calc_turn(other) > 0 
-
-    def __ge__(self,other):
-        '''
-            Is segment\point is right to self segment
-        '''
-        return self._calc_turn(other) >=0
-
-    def __hash__(self):
-        return str(self)
-
     def __str__(self):
         return "{0}--{1}".format(self.upper_point,self.lower_point)
-
-
+        
     def find_intersection_point(self,other_segment):
         self_line = Line(self)
         other_line = Line(other_segment)

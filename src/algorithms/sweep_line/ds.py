@@ -1,5 +1,9 @@
 from src.data_structures import binary_tree  as binary_tree
+from src.data_structures.lines import Segment as GeneralSegment
+from src.data_structures import Point
 from functools import cmp_to_key
+from src.hypothesis.rgon_1988 import turn
+
 
 class LineStatus(binary_tree.AVL_Tree):
 
@@ -155,7 +159,6 @@ class EventQueue():
         print()
 
 
-
 def sorting_order(point1,point2):
     '''
         Sorting mechanism for the event points
@@ -166,3 +169,61 @@ def sorting_order(point1,point2):
         return point1.x-point2.x
     else:
         return point2.y-point1.y 
+
+class Segment(GeneralSegment):
+    
+    def __init__(self,upper_point,lower_point):
+        super().__init__(upper_point,lower_point)
+        self.origin_upper_point = self.upper_point
+
+    def __eq__(self,segment):
+        return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
+
+    def __ne__(self,segment):
+        return self.upper_point != segment.upper_point or self.lower_point != segment.lower_point
+
+    def _calc_turn(self,other):
+        if isinstance(other,Segment):
+            _i = self.lower_point
+            _j = self.upper_point
+            _k = other.upper_point
+            if self.upper_point == other.upper_point:
+                _k = other.lower_point
+            return turn(_i,_j,_k)
+        
+        if isinstance(other,Point):
+            return turn(self.lower_point,self.upper_point,other) 
+
+    def __lt__(self,other):
+        '''
+            Is segment\point is left to self segment
+        '''
+        return self._calc_turn(other) < 0 
+        
+        
+    def __le__(self,other):
+        '''
+            Is segment\point is left or in to self segment
+        '''
+        return self._calc_turn(other) <=0
+
+    def __gt__(self,other):
+        '''
+            Is segment\point is right to self segment
+        '''
+        return self._calc_turn(other) > 0 
+
+    def __ge__(self,other):
+        '''
+            Is segment\point is right to self segment
+        '''
+        return self._calc_turn(other) >=0
+
+    def __hash__(self):
+        return str(self)
+
+    def __str__(self):
+        return "{0}--{1}".format(self.origin_upper_point,self.lower_point)
+
+    def get_parent(self):
+        return GeneralSegment(self.upper_point,self.lower_point) # MUST DO IT MORE ELEGEANT WITH OOP

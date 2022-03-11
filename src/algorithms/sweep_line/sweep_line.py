@@ -1,8 +1,6 @@
-from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order
-from src.data_structures.segment import Segment
+from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order,Segment
 from functools import cmp_to_key
-# import binarytree
-# from src.data_structures import binary_tree 
+# from src.data_structures.lines import Segment as GeneralSegment
 
 
 class SweepLine():
@@ -13,20 +11,9 @@ class SweepLine():
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
         self.interior_point_segments = {}
-        self.intersection = []
+        self.intersections = []
 
     def preprocess(self,edges):
-        
-        # for edge in edges:
-        #     # self.upper_endpoint_segments[str(edge.src_point)] = []
-        #     # self.upper_endpoint_segments[str(edge.dst_point)] = []
-        #     # self.lower_endpoint_segments[str(edge.src_point)] = []
-        #     # self.lower_endpoint_segments[str(edge.dst_point)] = []
-        #     # self.interior_point_segments[str(edge.src_point)] = []
-        #     # self.interior_point_segments[str(edge.dst_point)] = []
-        #     self.event_queue.append(edge.src_point)            
-        #     self.event_queue.append(edge.dst_point) 
-
         for edge in edges:
             '''
                 Initialize the lower and upper endpoints DB
@@ -46,12 +33,12 @@ class SweepLine():
             seg = Segment(upper_endpoint,lower_endpoint)
             self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
             self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
-
-        # # remove duplicates and sort
-        # self.event_queue = list(set(self.event_queue)) 
-        # self.event_queue = sorted(self.event_queue,key=cmp_to_key(sorting_order))
             
     def run_algo(self):
+        '''
+            Please first run preprocessing.
+            The answer will be at self.intersections
+        '''
         while len(self.event_queue.queue)>0:
             event_point = self.event_queue.pop()
             self.handle_event_point(event_point)
@@ -66,10 +53,10 @@ class SweepLine():
 
         # intercsetion
         if len(segment_involved) > 1:
-            self.intersection.append(
+            self.intersections.append(
                 {
                     "point":event_point,
-                    "segments": segment_involved
+                    "segments": [seg.get_parent() for seg in segment_involved]
                 }
             )
         
@@ -118,8 +105,7 @@ class SweepLine():
             if not self.is_point_endpoint(self.upper_endpoint_segments,intersec_point,segment_2) and \
                 not self.is_point_endpoint(self.lower_endpoint_segments,intersec_point,segment_2):
                 if segment_2.is_point_in_segment(intersec_point):
-                    self._append_event_point(self.interior_point_segments,segment_2,intersec_point)
-    
+                    self._append_event_point(self.interior_point_segments,segment_2,intersec_point)    
 
     def _append_event_point(self,dict_point_segment,segment,event_point):
         if not str(event_point) in dict_point_segment:

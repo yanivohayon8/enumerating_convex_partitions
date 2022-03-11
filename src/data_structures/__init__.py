@@ -1,8 +1,4 @@
 
-
-# from src.data_structures.segment import Segment
-
-
 class Point(object):
     def __init__(self,x,y): #*args):
         self.x = x 

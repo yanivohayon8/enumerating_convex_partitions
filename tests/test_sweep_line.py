@@ -95,28 +95,6 @@ class TestSweepLine(unittest.TestCase):
         sweep_line.line_status.delete_segment(upper_endpoint_segments_1[0])
         sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
         sl_xml.print()
-
-
-    def test_line_status_simple_numbers(self):
-        first_tree = SweepLine()
-        second_tree = SweepLine()
-        first_tree_vals = [4,10,5,6]
-        second_tree_vals = [4,10,6,5]
-        
-        for num in first_tree_vals:
-            first_tree.line_status.insert_segment(num)
-        
-        for num in second_tree_vals:
-            second_tree.line_status.insert_segment(num)
-
-        xml1 = first_tree.line_status.convert_to_lxml(first_tree.line_status.root)
-        xml1.print()
-
-        xml2 = second_tree.line_status.convert_to_lxml(second_tree.line_status.root)
-        xml2.print()
-        
-
-
         
 
 
