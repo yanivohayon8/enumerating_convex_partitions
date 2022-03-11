@@ -79,7 +79,7 @@ class SweepLine():
 
         # insert U(p) and C(p) (flip their position)
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
-        [self.line_status.insert_segment(segment) for segment in reversed(interior_point_segments)] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
+        [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
 
         left_segment,right_segment = self.line_status.get_neighbors(event_point)
         

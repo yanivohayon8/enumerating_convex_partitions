@@ -36,15 +36,24 @@ class TestBinaryTree(unittest.TestCase):
         # This code is contributed by Ajitesh Pathak
 
     def test_print_simple(self):
-        myTree = AVL_Tree()
-        root = None
-        nums = [1,2,3,4,5,6]
+        first_tree = AVL_Tree()
+        second_tree = AVL_Tree()
+        root1 = None
+        root2 = None
+        first_tree_vals = [4,10,5,6]
+        second_tree_vals = [4,10,6,5]
         
-        for num in nums:
-            root = myTree.insert(root, num)
+        for num in first_tree_vals:
+            root1 = first_tree.insert(root1, num)
+        
+        for num in second_tree_vals:
+            root2 = second_tree.insert(root2, num)
 
-        xml = myTree.convert_to_lxml(root)
-        myTree.print_as_xml(xml)
+        xml1 = first_tree.convert_to_lxml(root1)
+        xml1.print()
+
+        xml2 = second_tree.convert_to_lxml(root2)
+        xml2.print()
 
 if __name__ == "__main__":
     unittest.main()

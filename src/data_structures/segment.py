@@ -1,6 +1,11 @@
 from src.hypothesis.rgon_1988 import turn
 from src.data_structures import Point
 
+'''
+
+MAYBE THIS MODULE BELONGS UNDER SWEEP LINE PACKAGE 
+'''
+
 
 class Line(object):
     def __init__(self,*args):
