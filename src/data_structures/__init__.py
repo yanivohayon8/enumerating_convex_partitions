@@ -1,8 +1,8 @@
 
 class Point(object):
     def __init__(self,x,y): #*args):
-        self.x = x 
-        self.y = y
+        self.x = float(round(x,2))
+        self.y = float(round(y,2))
         # if len(args) == 2:
         #     self.x = args[0]
         #     self.y = args[1]

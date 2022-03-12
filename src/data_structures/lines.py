@@ -45,12 +45,12 @@ class Segment(object):
         other_line = Line(other_segment)
         inter_point = self_line.find_intersection(other_line)
 
-        if not (self.lower_point.x < inter_point.x <  self.upper_point.x or\
-            self.upper_point.x < inter_point.x <  self.lower_point.x):
+        if not (self.lower_point.x <= inter_point.x <=  self.upper_point.x or\
+            self.upper_point.x <= inter_point.x <=  self.lower_point.x):
             return None
             
-        if not (other_segment.lower_point.x < inter_point.x <  other_segment.upper_point.x or\
-                other_segment.upper_point.x < inter_point.x <  other_segment.lower_point.x):
+        if not (other_segment.lower_point.x <= inter_point.x <=  other_segment.upper_point.x or\
+                other_segment.upper_point.x <= inter_point.x <=  other_segment.lower_point.x):
             return None
         
         return inter_point

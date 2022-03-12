@@ -43,6 +43,10 @@ class LineStatus(binary_tree.AVL_Tree):
                 self._delete_leaf(self.root,left_neighbor)
                 self.root = self.delete(self.root,segment)
                 self._update_internal_nodes_val(self.root)
+            else:
+                # if it is a single node tree - delete the tree
+                self._delete_leaf(self.root,self.root.val)
+                self.root = self.delete(self.root,segment)
         
 
     def get_segment_on_line(self):
@@ -147,23 +151,29 @@ class LineStatus(binary_tree.AVL_Tree):
                 Make sure the order of them is correct based on the sorting_order fucntion
                 and that there is no duplicates
         '''
-        is_internal_ok = self._check_sanity_internal(self.root)
+        self._check_sanity_internal(self.root)
         
         leafs = self.get_segment_on_line()
         is_leafs_ok = all(leafs[i] < leafs[i + 1] for i in range(len(leafs)-1))
 
-        return is_internal_ok and is_leafs_ok
+        if not is_leafs_ok:
+            raise("Check for duplicates and well ordering of the segment on the line status")
+
+        return None
     
     def _check_sanity_internal(self,root):
+        if not root:
+            return None
+
         if self._is_leaf(root):
-            return True
+            return None
 
         if self._is_have_single_child(root):
-            return False
+            raise(f"Node {str(root)} have a single child")
 
         expected_val = self._get_internal_node_expected_val(root.left)
         if expected_val != root.val:
-            return False
+            raise(f"Expected value of node {str(root)} is {str(expected_val)}, whereas it is {str(root.val)}")
         
         return self._check_sanity_internal(root.left) and self._check_sanity_internal(root.right)
 
@@ -249,10 +259,10 @@ class Segment(GeneralSegment):
         return self._calc_turn(other) >=0
 
     def __hash__(self):
-        return str(self)
+        return hash((self.origin_upper_point,self.lower_point))
 
     def __str__(self):
         return "{0}--{1}".format(self.origin_upper_point,self.lower_point)
 
     def get_parent(self):
-        return GeneralSegment(self.upper_point,self.lower_point) # MUST DO IT MORE ELEGEANT WITH OOP
+        return GeneralSegment(self.origin_upper_point,self.lower_point) # MUST DO IT MORE ELEGEANT WITH OOP

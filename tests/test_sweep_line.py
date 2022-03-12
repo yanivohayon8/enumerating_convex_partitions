@@ -1,3 +1,4 @@
+from genericpath import exists
 import sys
 import os
 
@@ -48,8 +49,13 @@ class TestSweepLine(unittest.TestCase):
             sweep_line.line_status.print()
             sweep_line.event_queue.print()
             print("\n",end="\n\n")
-            self.assertTrue(sweep_line.line_status.check_sanity())
+            sweep_line.line_status.check_sanity()
         
+        pass
+        # should be equal
+        # for exist,expected in zip(sweep_line.intersections,expected_intersections):
+        #     self.assertEqual(exist["point"],expected["point"])
+        #     [ for seg_exst,seg_expected in zip(exists[""])]
         #self.assertEqual(expected_intersections,sweep_line.intersections)
 
     def test_simple_example(self):
@@ -63,6 +69,12 @@ class TestSweepLine(unittest.TestCase):
         }]
 
         self._run_example('data/algo_test/sweep_line/002.csv',expected_intersections)
+
+    def test_example_001(self):
+        self._run_example('data/algo_test/sweep_line/001.csv',None)
+
+    def test_inter_example(self):
+        self._run_example('data/algo_test/sweep_line/003.csv',None,is_plot=True)
 
 
 if __name__ == "__main__":

@@ -66,7 +66,7 @@ class SweepLine():
         
         # Delete C(p) and L(p)
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
-        [self.line_status.delete_segment(segment) for segment in reversed(interior_point_segments)]
+        [self.line_status.delete_segment(segment) for segment in interior_point_segments]
 
         # Cut the segemnt for a new upper endpoint (the intersection)
         for segment in interior_point_segments:
@@ -114,8 +114,9 @@ class SweepLine():
     def _append_event_point(self,dict_point_segment,segment,event_point):
         if not str(event_point) in dict_point_segment:
             dict_point_segment[str(event_point)] = []
-
+            
         dict_point_segment[str(event_point)].append(segment)
+        dict_point_segment[str(event_point)] = list(set(dict_point_segment[str(event_point)])) # remove duplicates
 
     def _get_point_segments(self,dict_point_segment,event_point):
         if not str(event_point) in dict_point_segment:

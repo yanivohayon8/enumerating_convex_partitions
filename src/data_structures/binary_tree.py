@@ -186,6 +186,13 @@ class AVL_Tree(object):
         self.preOrder(root.right)
     
     def convert_to_lxml(self,root,prefix="_",att="node"):
+        # The Tree is empty
+        if root is None:
+            return XmlWrapper(prefix=prefix)
+        else:
+            return self._convert_to_lxml(root,prefix=prefix,att=att)
+
+    def _convert_to_lxml(self,root,prefix="_",att="node"):
         if root is not None:
             element_root = XmlWrapper(prefix=prefix)
             element_root.set_att(att,str(root.val))
