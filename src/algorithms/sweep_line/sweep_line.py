@@ -10,7 +10,7 @@ class SweepLine():
     
     '''
     def __init__(self):
-        self.line_status = LineStatus() # None
+        self.line_status = LineStatus() 
         self.event_queue = EventQueue()
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
@@ -38,7 +38,7 @@ class SweepLine():
             self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
             self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
             
-    def run_algo(self):
+    def run_algo(self,is_debug=False):
         '''
             Please first run preprocessing.
             The answer will be at self.intersections
@@ -46,7 +46,15 @@ class SweepLine():
         while len(self.event_queue.queue)>0:
             event_point = self.event_queue.pop()
             self.handle_event_point(event_point)
-            yield event_point
+            
+            if is_debug:
+                print(f"Handled Event point: {event_point}")
+                sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
+                sl_xml.print()
+                self.line_status.print()
+                self.event_queue.print()
+                print("\n",end="\n\n")
+                self.line_status.check_sanity()
     
     def handle_event_point(self,event_point):
         lower_endpoint_segments = self._get_point_segments(self.lower_endpoint_segments,event_point)
@@ -71,9 +79,6 @@ class SweepLine():
         # Cut the segemnt for a new upper endpoint (the intersection)
         for segment in interior_point_segments:
             segment.upper_point = event_point
-            # self._append_event_point(upper_endpoint_segments,segment,event_point)
-
-        # interior_point_segments.clear()
 
         # insert U(p) and C(p) (flip their position)
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
@@ -121,8 +126,7 @@ class SweepLine():
     def _get_point_segments(self,dict_point_segment,event_point):
         if not str(event_point) in dict_point_segment:
             return []
-        # lst = dict_point_segment[str(event_point)]
-        # return sorted(lst,key=cmp_to_key(sorting_order)) # lst
+
         return dict_point_segment[str(event_point)]
 
     def is_point_endpoint(self,dict_upper_lower,point,segment):

@@ -216,10 +216,10 @@ class Segment(GeneralSegment):
         self.origin_upper_point = self.upper_point
 
     def __eq__(self,segment):
-        return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
+        return self.origin_upper_point == segment.origin_upper_point and self.lower_point == segment.lower_point
 
     def __ne__(self,segment):
-        return self.upper_point != segment.upper_point or self.lower_point != segment.lower_point
+        return self.origin_upper_point != segment.origin_upper_point or self.lower_point != segment.lower_point
 
     def _calc_turn(self,other):
         if isinstance(other,Segment):

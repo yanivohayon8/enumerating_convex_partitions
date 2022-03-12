@@ -39,7 +39,14 @@ class Segment(object):
 
     def __str__(self):
         return "{0}--{1}".format(self.upper_point,self.lower_point)
-        
+    
+    def __eq__(self,segment):
+        return self.upper_point == segment.upper_point and self.lower_point == segment.lower_point
+
+    def __ne__(self,segment):
+        return self.upper_point != segment.upper_point or self.lower_point != segment.lower_point
+
+
     def find_intersection_point(self,other_segment):
         self_line = Line(self)
         other_line = Line(other_segment)

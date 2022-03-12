@@ -37,26 +37,18 @@ class TestSweepLine(unittest.TestCase):
 
         sweep_line = SweepLine()
         sweep_line.preprocess(segments)
-
         print("Starting point:")
         sweep_line.line_status.print()
         sweep_line.event_queue.print()
-
-        for event_point in sweep_line.run_algo():
-            print(f"Handled Event point: {event_point}")
-            sl_xml = sweep_line.line_status.convert_to_lxml(sweep_line.line_status.root)
-            sl_xml.print()
-            sweep_line.line_status.print()
-            sweep_line.event_queue.print()
-            print("\n",end="\n\n")
-            sweep_line.line_status.check_sanity()
+        sweep_line.run_algo(is_debug=True)
         
-        pass
-        # should be equal
-        # for exist,expected in zip(sweep_line.intersections,expected_intersections):
-        #     self.assertEqual(exist["point"],expected["point"])
-        #     [ for seg_exst,seg_expected in zip(exists[""])]
-        #self.assertEqual(expected_intersections,sweep_line.intersections)
+        # None = I skipped it for now 
+        if expected_intersections is not None:
+            self.assertEqual(len(sweep_line.intersections),len(expected_intersections))
+
+            for exist,expected in zip(sweep_line.intersections,expected_intersections):
+                self.assertEqual(exist["point"],expected["point"])
+                self.assertEqual(exist["segments"],expected["segments"])
 
     def test_simple_example(self):
         # The expected results 
@@ -73,8 +65,14 @@ class TestSweepLine(unittest.TestCase):
     def test_example_001(self):
         self._run_example('data/algo_test/sweep_line/001.csv',None)
 
-    def test_inter_example(self):
+    def test_inter_003_example(self):
         self._run_example('data/algo_test/sweep_line/003.csv',None,is_plot=True)
+    
+    def test_inter_004_example(self):
+        self._run_example('data/algo_test/sweep_line/004.csv',None,is_plot=True)
+
+    def test_vertical_005_example(self):
+        self._run_example('data/algo_test/sweep_line/005.csv',None)
 
 
 if __name__ == "__main__":
