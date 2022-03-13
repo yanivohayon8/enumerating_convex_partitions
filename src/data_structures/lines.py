@@ -1,4 +1,5 @@
 from src.data_structures import Point
+from src.hypothesis.rgon_1988 import turn
 
 class Line(object):
     def __init__(self,*args):
@@ -48,25 +49,41 @@ class Segment(object):
 
 
     def find_intersection_point(self,other_segment):
+
+        if not self.is_intersects(other_segment):
+            return None
+
         self_line = Line(self)
         other_line = Line(other_segment)
         inter_point = self_line.find_intersection(other_line)
-
-        if not (self.lower_point.x <= inter_point.x <=  self.upper_point.x or\
-            self.upper_point.x <= inter_point.x <=  self.lower_point.x):
-            return None
-            
-        if not (other_segment.lower_point.x <= inter_point.x <=  other_segment.upper_point.x or\
-                other_segment.upper_point.x <= inter_point.x <=  other_segment.lower_point.x):
-            return None
         
         return inter_point
             
     
-    def is_point_in_segment(self,point):
-        x_condition =  self.upper_point.x < point.x < self.lower_point.x or self.lower_point.x < point.x < self.upper_point.x
-        y_condition = self.upper_point.y < point.y < self.lower_point.y or self.lower_point.y < point.y < self.upper_point.y
-        return x_condition and y_condition
+    def is_endpoint(self,point):
+        return point == self.upper_point or point == self.lower_point
+
+    def is_in_segment(self,point):
+
+        def isBetween(a, b, c):
+            crossproduct = (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y)
+
+            # compare versus epsilon for floating point values, or != 0 if using integers
+            epsilon = 0.001 # This is dangerous. is due to the fact rounding point coordinates to 2
+            if abs(crossproduct) > epsilon:
+                return False
+
+            dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
+            if dotproduct < 0:
+                return False
+
+            squaredlengthba = (b.x - a.x)*(b.x - a.x) + (b.y - a.y)*(b.y - a.y)
+            if dotproduct > squaredlengthba:
+                return False
+
+            return True
+    
+        return isBetween(self.lower_point,self.upper_point,point)
 
     def is_intersects(self,segment):
         # Given three collinear points p, q, r, the function checks if

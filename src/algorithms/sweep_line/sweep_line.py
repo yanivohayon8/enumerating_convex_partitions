@@ -1,5 +1,6 @@
-from  src.algorithms.sweep_line.ds import LineStatus,EventQueue, sorting_order,Segment
-from functools import cmp_to_key
+import pandas as pd
+from  src.algorithms.sweep_line.ds import LineStatus,EventQueue
+from src.algorithms.sweep_line import sorting_order, Segment
 
 
 class SweepLine():
@@ -15,10 +16,14 @@ class SweepLine():
         self.upper_endpoint_segments = {}
         self.lower_endpoint_segments = {}
         self.interior_point_segments = {}
-        self.intersections = []
+        self.intersections = {
+            "x":[],
+            "y":[],
+            "segment":[]
+        }
 
     def preprocess(self,edges):
-        for edge in edges:
+        for index,edge in enumerate(edges):
             '''
                 Initialize the lower and upper endpoints DB
                 if the dst point is above the src point
@@ -34,7 +39,7 @@ class SweepLine():
                 upper_endpoint = lower_endpoint
                 lower_endpoint=tmp
 
-            seg = Segment(upper_endpoint,lower_endpoint)
+            seg = Segment(upper_endpoint,lower_endpoint,index=index)
             self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
             self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
             
@@ -55,6 +60,12 @@ class SweepLine():
                 self.event_queue.print()
                 print("\n",end="\n\n")
                 self.line_status.check_sanity()
+
+        data = []
+        for x,(y,seg_index) in zip(self.intersections["x"],\
+                            zip(self.intersections["y"],self.intersections["segment"])):
+            data.append([x,y,seg_index])
+        return pd.DataFrame(data,columns=['x',"y","segment"])
     
     def handle_event_point(self,event_point):
         lower_endpoint_segments = self._get_point_segments(self.lower_endpoint_segments,event_point)
@@ -65,12 +76,10 @@ class SweepLine():
 
         # intercsetion
         if len(segment_involved) > 1:
-            self.intersections.append(
-                {
-                    "point":event_point,
-                    "segments": [seg.get_parent() for seg in segment_involved]
-                }
-            )
+            for seg in segment_involved:
+                self.intersections["x"].append(event_point.x)
+                self.intersections["y"].append(event_point.y)
+                self.intersections["segment"].append(seg.index)
         
         # Delete C(p) and L(p)
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
@@ -100,20 +109,19 @@ class SweepLine():
                     self.find_new_event(seg,right_segment,event_point)
     
     def find_new_event(self,segment_1,segment_2,event_point):
-        if not segment_1.is_intersects(segment_2):
-            return None
+        # if not segment_1.is_intersects(segment_2):
+        #     return None
         intersec_point = segment_1.find_intersection_point(segment_2)
 
+        if not intersec_point:
+            return None
+            
         if sorting_order(intersec_point,event_point) > 0:
             if not intersec_point in self.event_queue.queue:
                 self.event_queue.append(intersec_point)
-            if not self.is_point_endpoint(self.upper_endpoint_segments,intersec_point,segment_1) and \
-                not self.is_point_endpoint(self.lower_endpoint_segments,intersec_point,segment_1):
-                if segment_1.is_point_in_segment(intersec_point):
+            if not (segment_1.is_endpoint(intersec_point)):# and segment_1.is_in_segment(intersec_point):
                     self._append_event_point(self.interior_point_segments,segment_1,intersec_point)
-            if not self.is_point_endpoint(self.upper_endpoint_segments,intersec_point,segment_2) and \
-                not self.is_point_endpoint(self.lower_endpoint_segments,intersec_point,segment_2):
-                if segment_2.is_point_in_segment(intersec_point):
+            if not(segment_2.is_endpoint(intersec_point)): #and segment_2.is_in_segment(intersec_point):
                     self._append_event_point(self.interior_point_segments,segment_2,intersec_point)    
 
     def _append_event_point(self,dict_point_segment,segment,event_point):
@@ -128,10 +136,5 @@ class SweepLine():
             return []
 
         return dict_point_segment[str(event_point)]
-
-    def is_point_endpoint(self,dict_upper_lower,point,segment):
-        if point in dict_upper_lower:
-            return segment in dict_upper_lower[str(point)]
-        return False
 
    

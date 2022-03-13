@@ -11,15 +11,17 @@ import pandas as pd
 # from  algorithms.sweep_line.sweep_line import SweepLine
 from src.algorithms.sweep_line.sweep_line import SweepLine
 import unittest
-from src.data_types import XmlWrapper
 from src.data_structures.lines import Segment 
+from src.data_structures import Point
 
 class TestSweepLine(unittest.TestCase):
 
-    def _run_example(self,file_path,expected_intersections,is_plot=False):
+    files_path = 'data/algo_test/sweep_line/'
+
+    def _run_example(self,file_path,file_path_ans,is_plot=False):
         '''load the examples'''
          # load the examples
-        df = pd.read_csv(file_path,index_col=False)
+        df = pd.read_csv(file_path) #pd.read_csv(file_path,index_col=False)
         segments = []
         df_list = df.values.tolist()
 
@@ -40,39 +42,28 @@ class TestSweepLine(unittest.TestCase):
         print("Starting point:")
         sweep_line.line_status.print()
         sweep_line.event_queue.print()
-        sweep_line.run_algo(is_debug=True)
+        df_res = sweep_line.run_algo(is_debug=True)
         
-        # None = I skipped it for now 
-        if expected_intersections is not None:
-            self.assertEqual(len(sweep_line.intersections),len(expected_intersections))
+        df_ans = pd.read_csv(file_path_ans)
+        df_res = df_res.sort_values(by=df_res.columns.tolist()).reset_index(drop=True)
+        df_ans = df_res.sort_values(by=df_ans.columns.tolist()).reset_index(drop=True)
+        self.assertTrue(df_res.equals(df_ans))
 
-            for exist,expected in zip(sweep_line.intersections,expected_intersections):
-                self.assertEqual(exist["point"],expected["point"])
-                self.assertEqual(exist["segments"],expected["segments"])
-
-    def test_simple_example(self):
-        # The expected results 
-        seg_1 = Segment(ds.Point(5,10),ds.Point(5.5,2.5))
-        seg_2 = Segment(ds.Point(6,6),ds.Point(5,2))
-        inter_point = seg_1.find_intersection_point(seg_2)
-        expected_intersections = [{
-            "point": inter_point,
-            "segments":[seg_2,seg_1]
-        }]
-
-        self._run_example('data/algo_test/sweep_line/002.csv',expected_intersections)
+        
+    def test_example_002(self):
+        self._run_example(self.files_path + '002.csv',self.files_path + '002_ans.csv')
 
     def test_example_001(self):
-        self._run_example('data/algo_test/sweep_line/001.csv',None)
+        self._run_example(self.files_path + '001.csv',self.files_path + '001_ans.csv')
 
     def test_inter_003_example(self):
-        self._run_example('data/algo_test/sweep_line/003.csv',None,is_plot=True)
+        self._run_example(self.files_path + '003.csv',self.files_path + '003_ans.csv')
     
     def test_inter_004_example(self):
-        self._run_example('data/algo_test/sweep_line/004.csv',None,is_plot=True)
+        self._run_example(self.files_path + '004.csv',self.files_path + '004_ans.csv')
 
     def test_vertical_005_example(self):
-        self._run_example('data/algo_test/sweep_line/005.csv',None)
+        self._run_example(self.files_path + '005.csv',self.files_path + '005_ans.csv')
 
 
 if __name__ == "__main__":

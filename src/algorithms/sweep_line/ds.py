@@ -1,9 +1,6 @@
 from src.data_structures import binary_tree  as binary_tree
-from src.data_structures.lines import Segment as GeneralSegment
-from src.data_structures import Point
 from functools import cmp_to_key
-from src.hypothesis.rgon_1988 import turn
-
+from src.algorithms.sweep_line import sorting_order
 
 class LineStatus(binary_tree.AVL_Tree):
 
@@ -111,22 +108,36 @@ class LineStatus(binary_tree.AVL_Tree):
     
     def get_right_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
-        neighbor_right = None
+        # neighbor_right = None
+        # for seg in leafs:
+        #     if seg > point_or_seg:
+        #         neighbor_right = seg
+        #         break
+        
         for seg in leafs:
-            if seg > point_or_seg:
-                neighbor_right = seg
-                break
-        return neighbor_right
+            # does point_or_seg is left to seg? 
+            # choose the previous
+            if point_or_seg < seg:
+                return seg
+
+        return None#neighbor_right
     
     def get_left_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
-        neighbor_left = None
+        # neighbor_left = None
+
+        # for seg in list(reversed(leafs)):
+        #     if seg < point_or_seg:
+        #         neighbor_left = seg
+        #         break
 
         for seg in list(reversed(leafs)):
-            if seg < point_or_seg:
-                neighbor_left = seg
-                break
-        return neighbor_left
+            # does point_or_seg is right to seg? 
+            # choose the previous
+            if point_or_seg > seg:
+                return seg
+
+        return None #neighbor_left
 
     def _replace_leaf_val(self,root,old_val,new_val):
         if root is not None:
@@ -154,12 +165,15 @@ class LineStatus(binary_tree.AVL_Tree):
         self._check_sanity_internal(self.root)
         
         leafs = self.get_segment_on_line()
-        is_leafs_ok = all(leafs[i] < leafs[i + 1] for i in range(len(leafs)-1))
+        # is_leafs_ok = all(leafs[i] < leafs[i + 1] for i in range(len(leafs)-1))
 
-        if not is_leafs_ok:
-            raise("Check for duplicates and well ordering of the segment on the line status")
+        # if not is_leafs_ok:
+        #     raise("Check for duplicates and well ordering of the segment on the line status")
 
-        return None
+        for i in range(len(leafs)-1):
+            if not leafs[i] < leafs[i + 1]:
+                raise ValueError("On the line status segment " + str(leafs[i]) +" should be left to " + str(leafs[i + 1]))
+
     
     def _check_sanity_internal(self,root):
         if not root:
@@ -169,11 +183,11 @@ class LineStatus(binary_tree.AVL_Tree):
             return None
 
         if self._is_have_single_child(root):
-            raise(f"Node {str(root)} have a single child")
+            raise ValueError(f"Node {str(root)} have a single child")
 
         expected_val = self._get_internal_node_expected_val(root.left)
         if expected_val != root.val:
-            raise(f"Expected value of node {str(root)} is {str(expected_val)}, whereas it is {str(root.val)}")
+            raise ValueError(f"Expected value of node {str(root)} is {str(expected_val)}, whereas it is {str(root.val)}")
         
         return self._check_sanity_internal(root.left) and self._check_sanity_internal(root.right)
 
@@ -196,73 +210,3 @@ class EventQueue():
         print("Event Queue: ",end="\t")
         [print(event, end=";") for event in self.queue]
         print()
-
-
-def sorting_order(point1,point2):
-    '''
-        Sorting mechanism for the event points
-        if one have higher y-coordinated it will be sorted first.
-        if the y-coordinates are equal, then the one with smaller x-coordinate will be count first
-    '''
-    if point1.y == point2.y:
-        return point1.x-point2.x
-    else:
-        return point2.y-point1.y 
-
-class Segment(GeneralSegment):
-    
-    def __init__(self,upper_point,lower_point):
-        super().__init__(upper_point,lower_point)
-        self.origin_upper_point = self.upper_point
-
-    def __eq__(self,segment):
-        return self.origin_upper_point == segment.origin_upper_point and self.lower_point == segment.lower_point
-
-    def __ne__(self,segment):
-        return self.origin_upper_point != segment.origin_upper_point or self.lower_point != segment.lower_point
-
-    def _calc_turn(self,other):
-        if isinstance(other,Segment):
-            _i = self.lower_point
-            _j = self.upper_point
-            _k = other.upper_point
-            if self.upper_point == other.upper_point:
-                _k = other.lower_point
-            return turn(_i,_j,_k)
-        
-        if isinstance(other,Point):
-            return turn(self.lower_point,self.upper_point,other) 
-
-    def __lt__(self,other):
-        '''
-            Is segment\point is left to self segment
-        '''
-        return self._calc_turn(other) < 0 
-        
-        
-    def __le__(self,other):
-        '''
-            Is segment\point is left or in to self segment
-        '''
-        return self._calc_turn(other) <=0
-
-    def __gt__(self,other):
-        '''
-            Is segment\point is right to self segment
-        '''
-        return self._calc_turn(other) > 0 
-
-    def __ge__(self,other):
-        '''
-            Is segment\point is right to self segment
-        '''
-        return self._calc_turn(other) >=0
-
-    def __hash__(self):
-        return hash((self.origin_upper_point,self.lower_point))
-
-    def __str__(self):
-        return "{0}--{1}".format(self.origin_upper_point,self.lower_point)
-
-    def get_parent(self):
-        return GeneralSegment(self.origin_upper_point,self.lower_point) # MUST DO IT MORE ELEGEANT WITH OOP
