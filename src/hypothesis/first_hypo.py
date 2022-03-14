@@ -1,6 +1,7 @@
 from ..hypothesis import HypothesisAlgo
 from ..hypothesis import rgon_1988  as Rgon1988
-from . import data_structures 
+# from . import data_structures 
+from .. import data_structures
 import functools
 
 
