@@ -1,3 +1,4 @@
+'''Deprecated Module'''
 class HypothesisAlgo():
     
     def __init__(self,interior_points,border_points):

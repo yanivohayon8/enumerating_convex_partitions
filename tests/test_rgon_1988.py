@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
 
 def load_csv_and_scatter():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/old/sampling_002.csv")
     
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])
@@ -23,7 +23,7 @@ def load_csv_and_scatter():
     plt.show()
 
 def draw_stared_shaped_polygon():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/old/sampling_002.csv")
     
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
 
@@ -45,7 +45,7 @@ def draw_stared_shaped_polygon():
     plt.show()
 
 def draw_visualization_graph():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/old/sampling_002.csv")
     
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
 
@@ -77,7 +77,7 @@ def draw_visualization_graph():
     plt.show()
 
 def draw_convex_chain():
-    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/sampling_002.csv")
+    df_points_interior,df_points_border = sampled_points.load_sampling_csv("data/starting_points/old/sampling_002.csv")
     x_border_length, y_border_length = sampled_points.get_border_dim(df_points_border)
     interior_points = sampled_points.df_to_array(df_points_interior[["x","y"]])
     border_points = sampled_points.df_to_array(df_points_border[["x","y"]])

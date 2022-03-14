@@ -1,0 +1,15 @@
+x,y,role
+1,1,interior
+2,4,interior
+5,2,interior
+5,5,interior
+7,3,interior
+11,5,interior
+0,0,border
+0,12,border
+15,0,border
+15,12,border
+0,0,frame
+0,12,frame
+15,0,frame
+15,12,frame

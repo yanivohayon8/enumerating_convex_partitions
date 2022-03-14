@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from .data_structures import Point
 
+'''DEPRECATED MODULE'''
+
 def load_sampling_csv(path):
     df = pd.read_csv(path,index_col=False)
     df_points_interior = df.loc[df["role"]=="interior"]
