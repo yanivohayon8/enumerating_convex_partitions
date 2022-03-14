@@ -28,11 +28,11 @@ class Point(object):
         return hash(self.get_as_tuple())
 
     @staticmethod
-    def scatter_points(ax,points):
+    def scatter_points(ax,points,color="blue"):
         xs = [point.x for point in points]
         ys = [point.y for point in points]
 
-        ax.scatter(xs,ys)
+        ax.scatter(xs,ys,color=color)
 
     def __sub__(self,p):
         if isinstance(p, Point):
@@ -121,6 +121,9 @@ class Polygon(object):
 
     @staticmethod
     def plot_polygons(ax,polygons:List[MatplotlibPolygon]):
+        '''
+            https://matplotlib.org/stable/gallery/shapes_and_collections/patch_collection.html#sphx-glr-gallery-shapes-and-collections-patch-collection-py
+        '''
         colors = 100 * np.random.rand(len(polygons))
         p = PatchCollection(polygons, alpha=0.4)
         p.set_array(colors)
