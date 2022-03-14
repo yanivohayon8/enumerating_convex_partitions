@@ -1,3 +1,7 @@
+import numpy as np
+from matplotlib.patches import Polygon as MatplotlibPolygon
+from matplotlib.collections import PatchCollection
+from typing import List
 
 class Point(object):
     def __init__(self,x,y): #*args):
@@ -13,6 +17,9 @@ class Point(object):
 
     def get_as_tuple(self):
         return (self.x,self.y)
+
+    def get_as_np(self):
+        return np.asarray([self.x,self.y])
 
     def __eq__(self,p):
         return self.x==p.x and self.y==p.y
@@ -111,6 +118,17 @@ class Polygon(object):
         ys = [p.y for p in verts]
         ax.plot( xs,ys,color=color )
         ax.scatter(xs,ys,color=color)
+
+    @staticmethod
+    def plot_polygons(ax,polygons:List[MatplotlibPolygon]):
+        colors = 100 * np.random.rand(len(polygons))
+        p = PatchCollection(polygons, alpha=0.4)
+        p.set_array(colors)
+        ax.add_collection(p)
+
+    def get_as_matplotlib(self) -> MatplotlibPolygon:
+        points_np = [vert.get_as_np() for vert in self.vertcies]
+        return MatplotlibPolygon(points_np,True)
 
     def remove_vertex(self,point):
         self.vertcies = list(filter(lambda p: not (p.x==point.x and p.y==point.y),self.vertcies))

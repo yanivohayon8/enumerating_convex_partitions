@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import unittest
 from src.puzzle_creators import PuzzleCreator
+import matplotlib.pyplot as plt
 
 class TestRandomCreator(unittest.TestCase):
 
@@ -14,6 +15,11 @@ class TestRandomCreator(unittest.TestCase):
     def test_data_loading(self):
         creator = PuzzleCreator()
         creator.load_sampled_points(self.files_path + "TBN_01.csv")
+
+        fig, ax = plt.subplots()
+        creator.plot_scratch(ax)
+
+        plt.show()
         pass
         
 
