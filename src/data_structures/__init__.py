@@ -124,14 +124,14 @@ class Polygon(object):
         '''
             https://matplotlib.org/stable/gallery/shapes_and_collections/patch_collection.html#sphx-glr-gallery-shapes-and-collections-patch-collection-py
         '''
-        colors = 100 * np.random.rand(len(polygons))
-        p = PatchCollection(polygons, alpha=0.4)
-        p.set_array(colors)
+        # colors = 100 * np.random.rand(len(polygons))
+        p = PatchCollection(polygons,match_original=True,alpha=0.4) # alpha=0.4 ,edgecolor=[0.5,0.5,0.5]
+        # p.set_array(colors)
         ax.add_collection(p)
 
-    def get_as_matplotlib(self) -> MatplotlibPolygon:
+    def get_as_matplotlib(self,**kwargs) -> MatplotlibPolygon:
         points_np = [vert.get_as_np() for vert in self.vertcies]
-        return MatplotlibPolygon(points_np,True)
+        return MatplotlibPolygon(points_np,True,**kwargs)#  working: edgecolor=[0,0,0],color=None,lw=100)  ,color=[0.5,0.5,0.5],alpha=None)
 
     def remove_vertex(self,point):
         self.vertcies = list(filter(lambda p: not (p.x==point.x and p.y==point.y),self.vertcies))
