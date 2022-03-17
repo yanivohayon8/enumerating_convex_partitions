@@ -1,7 +1,7 @@
 from src.puzzle_creators import PuzzleCreator
 from src.data_structures import Polygon,Edge
 import random
-
+from collections import OrderedDict
 
 class RandomCreator(PuzzleCreator):
 
@@ -31,8 +31,14 @@ class RandomCreator(PuzzleCreator):
 
         return rgon
     
-    def _get_next_polygon_num_edges(self):
-        return 3
+    def _get_next_polygon_num_edges(self,continuity_edges,edges_max_chain_length):
+        possble_edge_len = [edges_max_chain_length[_key] for _key in edges_max_chain_length.keys()]
+        min_len = min(possble_edge_len)
+        max_len = max(possble_edge_len)
+        if min_len == 0:
+            return 0
+        return random.randint(min_len,max_len) + 2
+        # return 3
 
     def _is_finished_scan(self):
         return True

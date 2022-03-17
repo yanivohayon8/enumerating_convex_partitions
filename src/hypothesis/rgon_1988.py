@@ -167,6 +167,24 @@ def get_edges_max_chain_length(visual_graph,continuity_edges):
             edges_max_chain_length[str(input_edge)] = max_length + 1
     
     return edges_max_chain_length
+    
+def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
+    edges_max_chain_length = {}
+
+    for edge in visual_graph.edges:
+        edges_max_chain_length[str(edge)] = 0
+
+    sorted_verticies = get_stared_shape_polygon(kernel_point,visual_graph.vertecies).vertcies
+    sorted_verticies.pop(0)
+
+    for vertex in sorted_verticies:
+        input_edges = visual_graph.get_input_edges(vertex)
+
+        for input_edge in input_edges:
+            max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])
+            edges_max_chain_length[str(input_edge)] = max_length + 1
+    
+    return edges_max_chain_length
 
 def create_rgon(kernel_point,r,edges_max_chain_length,continuity_edges):
     rgon = Polygon()
