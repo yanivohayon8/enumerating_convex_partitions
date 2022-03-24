@@ -19,7 +19,7 @@ class Direction(Enum):
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.puzzle_creator")
 logger.addHandler(log_handler)
-debug_dir = setup_logger.get_debug_dir()
+debug_dir = setup_logger.get_debug_lastrun_dir()
 
 class PuzzleCreator():
 
@@ -90,6 +90,7 @@ class PuzzleCreator():
             ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
             conn_graph.plot_directed(ax) # way to plot the graph
             plt.savefig(debug_dir + "/Last sweep Line graph.png")
+            # logger.exception(err)
             raise err
     
         for inter_point in intersections:

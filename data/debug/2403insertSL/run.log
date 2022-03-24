@@ -582,3 +582,34 @@ logger.sweep_line - DEBUG - Event Queue: ;(8.0,5.0);(11.0,5.0);(2.0,4.0);(7.0,3.
 logger.sweep_line - INFO - Start handle event point (8.0,5.0)
 logger.sweep_line - DEBUG - Reporting intersection at (8.0,5.0)
 logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(5.0,2.0)">
+  <left node="None">
+    <left/>
+    <right node="(5.0,5.0)--(5.0,2.0)">
+      <left/>
+      <right/>
+    </right>
+  </left>
+  <right node="(5.0,5.0)--(2.0,4.0)">
+    <left/>
+    <right/>
+  </right>
+</_>
+
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(5.0,5.0)--(5.0,2.0);(5.0,5.0)--(2.0,4.0);
+logger.sweep_line - DEBUG - Event Queue: ;(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - ERROR - Node <src.data_structures.binary_tree.TreeNode object at 0x000001F309DA8198> have a single child
+Traceback (most recent call last):
+  File "c:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\algorithms\sweep_line\sweep_line.py", line 70, in run_algo
+    self.handle_event_point(event_point)
+  File "c:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\algorithms\sweep_line\sweep_line.py", line 116, in handle_event_point
+    self.line_status.check_sanity()
+  File "c:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\algorithms\sweep_line\ds.py", line 169, in check_sanity
+    self._check_sanity_internal(self.root)
+  File "c:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\algorithms\sweep_line\ds.py", line 208, in _check_sanity_internal
+    self._check_sanity_internal(root.left)
+  File "c:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\algorithms\sweep_line\ds.py", line 193, in _check_sanity_internal
+    raise ValueError(f"Node {str(root)} have a single child")
+ValueError: Node <src.data_structures.binary_tree.TreeNode object at 0x000001F309DA8198> have a single child

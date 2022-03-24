@@ -42,7 +42,7 @@ class TestRandomCreator(unittest.TestCase):
     
     def test_example_01_restored(self):
         
-        log_path = setup_logger.get_debug_log_file()
+        log_path = setup_logger.get_cwd()+"/data/debug/2403insertSL/run.log" #setup_logger.get_debug_log_file()
 
         creator = RestoreRandom(log_path)
 
@@ -55,8 +55,13 @@ class TestRandomCreator(unittest.TestCase):
         creator.load_sampled_points(self.files_path + "TBN_01.csv")
         fig, ax = plt.subplots()
 
-        creator.create()
-        creator.plot_puzzle(fig,ax)
+        try:
+            creator.create()
+            creator.plot_puzzle(fig,ax)
+            plt.show()
+        except Exception as err:
+            # logger.exception(err)
+            raise err
 
         plt.show()
         pass
@@ -64,7 +69,7 @@ class TestRandomCreator(unittest.TestCase):
     def test_example_01_logged(self):
         
         # Override last running directory
-        debug_dir = setup_logger.get_debug_dir()
+        debug_dir = setup_logger.get_debug_lastrun_dir()
         # shutil.rmtree(debug_dir)
         # os.makedirs(debug_dir)
         log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file(),mode="w")
@@ -78,24 +83,26 @@ class TestRandomCreator(unittest.TestCase):
 
         try:
             creator.create()
+            creator.plot_puzzle(fig,ax)
+            plt.show()
         except Exception as err:
+            # logger.exception(err)
             plt.close("all")
             raise err
-        creator.plot_puzzle(fig,ax)
-
-        plt.show()
+        
         pass
 
-    def test_example_01(self):
-        creator = RandomCreator()
-        creator.load_sampled_points(self.files_path + "TBN_01.csv")
-        fig, ax = plt.subplots()
-
-        creator.create()
-        creator.plot_puzzle(fig,ax)
-
-        plt.show()
-        pass
+    # def test_example_01(self):
+    #     creator = RandomCreator()
+    #     creator.load_sampled_points(self.files_path + "TBN_01.csv")
+    #     fig, ax = plt.subplots()
+    #     try:
+    #         creator.create()
+    #         creator.plot_puzzle(fig,ax)
+    #         plt.show()
+    #     except Exception as err:
+    #         logger.excep
+    #         raise err
 
 
 if __name__ == "__main__":

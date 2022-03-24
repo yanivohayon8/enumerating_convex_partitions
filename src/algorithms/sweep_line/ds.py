@@ -48,7 +48,10 @@ class LineStatus(binary_tree.AVL_Tree):
                     # self._delete_leaf(self.root,self.root.val)
                 self._delete_leaf(self.root,self.root.val)
                 self.root = self.delete(self.root,segment)
-        
+        try:
+            self.check_sanity()
+        except Exception as err:
+            raise err
 
     def get_segment_on_line(self):
         return self._get_leafs(self.root)#super().in_order(self.root)

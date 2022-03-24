@@ -9,10 +9,13 @@ def get_file_handler(filepath,**kwargs):
     log_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
     return log_handler
 
-def get_debug_dir():
+def get_cwd():
+    return os.getcwd()
+
+def get_debug_lastrun_dir():
     current_working_dir = os.getcwd()
     return os.path.join(current_working_dir,"data","debug","last_run")
 
 def get_debug_log_file():
-    dir = get_debug_dir()
+    dir = get_debug_lastrun_dir()
     return os.path.join(dir,"run.log")

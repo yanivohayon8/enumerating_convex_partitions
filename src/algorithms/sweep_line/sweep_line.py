@@ -9,7 +9,7 @@ from src import setup_logger
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.sweep_line")
 logger.addHandler(log_handler)
-# debug_dir = setup_logger.get_debug_dir()
+# debug_dir = setup_logger.get_debug_lastrun_dir()
 
 class SweepLine():
     '''
@@ -68,34 +68,25 @@ class SweepLine():
 
             try:
                 self.handle_event_point(event_point)
-
-                if is_debug:
-                    # print(f"Handled Event point: {event_point}")
-                    sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
-                    sl_xml.print()
-                    logger.debug("Line status Binary tree:")
-                    logger.debug(sl_xml.toString())
-                    # self.line_status.print()
-                    # self.event_queue.print()
-                    # print("\n",end="\n\n")
-                    logger.debug("Line status " )
-                    logger.debug(self.line_status.toString())
-                    logger.debug("Event Queue: " + self.event_queue.toString())
+                # if is_debug:
+                sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
+                logger.debug("Line status Binary tree:")
+                logger.debug(sl_xml.toString())
+                logger.debug("Line status " )
+                logger.debug(self.line_status.toString())
+                logger.debug("Event Queue: " + self.event_queue.toString())
 
                 self.line_status.check_sanity()
             except Exception as err:
-                    print(f"Handled Event point: {event_point}")
                     sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
-                    sl_xml.print()
-                    self.line_status.print()
-                    self.event_queue.print()
-                    # traceback.print_tb(err.__traceback__)
+                    logger.debug("Line status Binary tree:")
+                    logger.debug(sl_xml.toString())
+                    logger.debug("Line status " )
+                    logger.debug(self.line_status.toString())
+                    logger.debug("Event Queue: " + self.event_queue.toString())
+                    logger.exception(err)
                     raise err
             
-            
-            
-            
-
         data = []
         for x,(y,seg_index) in zip(self.intersections["x"],\
                             zip(self.intersections["y"],self.intersections["segment"])):
@@ -122,6 +113,7 @@ class SweepLine():
         logger.debug("Deleting segments from line status")
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
         [self.line_status.delete_segment(segment) for segment in interior_point_segments]
+        # self.line_status.check_sanity()
 
         # Cut the segemnt for a new upper endpoint (the intersection)
         for segment in interior_point_segments:
@@ -131,6 +123,7 @@ class SweepLine():
         logger.debug("Inserting segments to line status")
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
         [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
+        # self.line_status.check_sanity()
 
         left_segment = self.line_status.get_left_neighbor(event_point)
         right_segment = self.line_status.get_right_neighbor(event_point)

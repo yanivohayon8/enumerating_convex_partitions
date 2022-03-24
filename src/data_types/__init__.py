@@ -15,7 +15,8 @@ class XmlWrapper():
         etree.indent(self.element,space="\t")
     
     def toString(self):
-        return etree.tostring(self.element).decode("UTF-8")
+        # return etree.tostring(self.element).decode("UTF-8")
+        return etree.tostring(self.element,pretty_print=True).decode("UTF-8")
 
     def print(self):
         self.indent()
