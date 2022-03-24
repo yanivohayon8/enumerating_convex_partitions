@@ -109,6 +109,10 @@ class SweepLine():
                 self.intersections["y"].append(event_point.y)
                 self.intersections["segment"].append(seg.index)
         
+        # # Cut the segemnt for a new upper endpoint (the intersection)
+        # for segment in interior_point_segments:
+        #     segment.upper_point = event_point
+
         # Delete C(p) and L(p)
         logger.debug("Deleting segments from line status")
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]

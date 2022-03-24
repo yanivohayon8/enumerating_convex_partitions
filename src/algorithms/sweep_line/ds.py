@@ -1,6 +1,6 @@
-from src.data_structures import binary_tree  as binary_tree
+from src.data_structures import Point, binary_tree  as binary_tree
 from functools import cmp_to_key
-from src.algorithms.sweep_line import sorting_order
+from src.algorithms.sweep_line import Segment, sorting_order
 from functools import reduce
 
 
@@ -115,36 +115,39 @@ class LineStatus(binary_tree.AVL_Tree):
     
     def get_right_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
-        # neighbor_right = None
-        # for seg in leafs:
-        #     if seg > point_or_seg:
-        #         neighbor_right = seg
-        #         break
-        
-        for seg in leafs:
-            # does point_or_seg is left to seg? 
-            # choose the previous
-            if point_or_seg < seg:
-                return seg
 
-        return None#neighbor_right
+        if isinstance(point_or_seg,Segment):
+            index = leafs.index(point_or_seg) + 1
+            if index == len(leafs):
+                return None
+            return leafs[index]
+
+        if isinstance(point_or_seg,Point):
+            for seg in leafs:
+                # does point_or_seg is left to seg? 
+                # choose the previous
+                if point_or_seg < seg:
+                    return seg
+
+        return None
     
     def get_left_neighbor(self,point_or_seg):
         leafs = self.get_segment_on_line()
-        # neighbor_left = None
 
-        # for seg in list(reversed(leafs)):
-        #     if seg < point_or_seg:
-        #         neighbor_left = seg
-        #         break
+        if isinstance(point_or_seg,Segment):
+            index = leafs.index(point_or_seg) - 1
+            if index == -1:
+                return None
+            return leafs[index]
 
-        for seg in list(reversed(leafs)):
-            # does point_or_seg is right to seg? 
-            # choose the previous
-            if point_or_seg > seg:
-                return seg
+        if isinstance(point_or_seg, Point):
+            for seg in list(reversed(leafs)):
+                # does point_or_seg is right to seg? 
+                # choose the previous
+                if point_or_seg > seg:
+                    return seg
 
-        return None #neighbor_left
+        return None
 
     def _replace_leaf_val(self,root,old_val,new_val):
         if root is not None:
