@@ -1,6 +1,8 @@
 from src.data_structures import binary_tree  as binary_tree
 from functools import cmp_to_key
 from src.algorithms.sweep_line import sorting_order
+from functools import reduce
+
 
 class LineStatus(binary_tree.AVL_Tree):
 
@@ -40,8 +42,10 @@ class LineStatus(binary_tree.AVL_Tree):
                 self._delete_leaf(self.root,left_neighbor)
                 self.root = self.delete(self.root,segment)
                 self._update_internal_nodes_val(self.root)
-            else:
+            elif self.root is not None:
                 # if it is a single node tree - delete the tree
+                # if self.root.height > 1:
+                    # self._delete_leaf(self.root,self.root.val)
                 self._delete_leaf(self.root,self.root.val)
                 self.root = self.delete(self.root,segment)
         
@@ -170,6 +174,9 @@ class LineStatus(binary_tree.AVL_Tree):
         # if not is_leafs_ok:
         #     raise("Check for duplicates and well ordering of the segment on the line status")
 
+        if not all(leaf is not None for leaf in leafs):
+            raise ValueError("On the line segment - segment cannot have None value")
+
         for i in range(len(leafs)-1):
             if not leafs[i] < leafs[i + 1]:
                 raise ValueError("On the line status segment " + str(leafs[i]) +" should be left to " + str(leafs[i + 1]))
@@ -184,14 +191,27 @@ class LineStatus(binary_tree.AVL_Tree):
 
         if self._is_have_single_child(root):
             raise ValueError(f"Node {str(root)} have a single child")
+        
+        if root.val is None:
+            raise ValueError(f"Value of internal node cannot be None")
 
         expected_val = self._get_internal_node_expected_val(root.left)
+
+        # Internal node cann't have None value
+        if not expected_val:
+            raise ValueError(f"Expected internal node value can't be None")
+
         if expected_val != root.val:
             raise ValueError(f"Expected value of node {str(root)} is {str(expected_val)}, whereas it is {str(root.val)}")
         
-        return self._check_sanity_internal(root.left) and self._check_sanity_internal(root.right)
+        # return self._check_sanity_internal(root.left) and self._check_sanity_internal(root.right)
+        self._check_sanity_internal(root.left)
+        self._check_sanity_internal(root.right)
 
-        
+    def toString(self):
+        leafs = self.get_segment_on_line()
+        return reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),leafs)))
+
 
 class EventQueue():
 
@@ -210,3 +230,6 @@ class EventQueue():
         print("Event Queue: ",end="\t")
         [print(event, end=";") for event in self.queue]
         print()
+    
+    def toString(self):
+        return reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),self.queue)))

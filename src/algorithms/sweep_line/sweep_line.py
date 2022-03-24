@@ -1,7 +1,15 @@
 import pandas as pd
 from  src.algorithms.sweep_line.ds import LineStatus,EventQueue
 from src.algorithms.sweep_line import sorting_order, Segment
+import traceback
+import logging
+from src import setup_logger
 
+
+log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
+logger = logging.getLogger("logger.sweep_line")
+logger.addHandler(log_handler)
+# debug_dir = setup_logger.get_debug_dir()
 
 class SweepLine():
     '''
@@ -23,6 +31,8 @@ class SweepLine():
         }
 
     def preprocess(self,edges):
+
+        segments_added = []
         for index,edge in enumerate(edges):
             '''
                 Initialize the lower and upper endpoints DB
@@ -31,8 +41,6 @@ class SweepLine():
             '''
             upper_endpoint = edge.src_point
             lower_endpoint = edge.dst_point
-            self.event_queue.append(upper_endpoint)
-            self.event_queue.append(lower_endpoint)
             
             if sorting_order(edge.src_point,edge.dst_point) > 0:
                 tmp = upper_endpoint
@@ -40,26 +48,53 @@ class SweepLine():
                 lower_endpoint=tmp
 
             seg = Segment(upper_endpoint,lower_endpoint,index=index)
-            self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
-            self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
+            if not seg in segments_added:
+                segments_added.append(seg)
+                self._append_event_point(self.upper_endpoint_segments,seg,upper_endpoint)
+                self._append_event_point(self.lower_endpoint_segments,seg,lower_endpoint)
+                self.event_queue.append(upper_endpoint)
+                self.event_queue.append(lower_endpoint)
+            else:
+                pass#debug
             
     def run_algo(self,is_debug=False):
         '''
             Please first run preprocessing.
             The answer will be at self.intersections
         '''
+        logger.debug("Start run_algo function")
         while len(self.event_queue.queue)>0:
             event_point = self.event_queue.pop()
-            self.handle_event_point(event_point)
-            
-            if is_debug:
-                print(f"Handled Event point: {event_point}")
-                sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
-                sl_xml.print()
-                self.line_status.print()
-                self.event_queue.print()
-                print("\n",end="\n\n")
+
+            try:
+                self.handle_event_point(event_point)
+
+                if is_debug:
+                    # print(f"Handled Event point: {event_point}")
+                    sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
+                    sl_xml.print()
+                    logger.debug("Line status Binary tree:")
+                    logger.debug(sl_xml.toString())
+                    # self.line_status.print()
+                    # self.event_queue.print()
+                    # print("\n",end="\n\n")
+                    logger.debug("Line status " )
+                    logger.debug(self.line_status.toString())
+                    logger.debug("Event Queue: " + self.event_queue.toString())
+
                 self.line_status.check_sanity()
+            except Exception as err:
+                    print(f"Handled Event point: {event_point}")
+                    sl_xml = self.line_status.convert_to_lxml(self.line_status.root)
+                    sl_xml.print()
+                    self.line_status.print()
+                    self.event_queue.print()
+                    # traceback.print_tb(err.__traceback__)
+                    raise err
+            
+            
+            
+            
 
         data = []
         for x,(y,seg_index) in zip(self.intersections["x"],\
@@ -68,6 +103,7 @@ class SweepLine():
         return pd.DataFrame(data,columns=['x',"y","segment"])
     
     def handle_event_point(self,event_point):
+        logger.info("Start handle event point " + str(event_point))
         lower_endpoint_segments = self._get_point_segments(self.lower_endpoint_segments,event_point)
         upper_endpoint_segments = self._get_point_segments(self.upper_endpoint_segments,event_point)
         interior_point_segments = self._get_point_segments(self.interior_point_segments,event_point)
@@ -76,12 +112,14 @@ class SweepLine():
 
         # intercsetion
         if len(segment_involved) > 1:
+            logger.debug("Reporting intersection at " + str(event_point))
             for seg in segment_involved:
                 self.intersections["x"].append(event_point.x)
                 self.intersections["y"].append(event_point.y)
                 self.intersections["segment"].append(seg.index)
         
         # Delete C(p) and L(p)
+        logger.debug("Deleting segments from line status")
         [self.line_status.delete_segment(segment) for segment in lower_endpoint_segments]
         [self.line_status.delete_segment(segment) for segment in interior_point_segments]
 
@@ -90,6 +128,7 @@ class SweepLine():
             segment.upper_point = event_point
 
         # insert U(p) and C(p) (flip their position)
+        logger.debug("Inserting segments to line status")
         [self.line_status.insert_segment(segment) for segment in upper_endpoint_segments]
         [self.line_status.insert_segment(segment) for segment in interior_point_segments] # for debug: self.line_status.convert_to_lxml(self.line_status.root).print()
 
@@ -118,6 +157,7 @@ class SweepLine():
             
         if sorting_order(intersec_point,event_point) > 0:
             if not intersec_point in self.event_queue.queue:
+                logger.debug("Found new event point " + str(event_point))
                 self.event_queue.append(intersec_point)
             if not (segment_1.is_endpoint(intersec_point)):# and segment_1.is_in_segment(intersec_point):
                     self._append_event_point(self.interior_point_segments,segment_1,intersec_point)
@@ -134,6 +174,9 @@ class SweepLine():
     def _get_point_segments(self,dict_point_segment,event_point):
         if not str(event_point) in dict_point_segment:
             return []
+
+        if not dict_point_segment[str(event_point)]:
+            raise ValueError("OMG fix this")
 
         return dict_point_segment[str(event_point)]
 

@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib.patches import Polygon as MatplotlibPolygon
 from matplotlib.collections import PatchCollection
 from typing import List
+from functools import reduce
 
 class Point(object):
     def __init__(self,x,y): #*args):
@@ -23,6 +24,9 @@ class Point(object):
 
     def __eq__(self,p):
         return self.x==p.x and self.y==p.y
+    
+    def __ne__(self,p):
+        return not (self.x == p.x and self.y==p.y)
     
     def __hash__(self):
         return hash(self.get_as_tuple())
@@ -54,6 +58,9 @@ class Edge(object):
             tuple_1 = eval(args[0].split("->")[1])
             self.src_point = Point(tuple_0[0],tuple_0[1])
             self.dst_point = Point(tuple_1[0],tuple_1[1])
+
+        if self.src_point == self.dst_point:
+            raise ValueError(f"Tried to create edge with the same src_point and dst_point value ({str(self.src_point)})")
     
     def plot(self,ax):
         ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],"o-")
@@ -66,11 +73,11 @@ class Edge(object):
     def __str__(self):
         return str(self.src_point) + "->" + str(self.dst_point)
 
-    # def __eq__(self,edge):
-    #     return self.src_point == edge.src_point and self.dst_point == edge.dst_point
+    def __eq__(self,edge):
+        return self.src_point == edge.src_point and self.dst_point == edge.dst_point
     
-    # def __hash__(self):
-    #     return str(self)
+    def __hash__(self):
+        return hash((self.src_point,self.dst_point))
 
 class Graph(object):
     def __init__(self):
@@ -101,6 +108,23 @@ class Graph(object):
     def get_output_edges(self,src_vertex):
         return [edge for edge in self.edges if edge.src_point == src_vertex]
 
+    def union(self,graph):
+        self.vertecies = self.vertecies.union(graph.vertecies)
+        self.edges = self.edges.union(graph.edges)
+        # for vert in graph.vertecies:
+        #     self.insert_vertex(vert)
+        # for edge in graph.edges:
+        #     self.insert_edge(edge)
+
+    def get_copy(self):
+        grph = Graph()
+        grph.union(self)
+        return grph
+
+    def remove_edge(self,edge):
+        pass
+            
+
 
 class Polygon(object):
     def __init__(self,*args):
@@ -110,7 +134,8 @@ class Polygon(object):
             self.vertcies = []
 
     def add_vertex(self,point):
-        self.vertcies.append(point)
+        if not point in self.vertcies:
+            self.vertcies.append(point)
 
     def plot(self,ax,color="blue"):
         verts = self.vertcies + [self.vertcies[0]]
@@ -141,3 +166,14 @@ class Polygon(object):
     
     def reverse_direction(self):
         self.vertcies.reverse()
+
+    def get_graph(self):
+        grph = Graph()
+        for i,vert in enumerate(self.vertcies):
+            # grph.insert_vertex(vert)
+            next_vert = self.vertcies[(i+1)%len(self.vertcies)]
+            grph.insert_edge(Edge(vert,next_vert))
+        return grph
+
+    def __str__(self) -> str:
+        return reduce(lambda acc,vert_str: acc + vert_str+";",list(map(lambda x: str(x),self.vertcies)),"")

@@ -1,0 +1,562 @@
+logger.test_puzzle_creator - DEBUG - Starting....
+logger.puzzle_creator - INFO - Starts create function
+logger.sweep_line - DEBUG - Start run_algo function
+logger.sweep_line - INFO - Start handle event point (15.0,12.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(15.0,12.0)--(1.0,1.0)">
+	<left/>
+	<right/>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(15.0,12.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.0,5.0);(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(1.0,1.0)">
+	<left node="(5.0,5.0)--(1.0,1.0)">
+		<left/>
+		<right/>
+	</left>
+	<right node="(15.0,12.0)--(1.0,1.0)">
+		<left/>
+		<right/>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(5.0,5.0)--(1.0,1.0);(15.0,12.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (11.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(1.0,1.0)">
+	<left node="(5.0,5.0)--(1.0,1.0)">
+		<left/>
+		<right/>
+	</left>
+	<right node="(15.0,12.0)--(1.0,1.0)">
+		<left node="(15.0,12.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(11.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(5.0,5.0)--(1.0,1.0);(15.0,12.0)--(1.0,1.0);(11.0,5.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (2.0,4.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(15.0,12.0)--(1.0,1.0)">
+		<left node="(15.0,12.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(11.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(5.0,5.0)--(1.0,1.0);(15.0,12.0)--(1.0,1.0);(11.0,5.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (7.0,3.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(15.0,12.0)--(1.0,1.0)">
+		<left node="(15.0,12.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(11.0,5.0)--(1.0,1.0)">
+			<left node="(11.0,5.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</left>
+			<right node="(7.0,3.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</right>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(5.0,5.0)--(1.0,1.0);(15.0,12.0)--(1.0,1.0);(11.0,5.0)--(1.0,1.0);(7.0,3.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.0,2.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(11.0,5.0)--(1.0,1.0)">
+		<left node="(15.0,12.0)--(1.0,1.0)">
+			<left node="(15.0,12.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</left>
+			<right node="(11.0,5.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</right>
+		</left>
+		<right node="(7.0,3.0)--(1.0,1.0)">
+			<left node="(7.0,3.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</left>
+			<right node="(5.0,2.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</right>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(5.0,5.0)--(1.0,1.0);(15.0,12.0)--(1.0,1.0);(11.0,5.0)--(1.0,1.0);(7.0,3.0)--(1.0,1.0);(5.0,2.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (1.0,1.0)
+logger.sweep_line - DEBUG - Reporting intersection at (1.0,1.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(1.0,1.0)--(15.0,0.0)">
+	<left/>
+	<right/>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(1.0,1.0)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (15.0,0.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_/>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;
+logger.sweep_line - DEBUG - Event Queue: ;
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (1.0,1.0);(11.0,5.0);(5.0,5.0);(2.0,4.0);
+logger.sweep_line - DEBUG - Start run_algo function
+logger.sweep_line - INFO - Start handle event point (15.0,12.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(15.0,12.0)--(2.0,4.0)">
+	<left/>
+	<right/>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(15.0,12.0)--(2.0,4.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.0,5.0);(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.0,5.0)
+logger.sweep_line - DEBUG - Reporting intersection at (5.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(15.0,12.0)--(2.0,4.0)">
+	<left node="(15.0,12.0)--(2.0,4.0)">
+		<left/>
+		<right/>
+	</left>
+	<right node="(5.0,5.0)--(2.0,4.0)">
+		<left node="(5.0,5.0)--(2.0,4.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(11.0,5.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(15.0,12.0)--(2.0,4.0);(5.0,5.0)--(2.0,4.0);(5.0,5.0)--(11.0,5.0);
+logger.sweep_line - DEBUG - Event Queue: ;(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (11.0,5.0)
+logger.sweep_line - DEBUG - Reporting intersection at (11.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(2.0,4.0)">
+	<left node="(15.0,12.0)--(2.0,4.0)">
+		<left node="(15.0,12.0)--(2.0,4.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(2.0,4.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(11.0,5.0)--(2.0,4.0)">
+		<left node="(11.0,5.0)--(2.0,4.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(11.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(15.0,12.0)--(2.0,4.0);(5.0,5.0)--(2.0,4.0);(11.0,5.0)--(2.0,4.0);(11.0,5.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (2.0,4.0)
+logger.sweep_line - DEBUG - Reporting intersection at (2.0,4.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Found new event point (2.0,4.0)
+logger.sweep_line - DEBUG - Found new event point (2.0,4.0)
+logger.sweep_line - DEBUG - Found new event point (2.0,4.0)
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(2.0,4.0)--(15.0,0.0)">
+	<left node="(2.0,4.0)--(5.0,2.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left node="(2.0,4.0)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</left>
+			<right node="(2.0,4.0)--(5.0,2.0)">
+				<left/>
+				<right/>
+			</right>
+		</left>
+		<right node="(2.0,4.0)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(2.0,4.0)--(7.0,3.0)">
+		<left node="(2.0,4.0)--(7.0,3.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(11.0,5.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(2.0,4.0)--(5.0,2.0);(2.0,4.0)--(15.0,0.0);(2.0,4.0)--(7.0,3.0);(11.0,5.0)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(6.33,3.13);(7.0,3.0);(5.67,2.87);(4.44,2.38);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (6.33,3.13)
+logger.sweep_line - DEBUG - Reporting intersection at (6.33,3.13)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Found new event point (6.33,3.13)
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(2.0,4.0)--(5.0,2.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(2.0,4.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(2.0,4.0)--(15.0,0.0)">
+		<left node="(2.0,4.0)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(6.33,3.13)--(1.0,1.0)">
+			<left node="(6.33,3.13)--(1.0,1.0)">
+				<left/>
+				<right/>
+			</left>
+			<right node="(6.33,3.13)--(7.0,3.0)">
+				<left/>
+				<right/>
+			</right>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(2.0,4.0)--(5.0,2.0);(2.0,4.0)--(15.0,0.0);(6.33,3.13)--(1.0,1.0);(6.33,3.13)--(7.0,3.0);
+logger.sweep_line - DEBUG - Event Queue: ;(7.0,3.0);(5.67,2.87);(5.68,2.87);(4.44,2.38);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (7.0,3.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(2.0,4.0)--(5.0,2.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(2.0,4.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(2.0,4.0)--(15.0,0.0)">
+		<left node="(2.0,4.0)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(6.33,3.13)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(2.0,4.0)--(5.0,2.0);(2.0,4.0)--(15.0,0.0);(6.33,3.13)--(1.0,1.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.67,2.87);(5.68,2.87);(4.44,2.38);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.67,2.87)
+logger.sweep_line - DEBUG - Reporting intersection at (5.67,2.87)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(2.0,4.0)--(5.0,2.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(2.0,4.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(5.67,2.87)--(1.0,1.0)">
+		<left node="(5.67,2.87)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.67,2.87)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(2.0,4.0)--(5.0,2.0);(5.67,2.87)--(1.0,1.0);(5.67,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.68,2.87);(4.44,2.38);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.68,2.87)
+logger.sweep_line - DEBUG - Reporting intersection at (5.68,2.87)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Found new event point (5.68,2.87)
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(2.0,4.0)--(5.0,2.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(2.0,4.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(5.68,2.87)--(1.0,1.0)">
+		<left node="(5.68,2.87)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.68,2.87)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(2.0,4.0)--(5.0,2.0);(5.68,2.87)--(1.0,1.0);(5.68,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(4.44,2.38);(4.44,2.37);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (4.44,2.38)
+logger.sweep_line - DEBUG - Reporting intersection at (4.44,2.38)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(4.44,2.38)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(4.44,2.38)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(4.44,2.38)--(5.0,2.0)">
+		<left node="(4.44,2.38)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.68,2.87)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(4.44,2.38)--(1.0,1.0);(4.44,2.38)--(5.0,2.0);(5.68,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(4.44,2.37);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (4.44,2.37)
+logger.sweep_line - DEBUG - Reporting intersection at (4.44,2.37)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(4.44,2.37)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(4.44,2.37)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(4.44,2.37)--(5.0,2.0)">
+		<left node="(4.44,2.37)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.68,2.87)--(15.0,0.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(4.44,2.37)--(1.0,1.0);(4.44,2.37)--(5.0,2.0);(5.68,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.0,2.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(4.44,2.37)--(1.0,1.0)">
+	<left node="(2.0,4.0)--(1.0,1.0)">
+		<left node="(2.0,4.0)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(4.44,2.37)--(1.0,1.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(5.68,2.87)--(15.0,0.0)">
+		<left/>
+		<right/>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(2.0,4.0)--(1.0,1.0);(4.44,2.37)--(1.0,1.0);(5.68,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (1.0,1.0)
+logger.sweep_line - DEBUG - Reporting intersection at (1.0,1.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.68,2.87)--(15.0,0.0)">
+	<left/>
+	<right/>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(5.68,2.87)--(15.0,0.0);
+logger.sweep_line - DEBUG - Event Queue: ;(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (15.0,0.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_/>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;
+logger.sweep_line - DEBUG - Event Queue: ;
+logger.sweep_line - DEBUG - Start run_algo function
+logger.sweep_line - INFO - Start handle event point (15.0,12.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(15.0,12.0)--(5.0,2.0)">
+	<left/>
+	<right/>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(15.0,12.0)--(5.0,2.0);
+logger.sweep_line - DEBUG - Event Queue: ;(5.0,5.0);(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (5.0,5.0)
+logger.sweep_line - DEBUG - Reporting intersection at (5.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
+logger.sweep_line - DEBUG - Found new event point (5.0,5.0)
+logger.sweep_line - DEBUG - Line status Binary tree:
+logger.sweep_line - DEBUG - <_ node="(5.0,5.0)--(5.0,2.0)">
+	<left node="(5.0,5.0)--(2.0,4.0)">
+		<left node="(5.0,5.0)--(2.0,4.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(5.0,5.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</left>
+	<right node="(5.0,5.0)--(11.0,5.0)">
+		<left node="(5.0,5.0)--(11.0,5.0)">
+			<left/>
+			<right/>
+		</left>
+		<right node="(15.0,12.0)--(5.0,2.0)">
+			<left/>
+			<right/>
+		</right>
+	</right>
+</_>
+logger.sweep_line - DEBUG - Line status 
+logger.sweep_line - DEBUG - ;(5.0,5.0)--(2.0,4.0);(5.0,5.0)--(5.0,2.0);(5.0,5.0)--(11.0,5.0);(15.0,12.0)--(5.0,2.0);
+logger.sweep_line - DEBUG - Event Queue: ;(8.0,5.0);(11.0,5.0);(2.0,4.0);(7.0,3.0);(5.0,2.0);(1.0,1.0);(15.0,0.0);
+logger.sweep_line - INFO - Start handle event point (8.0,5.0)
+logger.sweep_line - DEBUG - Reporting intersection at (8.0,5.0)
+logger.sweep_line - DEBUG - Deleting segments from line status
+logger.sweep_line - DEBUG - Inserting segments to line status
