@@ -65,6 +65,10 @@ class TestSweepLine(unittest.TestCase):
     def test_vertical_005_example(self):
         self._run_example(self.files_path + '005.csv',self.files_path + '005_ans.csv')
 
+    # sweep line assumes this scenario does not exist
+    # def test_segment_in_segment_006_example(self):
+    #     self._run_example(self.files_path + '006.csv',self.files_path + '006_ans.csv')
+
 
 if __name__ == "__main__":
     unittest.main()

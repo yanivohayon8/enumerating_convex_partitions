@@ -186,6 +186,17 @@ class LineStatus(binary_tree.AVL_Tree):
         for i in range(len(leafs)-1):
             if not leafs[i] < leafs[i + 1]:
                 raise ValueError("On the line status segment " + str(leafs[i]) +" should be left to " + str(leafs[i + 1]))
+            # # The problem is == is asking if the endpoints are indentical where <= ask about the detminant
+            # # So I needed to split it to an ugly if-s
+            # if not leafs[i] <= leafs[i + 1]:
+            #     raise ValueError("On the line status segment " + str(leafs[i]) +" should be left to " + str(leafs[i + 1]))
+            # else:
+            #     # This conditioning raise Error if the segments are duplicate, but if they are two different segment
+            #     # contained on each other (hopefully) on the same line, the test will pass it
+            #     # sweep line assume line contains line is nonreal senario, but I had to implement it
+            #     if leafs[i] == leafs[i + 1]:
+            #         raise ValueError("On the line status segment " +str(leafs[i]) + " is Duplicated")
+
 
     
     def _check_sanity_internal(self,root):

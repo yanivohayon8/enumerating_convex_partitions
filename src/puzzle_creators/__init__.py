@@ -77,7 +77,15 @@ class PuzzleCreator():
         # TODO
         sweepline = SweepLine()
         conn_graph = self.connections_graph.get_copy()
-        [conn_graph.insert_edge(Edge(kernel_point,point)) for point in space] 
+
+        for point in space:
+            pass
+        
+        for point in space: 
+            pass
+            # conn_graph.insert_edge(Edge(kernel_point,point))
+
+
         edges = list(conn_graph.edges)
         sweepline.preprocess(edges)
         intersections = []
