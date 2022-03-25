@@ -5,7 +5,7 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-import src.data_structures as ds
+from src.data_structures.graph import Edge
 import matplotlib.pyplot as plt
 import pandas as pd
 # from  algorithms.sweep_line.sweep_line import SweepLine
@@ -26,9 +26,9 @@ class TestSweepLine(unittest.TestCase):
         df_list = df.values.tolist()
 
         for seg_row in df_list:
-            start_point = ds.Point(seg_row[0],seg_row[1])
-            end_point = ds.Point(seg_row[2],seg_row[3])
-            segments.append(ds.Edge(start_point,end_point)) 
+            start_point = Point(seg_row[0],seg_row[1])
+            end_point = Point(seg_row[2],seg_row[3])
+            segments.append(Edge(start_point,end_point)) 
 
         if is_plot:
             fig,axs = plt.subplots()

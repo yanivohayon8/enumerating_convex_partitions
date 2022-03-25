@@ -1,5 +1,5 @@
 from src.data_structures import Point
-from src.hypothesis.rgon_1988 import turn
+# from src.hypothesis.rgon_1988 import turn
 
 class Line(object):
     def __init__(self,*args):
@@ -9,6 +9,9 @@ class Line(object):
             if isinstance(args[0],Segment):
                 self.point_1 = args[0].upper_point
                 self.point_2 = args[0].lower_point
+        if len(args) == 2:
+            self.point_1 = args[0]
+            self.point_2 = args[1]
 
     def find_intersection(self,other_line):
         '''
@@ -25,7 +28,7 @@ class Line(object):
 
         div = det(xdiff, ydiff)
         if div == 0:
-            raise Exception('lines do not intersect')   
+            raise ZeroDivisionError('lines do not intersect')   
 
         d = (det(*line1), det(*line2))
         x = det(d, xdiff) / div

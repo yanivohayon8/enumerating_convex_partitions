@@ -1,7 +1,9 @@
 from turtle import color, right
 from numpy import poly
 import pandas as pd
-from src.data_structures import Point,Polygon,Graph,Edge
+from src.data_structures import Point
+from src.data_structures.shapes import Polygon
+from src.data_structures.graph import Graph,Edge
 import matplotlib.pyplot as plt
 
 from enum import Enum
@@ -63,9 +65,12 @@ class PuzzleCreator():
         Polygon.plot_polygons(ax,puzzle_mat_polygons)
 
     def _get_accessible_points(self,kernel_point,direction=1):
+        logger.info("Filter point in space to get reachable points")
+        logger.debug("Filter point that are not ahead the scanning direction")
         # on default - ahead to the left
         filter_condition = lambda item: item.x>=kernel_point.x and item!=kernel_point  
         space = list(self.interior_points+self.frame_anchor_points)
+        space.remove(kernel_point)
 
         # if requested ahead to right
         if direction == -1:
@@ -73,41 +78,74 @@ class PuzzleCreator():
             space.reverse()
 
         space = list(filter(filter_condition,space)) 
-        '''Sweep Line algorithm here'''
-        # TODO
-        sweepline = SweepLine()
-        conn_graph = self.connections_graph.get_copy()
-
-        for point in space:
-            pass
         
-        for point in space: 
-            pass
-            # conn_graph.insert_edge(Edge(kernel_point,point))
+        '''Sweep Line algorithm here'''
+        # debug
+        logger.debug("Filter point which are not visible : edge is block them from the view")
+        debug_graph = Graph()
+        for point in space:
+            debug_graph.insert_edge(Edge(kernel_point,point))
+        fig,ax = plt.subplots()
+        ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
+        debug_graph.plot_directed(ax,color="red") # way to plot the graph
+        self.connections_graph.plot_directed(ax)
+        fig.savefig(debug_dir + "/Last sweep Line graph.png")
+        plt.close()
+        
+        conn_graph_edges = self.connections_graph.edges
+        space_copy = space.copy()
+        for point in space_copy:
+            logger.debug(f"Check if point {str(point)} is visible")
+            ker_to_point_edge = Edge(kernel_point,point)
+            for edge in conn_graph_edges:
+                # This condition need to be more sohpisticated
 
+                # Enable reuse of edge
+                if ker_to_point_edge == edge:
+                    break
+                try:
+                    inter_point = ker_to_point_edge.find_intersection_point(edge)
 
-        edges = list(conn_graph.edges)
-        sweepline.preprocess(edges)
-        intersections = []
-        try:
-            df_results = sweepline.run_algo(is_debug=True)
-            intersections = list(filter(lambda item: not(item[0] == kernel_point.x and item[1] == kernel_point.y),\
-                                df_results.values.tolist()))
-        except Exception as err:
-            ax = plt.subplot()
-            ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
-            conn_graph.plot_directed(ax) # way to plot the graph
-            plt.savefig(debug_dir + "/Last sweep Line graph.png")
-            # logger.exception(err)
-            raise err
-    
-        for inter_point in intersections:
-            seg_index = int(inter_point[2])
-            point_to_remove = edges[seg_index].dst_point
-            if point_to_remove == kernel_point:
-                point_to_remove = edges[seg_index].src_point
+                    # If the origin of the edge sourced in kernel 
+                    # is not intersected because of its origins
+                    if inter_point is None:
+                        continue
+                    
+                    if edge.is_endpoint(inter_point):
+                        continue
+
+                    if inter_point != kernel_point:
+                        logger.debug(f"Point {str(point)} is not reachable")
+                        space.remove(point)
+                        break
+                except ZeroDivisionError as err:
+                    continue
+                    
             
-            space = list(filter(lambda p: p != point_to_remove,space))
+
+
+        # edges = list(conn_graph.edges)
+        # sweepline.preprocess(edges)
+        # intersections = []
+        # try:
+        #     df_results = sweepline.run_algo(is_debug=True)
+        #     intersections = list(filter(lambda item: not(item[0] == kernel_point.x and item[1] == kernel_point.y),\
+        #                         df_results.values.tolist()))
+        # except Exception as err:
+        #     ax = plt.subplot()
+        #     ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
+        #     conn_graph.plot_directed(ax) # way to plot the graph
+        #     plt.savefig(debug_dir + "/Last sweep Line graph.png")
+        #     # logger.exception(err)
+        #     raise err
+    
+        # for inter_point in intersections:
+        #     seg_index = int(inter_point[2])
+        #     point_to_remove = edges[seg_index].dst_point
+        #     if point_to_remove == kernel_point:
+        #         point_to_remove = edges[seg_index].src_point
+            
+        #     space = list(filter(lambda p: p != point_to_remove,space))
 
         return space
 
@@ -120,9 +158,9 @@ class PuzzleCreator():
         points_to_connect = self._get_accessible_points(kernel_point,direction=direction)            
         stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
         visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
-        # ax = plt.subplot()
+        # fig,ax = plt.subplots()
         # visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        # plt.show()
+        # fig.show()
         continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
         edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
         return continuity_edges,edges_max_chain_length
@@ -137,21 +175,26 @@ class PuzzleCreator():
         self._preprocess(scan_direction.value)
         while True:
             for interior_point in self.interior_points:
-                continuity_edges,edges_max_chain_length = self._get_surface(interior_point,direction=scan_direction.value)
-                num_edges = self._get_next_polygon_num_edges(continuity_edges,edges_max_chain_length)
-                polygon = self._create_rgon(interior_point,num_edges,edges_max_chain_length,continuity_edges)        
+                try:
+                    continuity_edges,edges_max_chain_length = self._get_surface(interior_point,direction=scan_direction.value)
+                    num_edges = self._get_next_polygon_num_edges(continuity_edges,edges_max_chain_length)
+                    polygon = self._create_rgon(interior_point,num_edges,edges_max_chain_length,continuity_edges)        
 
-                if polygon is not None:
-                    logger.debug(f"Next Polygon to create is : {str(polygon)}")
-                    # update maps
-                    polygon_grph = polygon.get_graph()
-                    self.connections_graph.union(polygon_grph)
-                    fig,ax = plt.subplots()
-                    ax.title.set_text("Debug Connectivity Graph")
-                    self.connections_graph.plot_directed(ax) # way to plot the graph
-                    fig.savefig(debug_dir + "/Last Connectivity Graph.png")
-                    self.pieces.append(polygon)
-            
+                    if polygon is not None:
+                        logger.debug(f"Next Polygon to create is : {str(polygon)}")
+                        # update maps
+                        polygon_grph = polygon.get_graph()
+                        self.connections_graph.union(polygon_grph)
+                        fig,ax = plt.subplots()
+                        ax.title.set_text("Debug Connectivity Graph")
+                        self.connections_graph.plot_directed(ax) # way to plot the graph
+                        fig.savefig(debug_dir + "/Last Connectivity Graph.png")
+                        plt.close()
+                        self.pieces.append(polygon)
+                except Exception as err:
+                    logger.exception(err)
+                    raise err 
+
             scan_direction = Direction(scan_direction.value * (-1))
             self._preprocess(scan_direction.value)
 

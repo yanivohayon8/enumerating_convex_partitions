@@ -1,5 +1,5 @@
 from turtle import color
-from src.data_structures import Polygon
+from src.data_structures.shapes import Polygon
 from src.hypothesis import rgon_1988 as Rgon1988
 from src.hypothesis.first_hypo import FirstHypo
 import matplotlib.pyplot as plt

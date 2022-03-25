@@ -1,7 +1,7 @@
 from ..hypothesis import HypothesisAlgo
 from ..hypothesis import rgon_1988  as Rgon1988
 # from . import data_structures 
-from .. import data_structures
+from src.data_structures.graph import Graph,Edge
 import functools
 
 '''THIS IS DEPRECATED MODULE'''
@@ -15,7 +15,7 @@ class FirstHypo(HypothesisAlgo):
     def __init__(self,interior_points,border_points):
         super().__init__(interior_points,border_points)
         self.polygons = []
-        self.graph = data_structures.Graph()
+        self.graph = Graph()
         self.space_points = interior_points + border_points
 
 
@@ -64,7 +64,7 @@ class FirstHypo(HypothesisAlgo):
                 print(str(rgon.vertcies[vert_index]) + "-"),
                 src_point = rgon.vertcies[vert_index]
                 dst_point = rgon.vertcies[(vert_index + 1)%len(rgon.vertcies)]
-                self.graph.insert_edge(data_structures.Edge(src_point,dst_point))
+                self.graph.insert_edge(Edge(src_point,dst_point))
 
             print()
         return polygons

@@ -1,5 +1,7 @@
 from src.puzzle_creators import PuzzleCreator
-from src.data_structures import Point, Polygon,Edge
+from src.data_structures import Point
+from src.data_structures.shapes import Polygon
+from src.data_structures.graph import Edge
 import random
 import re
 

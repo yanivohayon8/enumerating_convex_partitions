@@ -8,7 +8,6 @@ import unittest
 from src.puzzle_creators import PuzzleCreator
 from src.puzzle_creators.random import RandomCreator,RestoreRandom
 import matplotlib.pyplot as plt
-from src.data_structures import Polygon
 import logging
 from src import setup_logger
 
@@ -63,7 +62,7 @@ class TestRandomCreator(unittest.TestCase):
             # logger.exception(err)
             raise err
 
-        plt.show()
+        # plt.show()
         pass
 
     def test_example_01_logged(self):
