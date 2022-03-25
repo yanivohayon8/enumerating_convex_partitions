@@ -23,7 +23,7 @@ logger.puzzle_creator - DEBUG - Check if point (11.0,5.0) is visible
 logger.puzzle_creator - DEBUG - Check if point (15.0,0.0) is visible
 logger.puzzle_creator - DEBUG - Point (15.0,0.0) is not reachable
 logger.puzzle_creator - DEBUG - Check if point (15.0,12.0) is visible
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (2.0,4.0);(11.0,5.0);(5.0,5.0);
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (2.0,4.0);(5.0,5.0);(15.0,12.0);
 logger.puzzle_creator - INFO - Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
@@ -34,7 +34,7 @@ logger.puzzle_creator - DEBUG - Check if point (11.0,5.0) is visible
 logger.puzzle_creator - DEBUG - Check if point (15.0,0.0) is visible
 logger.puzzle_creator - DEBUG - Check if point (15.0,12.0) is visible
 logger.puzzle_creator - DEBUG - Point (15.0,12.0) is not reachable
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (5.0,2.0);(15.0,0.0);(7.0,3.0);
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (5.0,2.0);(15.0,0.0);(11.0,5.0);(7.0,3.0);
 logger.puzzle_creator - INFO - Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
@@ -61,3 +61,65 @@ logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is blo
 logger.puzzle_creator - DEBUG - Check if point (15.0,0.0) is visible
 logger.puzzle_creator - DEBUG - Check if point (15.0,12.0) is visible
 logger.puzzle_creator - DEBUG - Next Polygon to create is : (11.0,5.0);(15.0,0.0);(15.0,12.0);
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Point (0.0,12.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (1.0,1.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (2.0,4.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (5.0,5.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (5.0,2.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (7.0,3.0) is visible
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (11.0,5.0);(5.0,2.0);(7.0,3.0);(0.0,0.0);
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Point (0.0,12.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (1.0,1.0) is visible
+logger.puzzle_creator - DEBUG - Point (1.0,1.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (2.0,4.0) is visible
+logger.puzzle_creator - DEBUG - Point (2.0,4.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (5.0,5.0) is visible
+logger.puzzle_creator - DEBUG - Point (5.0,5.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (5.0,2.0) is visible
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (7.0,3.0);(5.0,2.0);(0.0,0.0);
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Point (0.0,12.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (1.0,1.0) is visible
+logger.puzzle_creator - DEBUG - Point (1.0,1.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (2.0,4.0) is visible
+logger.puzzle_creator - DEBUG - Point (2.0,4.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (5.0,5.0) is visible
+logger.puzzle_creator - DEBUG - Point (5.0,5.0) is not reachable
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Point (0.0,12.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (1.0,1.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (2.0,4.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (5.0,2.0) is visible
+logger.puzzle_creator - DEBUG - Point (5.0,2.0) is not reachable
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (5.0,5.0);(0.0,0.0);(1.0,1.0);(2.0,4.0);
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible
+logger.puzzle_creator - DEBUG - Check if point (1.0,1.0) is visible
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (2.0,4.0);(1.0,1.0);(0.0,0.0);
+logger.puzzle_creator - INFO - Filter point in space to get reachable points
+logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
+logger.puzzle_creator - DEBUG - Filter point which are not visible : edge is block them from the view
+logger.puzzle_creator - DEBUG - Check if point (0.0,12.0) is visible
+logger.puzzle_creator - DEBUG - Point (0.0,12.0) is not reachable
+logger.puzzle_creator - DEBUG - Check if point (0.0,0.0) is visible

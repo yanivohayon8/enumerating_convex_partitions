@@ -6,6 +6,10 @@ import random
 import re
 
 class RandomCreator(PuzzleCreator):
+    
+    def __init__(self):
+        super().__init__()
+        self.count_scans = 0
 
     def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
         rgon = Polygon()
@@ -47,7 +51,8 @@ class RandomCreator(PuzzleCreator):
         # return 3
 
     def _is_finished_scan(self):
-        return True
+        self.count_scans +=1
+        return self.count_scans >= 2
 
 
 class RestoreRandom(RandomCreator):
@@ -75,3 +80,5 @@ class RestoreRandom(RandomCreator):
             return self.polygons_to_create.pop(0)
 
         return super()._create_rgon(kernel_point, r, edges_max_chain_length, continuity_edges)
+
+    

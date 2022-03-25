@@ -195,11 +195,11 @@ class PuzzleCreator():
                     logger.exception(err)
                     raise err 
 
+            if self._is_finished_scan():
+                break
+
             scan_direction = Direction(scan_direction.value * (-1))
             self._preprocess(scan_direction.value)
-
-            if self._is_finished_scan:
-                break
     
     def _is_finished_scan(self):
         raise NotImplementedError("need to be implemented")
@@ -209,3 +209,4 @@ class PuzzleCreator():
 
     def _get_next_polygon_num_edges(self,continuity_edges,edges_max_chain_length):
         raise NotImplementedError("need to be implemented")
+    

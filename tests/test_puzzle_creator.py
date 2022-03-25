@@ -52,12 +52,14 @@ class TestRandomCreator(unittest.TestCase):
         logger.debug("Starting....")
 
         creator.load_sampled_points(self.files_path + "TBN_01.csv")
+        debug_dir = setup_logger.get_debug_lastrun_dir()
         fig, ax = plt.subplots()
 
         try:
             creator.create()
             creator.plot_puzzle(fig,ax)
             plt.show()
+            fig.savefig(debug_dir + "/results.png")
         except Exception as err:
             # logger.exception(err)
             raise err
