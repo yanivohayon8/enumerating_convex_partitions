@@ -5,6 +5,14 @@ from src.data_structures.graph import Edge
 import random
 import re
 
+import logging
+from src import setup_logger
+
+
+log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
+logger = logging.getLogger("logger.random_creator")
+logger.addHandler(log_handler)
+
 class RandomCreator(PuzzleCreator):
     
     def __init__(self):
@@ -19,7 +27,6 @@ class RandomCreator(PuzzleCreator):
         potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
 
         if len(potential_start_edges)==0:
-            #raise Exception("Can't create polygon sized " +str(r) + " from point " + str(kernel_point))
             return None
         
         next_edge = Edge(random.choice(potential_start_edges))
@@ -45,10 +52,10 @@ class RandomCreator(PuzzleCreator):
             max_len = max(possble_edge_len)
         except:
             return 0
-        # if min_len == 0:
-        #     return 0
-        return random.randint(min_len,max_len) + 2
-        # return 3
+        logger.debug(f"Random int number in range [{str(min_len)},{str(max_len)}]")
+        random_num = random.randint(min_len,max_len) + 2
+        logger.debug(f"Randomizing results is {str(random_num)}")
+        return random_num
 
     def _is_finished_scan(self):
         self.count_scans +=1

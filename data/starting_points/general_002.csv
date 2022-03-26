@@ -1,0 +1,14 @@
+x,y,role
+10,20,interior
+10,90,interior
+60,20,interior
+60,90,interior
+80,50,interior
+0,0,frame_anchor
+0,100,frame_anchor
+100,0,frame_anchor
+100,100,frame_anchor
+0,0,frame
+0,100,frame
+100,100,frame
+100,0,frame

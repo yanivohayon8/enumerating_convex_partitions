@@ -120,32 +120,6 @@ class PuzzleCreator():
                         break
                 except ZeroDivisionError as err:
                     continue
-                    
-            
-
-
-        # edges = list(conn_graph.edges)
-        # sweepline.preprocess(edges)
-        # intersections = []
-        # try:
-        #     df_results = sweepline.run_algo(is_debug=True)
-        #     intersections = list(filter(lambda item: not(item[0] == kernel_point.x and item[1] == kernel_point.y),\
-        #                         df_results.values.tolist()))
-        # except Exception as err:
-        #     ax = plt.subplot()
-        #     ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
-        #     conn_graph.plot_directed(ax) # way to plot the graph
-        #     plt.savefig(debug_dir + "/Last sweep Line graph.png")
-        #     # logger.exception(err)
-        #     raise err
-    
-        # for inter_point in intersections:
-        #     seg_index = int(inter_point[2])
-        #     point_to_remove = edges[seg_index].dst_point
-        #     if point_to_remove == kernel_point:
-        #         point_to_remove = edges[seg_index].src_point
-            
-        #     space = list(filter(lambda p: p != point_to_remove,space))
 
         return space
 
