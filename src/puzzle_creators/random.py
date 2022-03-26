@@ -1,6 +1,6 @@
 from src.puzzle_creators import PuzzleCreator
-from src.data_structures import Point
-from src.data_structures.shapes import Polygon
+from shapely.geometry import Point
+from shapely.geometry import Polygon
 from src.data_structures.graph import Edge
 import random
 import re
@@ -20,8 +20,7 @@ class RandomCreator(PuzzleCreator):
         self.count_scans = 0
 
     def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
-        rgon = Polygon()
-        rgon.add_vertex(kernel_point)
+        rgon = [kernel_point]
         r = r - 2
 
         potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
@@ -32,8 +31,8 @@ class RandomCreator(PuzzleCreator):
         next_edge = Edge(random.choice(potential_start_edges))
 
         while True:
-            rgon.add_vertex(next_edge.src_point)
-            rgon.add_vertex(next_edge.dst_point)
+            rgon.append(next_edge.src_point)
+            rgon.append(next_edge.dst_point)
             r-=1
 
             if r <= 0:
@@ -43,7 +42,7 @@ class RandomCreator(PuzzleCreator):
                                                 continuity_edges[str(next_edge)]))
             next_edge = random.choice(potential_start_edges)
 
-        return rgon
+        return Polygon(rgon)
     
     def _get_next_polygon_num_edges(self,continuity_edges,edges_max_chain_length):
         possble_edge_len = [edges_max_chain_length[_key] for _key in edges_max_chain_length.keys()]
@@ -73,14 +72,14 @@ class RestoreRandom(RandomCreator):
 
             for line in f:
                 if "Next Polygon to create is" in line:
-                    polygon = Polygon()
+                    polygon = []
                     vertices_str = re.findall("(\([\d,\-.]*\);)",line) # E.g.(1.0,1.0);(11.0,5.0);(5.0,5.0);(2.0,4.0);
                     for vert_str in vertices_str:
                         vert_str = re.sub(r"[;()]","",vert_str)
                         values = vert_str.split(",")
                         vert = Point(float(values[0]),float(values[1]))
-                        polygon.add_vertex(vert)
-                    self.polygons_to_create.append(polygon)
+                        polygon.append(vert)
+                    self.polygons_to_create.append(Polygon(polygon))
 
     def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
         if len(self.polygons_to_create)>0:

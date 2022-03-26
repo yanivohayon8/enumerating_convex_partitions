@@ -1,8 +1,8 @@
 from turtle import color, right
 from numpy import poly
 import pandas as pd
-from src.data_structures import Point
-from src.data_structures.shapes import Polygon
+from shapely.geometry import Point
+from shapely.geometry import Polygon
 from src.data_structures.graph import Graph,Edge
 import matplotlib.pyplot as plt
 

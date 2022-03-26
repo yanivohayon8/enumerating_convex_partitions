@@ -1,4 +1,4 @@
-from src.data_structures import Point
+from shapely.geometry import Point
 from src.data_structures.lines import Line
 
 
@@ -136,7 +136,7 @@ class Graph(object):
     def plot_undirected(self,ax):
         for e in self.edges:
             e.plot(ax)
-        Point.scatter_points(ax,self.vertecies)
+        # Point.scatter_points(ax,self.vertecies)
 
     def plot_directed(self,ax,**kwargs):
         for e in self.edges:
