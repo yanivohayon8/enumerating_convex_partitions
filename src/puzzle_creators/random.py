@@ -1,6 +1,6 @@
 from src.puzzle_creators import PuzzleCreator
 from src.data_structures import Point
-from shapely.geometry import Polygon
+from src.data_structures.shapes import Polygon
 from src.data_structures.graph import Edge
 import random
 import re
@@ -22,6 +22,10 @@ class RandomCreator(PuzzleCreator):
     def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
         rgon = [kernel_point]
         r = r - 2
+        
+        if r <=0:
+            return None
+
 
         potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
 
@@ -44,13 +48,18 @@ class RandomCreator(PuzzleCreator):
 
         return Polygon(rgon)
     
-    def _get_next_polygon_num_edges(self,continuity_edges,edges_max_chain_length):
+    def _get_next_polygon_num_verticies(self,continuity_edges,edges_max_chain_length):
+        logger.debug("Randomizing the number of edges to travel on them in the visibility graph")
         possble_edge_len = [edges_max_chain_length[_key] for _key in edges_max_chain_length.keys()]
         try:
             min_len = min(possble_edge_len)
             max_len = max(possble_edge_len)
-        except:
+        except ValueError:
             return 0
+        if max_len <= 0:
+            logger.debug("No edge is available - return 0")            
+            return 0
+
         logger.debug(f"Random int number in range [{str(min_len)},{str(max_len)}]")
         random_num = random.randint(min_len,max_len) + 2
         logger.debug(f"Randomizing results is {str(random_num)}")

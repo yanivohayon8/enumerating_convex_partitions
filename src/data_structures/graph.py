@@ -1,6 +1,6 @@
 from src.data_structures import Point
 from src.data_structures.lines import Line
-from shapely.geometry import Polygon
+from src.data_structures.shapes import Polygon
 
 class Edge(object):
     def __init__(self,*args):
@@ -28,7 +28,11 @@ class Edge(object):
         return str(self.src_point) + "->" + str(self.dst_point)
 
     def __eq__(self,edge):
-        return self.src_point == edge.src_point and self.dst_point == edge.dst_point
+        if isinstance(edge,Edge):
+            return self.src_point == edge.src_point and self.dst_point == edge.dst_point
+        if isinstance(edge,tuple):
+            return self.src_point == edge[0] and self.dst_point == edge[1]
+
     
     def __hash__(self):
         return hash((self.src_point,self.dst_point))

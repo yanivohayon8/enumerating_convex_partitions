@@ -1,6 +1,6 @@
 from asyncio.windows_events import NULL
 import numpy as np
-from shapely.geometry import Polygon
+from src.data_structures.shapes import Polygon
 # from networkx import DiGraph
 # from src.data_structures import substract_points
 from src.data_structures.graph import Edge,Graph
@@ -211,7 +211,7 @@ def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
     sorted_verticies.pop(-1)
 
     for vertex in sorted_verticies:
-        input_edges = visual_graph.get_input_edges(vertex)
+        input_edges = visual_graph.get_input_edges(Point(vertex))
 
         for input_edge in input_edges:
             max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])

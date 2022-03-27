@@ -1,3 +1,20 @@
+from shapely.geometry import Polygon as ShapelyPolygon
+from functools import reduce
+
+class Polygon(ShapelyPolygon):
+    def __str__(self) -> str:
+        xs,ys = self.exterior.coords.xy
+        verticies = [(x,y) for x,y in zip(xs,ys)]
+        return reduce(lambda acc,vert_str: acc + vert_str+";",\
+                list(map(lambda x: str(x),verticies)),"")
+    
+
+
+
+
+
+
+
 # from src.data_structures.graph import Graph,Edge
 # from matplotlib.patches import Polygon as MatplotlibPolygon
 # from matplotlib.collections import PatchCollection

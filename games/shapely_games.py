@@ -1,4 +1,29 @@
-from shapely.geometry import Polygon,Point,MultiPoint
+from src.data_structures.shapes import Polygon,Point,MultiPoint,LineString,MultiLineString
+import matplotlib.pyplot as plt
+
+poly = Polygon([(1,2),(3,4),(5,6)])
+xs,ys = poly.exterior.coords.xy
+[(x,y) for x,y in zip(xs,ys)]
+
+ax = plt.subplot()
+line = LineString([(0, 0), (1, 1)])
+x, y = line.xy
+ax.plot(x, y)
+plt.show()
+
+lines = MultiLineString([((1,2),(3,4)),((5,6),(7,8))])
+
+# plot_lines(lines)
+xs = []
+ys = []
+for l in list(lines.geoms):
+    x,y = l.coords
+    xs.append(x)
+    ys.append(y)
+
+plt.plot(xs,ys)
+
+plt.show()
 
 mp = MultiPoint([(1,1),(2,3)])
 
@@ -9,8 +34,7 @@ a = list(mp.coords)
 
 as_tuple = Point((2,2))
 
-poly = Polygon([(1,1),(2,2),(6,1)])
-bla = poly.exterior.coords.xy
+
 
 p1  = Point(1,1)
 p2  = Point(2,2)
