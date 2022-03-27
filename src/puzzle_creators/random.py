@@ -82,7 +82,7 @@ class RestoreRandom(RandomCreator):
             for line in f:
                 if "Next Polygon to create is" in line:
                     polygon = []
-                    vertices_str = re.findall("(\([\d,\-.]*\);)",line) # E.g.(1.0,1.0);(11.0,5.0);(5.0,5.0);(2.0,4.0);
+                    vertices_str = re.findall("(\([\s\d,\-.]*\);)",line) # E.g.(1.0,1.0);(11.0,5.0);(5.0,5.0);(2.0,4.0);
                     for vert_str in vertices_str:
                         vert_str = re.sub(r"[;()]","",vert_str)
                         values = vert_str.split(",")

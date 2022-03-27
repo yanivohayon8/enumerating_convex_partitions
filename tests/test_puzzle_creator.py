@@ -37,7 +37,7 @@ class TestRandomCreator(unittest.TestCase):
 
     def test_example_01_restored(self):
         
-        log_path = setup_logger.get_cwd()+"/data/debug/2403insertSL/run.log" #setup_logger.get_debug_log_file()
+        log_path = setup_logger.get_cwd()+"/data/debug/TBN_01_01/run.log" #setup_logger.get_debug_log_file()
 
         creator = RestoreRandom(log_path)
 

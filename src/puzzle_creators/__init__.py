@@ -48,17 +48,6 @@ class PuzzleCreator():
             point = Point(row[0],row[1])
             role_points[row[2]].append(point)
         
-    # def plot_scratch(self,ax):
-    #     '''
-    #         Plot the frame_anchor, frame, interior lines prior to the puzzle creation
-    #     '''
-    #     scatter_points(ax,self.interior_points,color="blue")
-    #     scatter_points(ax,self.frame_anchor_points,color="red")        
-
-    #     frame_polygon = Polygon(self.frame_points)
-    #     mat_polygon = frame_polygon.get_as_matplotlib(edgecolor=[0,0,0],facecolor=[1,1,1],lw=2,fill=False)
-    #     Polygon.plot_polygons(ax,[mat_polygon])
-
     def plot_puzzle(self,fig,ax):
         scatter_points(ax,self.interior_points,color="blue")
         scatter_points(ax,self.frame_anchor_points,color="red")        
@@ -117,67 +106,16 @@ class PuzzleCreator():
         logger.debug(f"The points that are visible are {str(visible_points_str)}")
         return visible_points
 
-        # '''Sweep Line algorithm here'''
-        # # debug
-        # logger.debug("Filter point which are not visible : edge is block them from the view")
-        # debug_graph = Graph()
-        # for point in space:
-        #     debug_graph.insert_edge(Edge(kernel_point,point))
-        # fig,ax = plt.subplots()
-        # ax.title.set_text(f"Debug sweep line at {str(kernel_point)}")
-        # debug_graph.plot_directed(ax,color="red") # way to plot the graph
-        # self.connections_graph.plot_directed(ax)
-        # fig.savefig(debug_dir + "/Last sweep Line graph.png")
-        # plt.close()
-        
-        # conn_graph_edges = self.connections_graph.edges
-        # space_copy = space.copy()
-        # for point in space_copy:
-        #     # logger.debug(f"Check if point {str(point)} is visible")
-        #     ker_to_point_edge = Edge(kernel_point,point)
-        #     for edge in conn_graph_edges:
-        #         # This condition need to be more sohpisticated
-
-        #         # Enable reuse of edge
-        #         if ker_to_point_edge == edge:
-        #             break
-        #         try:
-        #             inter_point = ker_to_point_edge.find_intersection_point(edge)
-
-        #             # If the origin of the edge sourced in kernel 
-        #             # is not intersected because of its origins
-        #             if inter_point is None:
-        #                 continue
-                    
-        #             if edge.is_endpoint(inter_point):
-        #                 continue
-
-        #             if inter_point != kernel_point:
-        #                 # logger.debug(f"Point {str(point)} is not reachable")
-        #                 space.remove(point)
-        #                 break
-        #         except ZeroDivisionError as err:
-        #             continue
-        
-        # space_str = reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),space)))
-        # logger.debug(f"The points that are visible are {str(space_str)}")
-        # return space
-
 
     def _preprocess(self,direction):
         self.interior_points = sorted(self.interior_points,key=lambda p: p.x,reverse=direction<0)
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
-
-
-    
     
     def create(self):
         logger.info("Starts create function")
-        # for point in self.interior_points + self.frame_anchor_points:
-        #     self.connections_graph.insert_vertex(point)
-
         scan_direction = Direction.left
         self._preprocess(scan_direction.value)
+
         while True:
             logger.info(f"Start to scan board to from {str(scan_direction.name)}")
             for kernel_point in self.interior_points:
@@ -200,16 +138,10 @@ class PuzzleCreator():
 
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
-                        # update maps
-                        # self.connections_graph.union(polygon)
-                        # fig,ax = plt.subplots()
-                        # ax.title.set_text("Debug Connectivity Graph")
-                        # self.connections_graph.plot_directed(ax) # way to plot the graph
-                        # fig.savefig(debug_dir + "/Last Connectivity Graph.png")
-                        # plt.close()
                         self.pieces.append(polygon)
                 except ValueError as err:
                     logger.warning(f"Failed to create polygon from point {str(kernel_point)}. The scan direction is from {scan_direction.name}")     
+                    logger.exception(err)
                 except Exception as err:
                     logger.exception(err)
                     raise err 
