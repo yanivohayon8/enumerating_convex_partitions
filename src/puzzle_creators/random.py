@@ -1,5 +1,5 @@
 from src.puzzle_creators import PuzzleCreator
-from shapely.geometry import Point
+from src.data_structures import Point
 from shapely.geometry import Polygon
 from src.data_structures.graph import Edge
 import random

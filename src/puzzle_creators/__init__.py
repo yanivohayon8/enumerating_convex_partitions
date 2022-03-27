@@ -1,17 +1,18 @@
-from turtle import color, right
-from numpy import poly
+# from turtle import color, right
+# from numpy import poly
 import pandas as pd
-from shapely.geometry import Point
-from shapely.geometry import Polygon
+from src.data_structures import Point,scatter_points,poly_as_matplotlib,plot_polygons
+from shapely.geometry import Polygon#,MultiPoint
 from src.data_structures.graph import Graph,Edge
 import matplotlib.pyplot as plt
 
 from enum import Enum
 from src.hypothesis import rgon_1988 as Rgon1988
 from src.consts import PLOT_COLORS
-from src.algorithms.sweep_line.sweep_line import SweepLine
+# from src.algorithms.sweep_line.sweep_line import SweepLine
 import logging
 from src import setup_logger
+from functools import reduce
 
 
 class Direction(Enum):
@@ -34,7 +35,7 @@ class PuzzleCreator():
     
     def load_sampled_points(self,file_path):
         role_points = {
-            "interior":self.interior_points,
+            "interior": self.interior_points,
             "frame_anchor":self.frame_anchor_points,
             "frame":self.frame_points
         }
@@ -44,28 +45,28 @@ class PuzzleCreator():
             point = Point(row[0],row[1])
             role_points[row[2]].append(point)
         
-    def plot_scratch(self,ax):
-        '''
-            Plot the frame_anchor, frame, interior lines prior to the puzzle creation
-        '''
-        Point.scatter_points(ax,self.interior_points,color="blue")
-        Point.scatter_points(ax,self.frame_anchor_points,color="red")        
+    # def plot_scratch(self,ax):
+    #     '''
+    #         Plot the frame_anchor, frame, interior lines prior to the puzzle creation
+    #     '''
+    #     scatter_points(ax,self.interior_points,color="blue")
+    #     scatter_points(ax,self.frame_anchor_points,color="red")        
 
-        frame_polygon = Polygon(self.frame_points)
-        mat_polygon = frame_polygon.get_as_matplotlib(edgecolor=[0,0,0],facecolor=[1,1,1],lw=2,fill=False)
-        Polygon.plot_polygons(ax,[mat_polygon])
+    #     frame_polygon = Polygon(self.frame_points)
+    #     mat_polygon = frame_polygon.get_as_matplotlib(edgecolor=[0,0,0],facecolor=[1,1,1],lw=2,fill=False)
+    #     Polygon.plot_polygons(ax,[mat_polygon])
 
     def plot_puzzle(self,fig,ax):
-        Point.scatter_points(ax,self.interior_points,color="blue")
-        Point.scatter_points(ax,self.frame_anchor_points,color="red")        
+        scatter_points(ax,self.interior_points,color="blue")
+        scatter_points(ax,self.frame_anchor_points,color="red")        
         frame_polygon = Polygon(self.frame_points)
-        frame_mat_polygon = frame_polygon.get_as_matplotlib(edgecolor="black",facecolor='white',lw=2)
-        puzzle_mat_polygons = [piece.get_as_matplotlib(color=PLOT_COLORS[i%len(PLOT_COLORS)]) for i,piece in enumerate(self.pieces)]
+        frame_mat_polygon = poly_as_matplotlib(frame_polygon,edgecolor="black",facecolor='white',lw=2)
+        puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)]) for i,piece in enumerate(self.pieces)]
         puzzle_mat_polygons.insert(0, frame_mat_polygon)
-        Polygon.plot_polygons(ax,puzzle_mat_polygons)
+        plot_polygons(ax,puzzle_mat_polygons)
 
     def _get_accessible_points(self,kernel_point,direction=1):
-        logger.info("Filter point in space to get reachable points")
+        logger.info("Start _get_accessible_points function. Filter point in space to get reachable points")
         logger.debug("Filter point that are not ahead the scanning direction")
         # on default - ahead to the left
         filter_condition = lambda item: item.x>=kernel_point.x and item!=kernel_point  
@@ -95,7 +96,7 @@ class PuzzleCreator():
         conn_graph_edges = self.connections_graph.edges
         space_copy = space.copy()
         for point in space_copy:
-            logger.debug(f"Check if point {str(point)} is visible")
+            # logger.debug(f"Check if point {str(point)} is visible")
             ker_to_point_edge = Edge(kernel_point,point)
             for edge in conn_graph_edges:
                 # This condition need to be more sohpisticated
@@ -115,12 +116,14 @@ class PuzzleCreator():
                         continue
 
                     if inter_point != kernel_point:
-                        logger.debug(f"Point {str(point)} is not reachable")
+                        # logger.debug(f"Point {str(point)} is not reachable")
                         space.remove(point)
                         break
                 except ZeroDivisionError as err:
                     continue
-
+        
+        space_str = reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),space)))
+        logger.debug(f"The points that are visible are {str(space_str)}")
         return space
 
 
@@ -148,8 +151,10 @@ class PuzzleCreator():
         scan_direction = Direction.left
         self._preprocess(scan_direction.value)
         while True:
+            logger.info(f"Start to scan board to from {str(scan_direction.name)}")
             for interior_point in self.interior_points:
                 try:
+                    logger.info(f"Next interior point potential to origin a polygon is {str(interior_point)}")
                     continuity_edges,edges_max_chain_length = self._get_surface(interior_point,direction=scan_direction.value)
                     num_edges = self._get_next_polygon_num_edges(continuity_edges,edges_max_chain_length)
                     polygon = self._create_rgon(interior_point,num_edges,edges_max_chain_length,continuity_edges)        
@@ -157,14 +162,15 @@ class PuzzleCreator():
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
                         # update maps
-                        polygon_grph = polygon.get_graph()
-                        self.connections_graph.union(polygon_grph)
+                        self.connections_graph.union(polygon)
                         fig,ax = plt.subplots()
                         ax.title.set_text("Debug Connectivity Graph")
                         self.connections_graph.plot_directed(ax) # way to plot the graph
                         fig.savefig(debug_dir + "/Last Connectivity Graph.png")
                         plt.close()
                         self.pieces.append(polygon)
+                except ValueError as err:
+                    logger.warning(f"Failed to create polygon from point {str(interior_point)}. The scan direction is from {scan_direction.name}")     
                 except Exception as err:
                     logger.exception(err)
                     raise err 

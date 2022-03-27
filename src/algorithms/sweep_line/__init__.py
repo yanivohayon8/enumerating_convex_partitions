@@ -1,7 +1,7 @@
 from email.mime import base
 from src.data_structures.lines import Segment as GeneralSegment
 from src.hypothesis.rgon_1988 import turn
-from shapely.geometry import Point
+from src.data_structures import Point
 
 
 def sorting_order(point1,point2):

@@ -1,4 +1,4 @@
-from shapely.geometry import Point, binary_tree  as binary_tree
+from src.data_structures import Point, binary_tree  as binary_tree
 from functools import cmp_to_key
 from src.algorithms.sweep_line import Segment, sorting_order
 from functools import reduce

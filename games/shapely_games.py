@@ -1,4 +1,11 @@
-from shapely.geometry import Polygon,Point
+from shapely.geometry import Polygon,Point,MultiPoint
+
+mp = MultiPoint([(1,1),(2,3)])
+
+for p in list(mp):
+    print(p)
+
+a = list(mp.coords)
 
 as_tuple = Point((2,2))
 

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from shapely.geometry import Point
+from src.data_structures import Point
 
 '''DEPRECATED MODULE'''
 

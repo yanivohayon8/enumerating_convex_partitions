@@ -1,4 +1,4 @@
-from shapely.geometry import Point
+from src.data_structures import Point
 # from src.hypothesis.rgon_1988 import turn
 
 class Line(object):

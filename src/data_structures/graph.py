@@ -1,6 +1,6 @@
-from shapely.geometry import Point
+from src.data_structures import Point
 from src.data_structures.lines import Line
-
+from shapely.geometry import Polygon
 
 class Edge(object):
     def __init__(self,*args):
@@ -149,9 +149,16 @@ class Graph(object):
     def get_output_edges(self,src_vertex):
         return [edge for edge in self.edges if edge.src_point == src_vertex]
 
-    def union(self,graph):
-        self.vertecies = self.vertecies.union(graph.vertecies)
-        self.edges = self.edges.union(graph.edges)
+    def union(self,other):
+
+        if isinstance(other,Polygon):
+            verts = list(other.exterior.coords)
+            for i in range(len(verts)-1):
+                self.insert_edge(Edge(Point(verts[i]),Point(verts[i+1])))
+
+        if isinstance(other,Graph):
+            self.vertecies = self.vertecies.union(other.vertecies)
+            self.edges = self.edges.union(other.edges)
         # for vert in graph.vertecies:
         #     self.insert_vertex(vert)
         # for edge in graph.edges:

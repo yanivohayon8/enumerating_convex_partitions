@@ -12,7 +12,7 @@ import pandas as pd
 from src.algorithms.sweep_line.sweep_line import SweepLine
 import unittest
 from src.data_structures.lines import Segment 
-from shapely.geometry import Point
+from src.data_structures import Point
 
 class TestSweepLine(unittest.TestCase):
 

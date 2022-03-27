@@ -7,6 +7,13 @@ from src.data_structures.graph import Edge,Graph
 from src.data_structures import Point
 
 import random
+import logging
+from src import setup_logger
+
+
+log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
+logger = logging.getLogger("logger.rgon_1988")
+logger.addHandler(log_handler)
 
 def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
     '''         |    p
@@ -38,11 +45,13 @@ def sort_points_clockwise(center_point,subspace_points):
     return pos_angle_points + neg_angle_points
 
 def get_stared_shape_polygon(kernel_point,subspace_points):
+    logger.info("Start function get_stared_shape_polygon")
     polygon_points = [kernel_point]
     [polygon_points.append(Point(point.x,point.y)) for point in sort_points_clockwise(kernel_point,
                                                                                     subspace_points)]
-
-    return Polygon(polygon_points)
+    stared_polygon = Polygon(polygon_points)
+    logger.debug(f"The stared polygon is  {str(list(stared_polygon.exterior.coords))}")
+    return stared_polygon
 
 def get_points_horizontal_ahead(src_point,space_points,direction="left"):
     '''
@@ -62,6 +71,8 @@ def get_visualization_graph(kernel_point,stared_polygon):
         This method implement the "Visibility" procedure in the rgon paper
 
     '''
+    logger.info("Start function get_visualization_graph")
+
     # copy_polygon = stared_polygon.make_copy()
     # copy_polygon.reverse_direction() # This is under the assumption it came from came stared polygon function above
     # copy_polygon.remove_vertex(kernel_point)
@@ -129,6 +140,8 @@ def get_convex_chain_connectivity(visual_graph):
         Assumption - we get the visualizatin graph from the visualizatin method above 
         and the vertecies are sorted clockwise as demanded
     '''
+    logger.info("Start function get_convex_chain_connectivity")
+
     continuity_edges = {}
 
     for edge in visual_graph.edges:
@@ -165,33 +178,37 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
     return continuity_edges
 
 
-def get_edges_max_chain_length(visual_graph,continuity_edges):
-    '''
-        This method implements the procedure for finding the longest convex chain for an edge L_e
-    '''
-    edges_max_chain_length = {}
+# def get_edges_max_chain_length(visual_graph,continuity_edges):
+#     '''
+#         This method implements the procedure for finding the longest convex chain for an edge L_e
+#     '''
+#     edges_max_chain_length = {}
 
-    for edge in visual_graph.edges:
-        edges_max_chain_length[str(edge)] = 0
+#     for edge in visual_graph.edges:
+#         edges_max_chain_length[str(edge)] = 0
 
 
-    for vertex in visual_graph.vertecies:
-        input_edges = visual_graph.get_input_edges(vertex)
+#     for vertex in visual_graph.vertecies:
+#         input_edges = visual_graph.get_input_edges(vertex)
 
-        for input_edge in input_edges:
-            max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])
-            edges_max_chain_length[str(input_edge)] = max_length + 1
+#         for input_edge in input_edges:
+#             max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])
+#             edges_max_chain_length[str(input_edge)] = max_length + 1
     
-    return edges_max_chain_length
+#     return edges_max_chain_length
     
 def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
+    logger.info("Start function get_edges_max_chain_length_new")
+
     edges_max_chain_length = {}
 
     for edge in visual_graph.edges:
         edges_max_chain_length[str(edge)] = 0
 
-    sorted_verticies = get_stared_shape_polygon(kernel_point,visual_graph.vertecies).vertcies
+    sorted_verticies = list(get_stared_shape_polygon(kernel_point,visual_graph.vertecies).exterior.coords)#.vertcies
+    # removing kernel
     sorted_verticies.pop(0)
+    sorted_verticies.pop(-1)
 
     for vertex in sorted_verticies:
         input_edges = visual_graph.get_input_edges(vertex)
