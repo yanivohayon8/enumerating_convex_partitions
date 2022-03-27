@@ -92,13 +92,23 @@ class PuzzleCreator():
         ax.title.set_text(f"Debug accesible point")
         self.plot_puzzle(fig,ax)
         visible_points = []
-        for point in space:
-            ker_to_p_line = LineString([kernel_point,point]) 
+        ker_to_p_lines = [LineString([kernel_point,point])for point in space]
+        for point,curr_ker_to_p_line in zip(space,ker_to_p_lines):
 
-            if all( not ker_to_p_line.overlaps(piece) for piece in self.pieces):
-                visible_points.append(point)
-                x, y = ker_to_p_line.xy
-                ax.plot(x, y,color="black")
+            # If the kernel, current point and other point forms a line, 
+            # the far distant point is not visible
+            if any(curr_ker_to_p_line.covers(line) and not line.equals(curr_ker_to_p_line)\
+                for line in ker_to_p_lines):
+                continue
+
+            if any((curr_ker_to_p_line.crosses(piece) or curr_ker_to_p_line.covered_by(piece))\
+                for piece in self.pieces):
+                continue
+            
+            # If it does visible
+            visible_points.append(point)
+            x, y = curr_ker_to_p_line.xy
+            ax.plot(x, y,color="black")
 
         fig.savefig(debug_dir + f"/Last debug accesible point.png")
         plt.close()
