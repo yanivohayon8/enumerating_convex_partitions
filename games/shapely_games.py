@@ -1,5 +1,19 @@
-from src.data_structures.shapes import Polygon,Point,MultiPoint,LineString,MultiLineString
+import sys
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+
+from src.data_structures.shapes import Polygon
+from src.data_structures import Point
+from shapely.geometry import MultiPoint,LineString,MultiLineString
 import matplotlib.pyplot as plt
+
+tr1 = Polygon([(1,1),(2,2),(3,3)])
+tr2 = Polygon([(2,2),(1,1),(3,3)])
+print(list(tr1.exterior.coords))
+print(list(tr2.exterior.coords))
 
 poly = Polygon([(1,2),(3,4),(5,6)])
 xs,ys = poly.exterior.coords.xy

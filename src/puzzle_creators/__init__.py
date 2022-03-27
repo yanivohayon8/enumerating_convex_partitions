@@ -33,8 +33,8 @@ class PuzzleCreator():
         self.interior_points = []
         self.frame_anchor_points = [] #frame anchor points
         self.frame_points = []
-        # self.connections_graph = Graph()
         self.pieces = [] #MultiPolygon
+        self.is_angles_convex = {}
     
     def load_sampled_points(self,file_path):
         role_points = {
@@ -86,11 +86,12 @@ class PuzzleCreator():
 
             # If the kernel, current point and other point forms a line, 
             # the far distant point is not visible
-            if any(curr_ker_to_p_line.covers(line) and not line.equals(curr_ker_to_p_line)\
+            if any(curr_ker_to_p_line.contains(line) and not line.equals(curr_ker_to_p_line)\
                 for line in ker_to_p_lines):
                 continue
-
-            if any((curr_ker_to_p_line.crosses(piece) or curr_ker_to_p_line.covered_by(piece))\
+            
+            # if other piece is blocking view to point
+            if any((curr_ker_to_p_line.crosses(piece) and not curr_ker_to_p_line.touches(piece))\
                 for piece in self.pieces):
                 continue
             
@@ -107,14 +108,17 @@ class PuzzleCreator():
         return visible_points
 
 
-    def _preprocess(self,direction):
+    def _set_direction_scan(self,direction):
         self.interior_points = sorted(self.interior_points,key=lambda p: p.x,reverse=direction<0)
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
     
     def create(self):
         logger.info("Starts create function")
         scan_direction = Direction.left
-        self._preprocess(scan_direction.value)
+        self._set_direction_scan(scan_direction.value)
+
+        for point in self.interior_points:
+            self.is_angles_convex[str(point)] = False
 
         while True:
             logger.info(f"Start to scan board to from {str(scan_direction.name)}")
@@ -124,12 +128,17 @@ class PuzzleCreator():
                     # observe surface data
                     points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
                     points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
+
+                    if len(points_to_connect) < 2:
+                        logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
+                        continue
+
                     stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
                     visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
-                    fig,ax = plt.subplots()
-                    visual_graph_polygon.plot_directed(ax) # way to plot the graph
-                    fig.savefig(debug_dir + "/Last visibility graph.png")
-                    plt.close()
+                    # fig,ax = plt.subplots()
+                    # visual_graph_polygon.plot_directed(ax) # way to plot the graph
+                    # fig.savefig(debug_dir + "/Last visibility graph.png")
+                    # plt.close()
                     continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
                     edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
 
@@ -139,21 +148,61 @@ class PuzzleCreator():
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
                         self.pieces.append(polygon)
+                    
+                    self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+
                 except ValueError as err:
                     logger.warning(f"Failed to create polygon from point {str(kernel_point)}. The scan direction is from {scan_direction.name}")     
                     logger.exception(err)
                 except Exception as err:
                     logger.exception(err)
                     raise err 
+                
+                fig,ax = plt.subplots()
+                self.plot_puzzle(fig,ax)
+                fig.savefig(debug_dir + "/results.png")
+                plt.close()
 
-            if self._is_finished_scan():
+            if self._is_finished_scan() and \
+                all(self.is_angles_convex[str(point)] for point in self.interior_points):
                 break
 
             scan_direction = Direction(scan_direction.value * (-1))
-            self._preprocess(scan_direction.value)
+            self._set_direction_scan(scan_direction.value)
         
         logger.info("Finish to create pieces")
     
+
+    def _is_edges_angles_convex(self,center_point):
+        '''Get pieces containing center point'''
+        center_point_coords = list(center_point.coords)[0]
+        pieces_contain_point = [list(piece.exterior.coords) for piece in self.pieces \
+                                if center_point_coords in list(piece.exterior.coords)]
+
+        '''Get neighbor points - sharing an edge with center_point'''
+        neighbors = []
+        for piece_coords in pieces_contain_point:
+            index = piece_coords.index(center_point_coords)
+            left_neighbor_index = index-1
+            right_neighbot_index = index+1
+            # if it is the origin of the piece it will apear twice in the coordinates
+            # The polygon has at least 3 different verticies
+            if index == 0: #or index==len(piece_coords) - 1:
+                left_neighbor_index = -2
+                right_neighbot_index = 1
+            
+            neighbors.append(Point(piece_coords[left_neighbor_index]))
+            neighbors.append(Point(piece_coords[right_neighbot_index]))
+
+        angles = [Rgon1988.calc_angle_around_point(center_point,point) for point in neighbors]
+        angles.sort()
+        angles = angles + [angles[0]]
+        is_angles_convex = all(ang2-ang1<180 for ang1, ang2 in zip(angles, angles[1:]))
+                        
+        return is_angles_convex
+
+
+
     def _is_finished_scan(self):
         raise NotImplementedError("need to be implemented")
         
