@@ -91,7 +91,8 @@ class PuzzleCreator():
                 continue
             
             # if other piece is blocking view to point
-            if any((curr_ker_to_p_line.crosses(piece) and not curr_ker_to_p_line.touches(piece))\
+            if any((curr_ker_to_p_line.crosses(piece) and not curr_ker_to_p_line.touches(piece)) or curr_ker_to_p_line.within(piece) \
+            # if any((curr_ker_to_p_line.within(piece))\
                 for piece in self.pieces):
                 continue
             
