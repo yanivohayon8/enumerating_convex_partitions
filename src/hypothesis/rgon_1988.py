@@ -9,11 +9,11 @@ from src.data_structures import Point
 import random
 import logging
 from src import setup_logger
-
-
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.rgon_1988")
 logger.addHandler(log_handler)
+
+
 
 def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
     '''         |    p
@@ -50,7 +50,6 @@ def get_stared_shape_polygon(kernel_point,subspace_points):
     [polygon_points.append(Point(point.x,point.y)) for point in sort_points_clockwise(kernel_point,
                                                                                     subspace_points)]
     stared_polygon = Polygon(polygon_points)
-    logger.debug(f"The stared polygon is  {str(list(stared_polygon.exterior.coords))}")
     return stared_polygon
 
 def get_points_horizontal_ahead(src_point,space_points,direction="left"):

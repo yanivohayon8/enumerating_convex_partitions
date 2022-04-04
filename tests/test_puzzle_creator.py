@@ -5,7 +5,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import unittest
-from src.puzzle_creators import PuzzleCreator
+from src.puzzle_creators.skeleton import PuzzleCreator
 from src.puzzle_creators.random import RandomCreator,RestoreRandom
 import matplotlib.pyplot as plt
 import logging
@@ -37,8 +37,17 @@ class TestRandomCreator(unittest.TestCase):
 
     def test_example_01_restored(self):
         
-        log_path = setup_logger.get_cwd()+"/data/debug/TBN_01_01/run.log" #setup_logger.get_debug_log_file()
+        debug_dir = setup_logger.get_debug_lastrun_dir()
+        for file in os.scandir(os.path.join(debug_dir,"results")):
+            os.remove(file.path)
 
+        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-before-filter")):
+            os.remove(file.path)
+
+        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-filtered")):
+            os.remove(file.path)    
+
+        log_path = setup_logger.get_cwd()+"/data/debug/TBN_01_02/run.log" #setup_logger.get_debug_log_file()
         creator = RestoreRandom(log_path)
 
         # Override last running directory
@@ -48,7 +57,6 @@ class TestRandomCreator(unittest.TestCase):
         logger.debug("Starting....")
 
         creator.load_sampled_points(self.files_path + self.example_name)
-        debug_dir = setup_logger.get_debug_lastrun_dir()
         fig, ax = plt.subplots()
 
         try:
@@ -63,8 +71,18 @@ class TestRandomCreator(unittest.TestCase):
 
     def test_example_01_logged(self):
         
-        # Override last running directory
+
         debug_dir = setup_logger.get_debug_lastrun_dir()
+        for file in os.scandir(os.path.join(debug_dir,"results")):
+            os.remove(file.path)
+
+        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-before-filter")):
+            os.remove(file.path)
+
+        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-filtered")):
+            os.remove(file.path)    
+            
+        # Override last running directory
         log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file(),mode="w")
         logger = logging.getLogger("logger.test_puzzle_creator")
         logger.addHandler(log_handler)

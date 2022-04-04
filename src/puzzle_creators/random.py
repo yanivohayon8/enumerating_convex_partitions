@@ -1,4 +1,4 @@
-from src.puzzle_creators import PuzzleCreator
+from src.puzzle_creators.skeleton import PuzzleCreator
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 from src.data_structures.graph import Edge
@@ -33,9 +33,9 @@ class RandomCreator(PuzzleCreator):
             return None
         
         next_edge = Edge(random.choice(potential_start_edges))
+        rgon.append(next_edge.src_point)
 
         while True:
-            rgon.append(next_edge.src_point)
             rgon.append(next_edge.dst_point)
             r-=1
 
