@@ -128,13 +128,14 @@ class PuzzleCreator():
 
                 try:
                     logger.info(f"n_iter: {str(n_iter)}. Next interior point potential to origin a polygon is {str(kernel_point)}")
+                    self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
                     # observe surface data
                     points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
                     points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
 
                     if len(points_to_connect) < 2:
                         logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
-                        self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+                        # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
                         continue
                     
                     stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
@@ -154,11 +155,21 @@ class PuzzleCreator():
 
                     for edge,line in zip(vs_grph_edges,lines):
                         for piece in self.pieces:
-                            if line.covered_by(piece):
-                            # if line.crosses(piece) and not line.touches(piece):
-                                logger.debug(f"Edge {str(edge)} is covered by piece {str(piece)} ,so remove it from visibility graph")
+                            
+                            if line.crosses(piece) and not line.touches(piece):
+                                logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
                                 visual_graph_polygon.remove_edge(edge)
                                 break
+
+                            if line.within(piece):
+                                logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
+                                visual_graph_polygon.remove_edge(edge)
+                                break
+
+                            # if line.covered_by(piece):
+                            #     logger.debug(f"Edge {str(edge)} is covered by piece {str(piece)} ,so remove it from visibility graph")
+                            #     visual_graph_polygon.remove_edge(edge)
+                            #     break
 
                     fig,ax = plt.subplots()
                     self.plot_puzzle(fig,ax)
@@ -233,9 +244,9 @@ class PuzzleCreator():
             return False
 
         angles = [Rgon1988.calc_angle_around_point(center_point,point) for point in neighbors]
+        angles = list(map(lambda ang: ang if ang>=0 else 360+ang,angles))
         angles.sort()
-        angles = angles + [angles[0]]
-        is_angles_convex = all(ang2-ang1<180 for ang1, ang2 in zip(angles, angles[1:]))
+        is_angles_convex = all(ang2-ang1>180 for ang1, ang2 in zip(angles, angles[1:] + [angles[0]]))
                         
         return is_angles_convex
 
