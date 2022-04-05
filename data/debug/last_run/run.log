@@ -16,8 +16,8 @@ logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
 logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
 logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
 logger.random_creator - DEBUG - Random int number in range [1,3]
-logger.random_creator - DEBUG - Randomizing results is 3
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0);
+logger.random_creator - DEBUG - Randomizing results is 4
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(10.0, 20.0);
 logger.puzzle_creator - INFO - n_iter: 2. Next interior point potential to origin a polygon is (10.0,90.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
@@ -28,7 +28,6 @@ logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
 logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(10.0, 90.0), (100.0, 100.0), (60.0, 90.0), (10.0, 20.0), (10.0, 90.0)]
 logger.rgon_1988 - INFO - Start function get_visualization_graph
 logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.puzzle_creator - DEBUG - Edge (10.0,20.0)>>(60.0,90.0) is within piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
 logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
 logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
 logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
@@ -41,9 +40,9 @@ logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(60.0,90.0);(80.0,50.0);(100.0,0.0);(100.0,100.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 2 points are visible: ;(80.0,50.0);(100.0,0.0);
+logger.puzzle_creator - DEBUG - 3 points are visible: ;(80.0,50.0);(100.0,0.0);(100.0,100.0);
 logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(60.0, 20.0), (80.0, 50.0), (100.0, 0.0), (60.0, 20.0)]
+logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(60.0, 20.0), (100.0, 100.0), (80.0, 50.0), (100.0, 0.0), (60.0, 20.0)]
 logger.rgon_1988 - INFO - Start function get_visualization_graph
 logger.puzzle_creator - INFO - Filter edges covered by exist pieces
 logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
@@ -58,18 +57,8 @@ logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(60.0,20.0);(80.0,50.0);(100.0,0.0);(100.0,100.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 2 points are visible: ;(80.0,50.0);(100.0,100.0);
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(60.0, 90.0), (100.0, 100.0), (80.0, 50.0), (60.0, 90.0)]
-logger.rgon_1988 - INFO - Start function get_visualization_graph
-logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
-logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
-logger.random_creator - DEBUG - Random int number in range [1,1]
-logger.random_creator - DEBUG - Randomizing results is 3
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (60.0, 90.0);(80.0, 50.0);(100.0, 100.0);(60.0, 90.0);
+logger.puzzle_creator - DEBUG - 1 points are visible: ;(100.0,100.0);
+logger.puzzle_creator - DEBUG - Not enough points to connect (1 < 2)
 logger.puzzle_creator - INFO - n_iter: 5. Next interior point potential to origin a polygon is (80.0,50.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
@@ -87,41 +76,50 @@ logger.random_creator - DEBUG - Randomizing the number of edges to travel on the
 logger.random_creator - DEBUG - Random int number in range [1,1]
 logger.random_creator - DEBUG - Randomizing results is 3
 logger.puzzle_creator - DEBUG - Next Polygon to create is : (80.0, 50.0);(100.0, 0.0);(100.0, 100.0);(80.0, 50.0);
+logger.puzzle_creator - INFO - Check whether to stop board scanning or not
+logger.puzzle_creator - DEBUG - Around the center point (10.0,20.0)                             the points (60.0,20.0) and (100.0,100.0) angle is 360.0-(60.0,20.0)=318.3664606634298>180
 logger.puzzle_creator - INFO - Start to scan board to from right
 logger.puzzle_creator - INFO - n_iter: 6. Next interior point potential to origin a polygon is (80.0,50.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(0.0,100.0);(0.0,0.0);(10.0,90.0);(10.0,20.0);(60.0,90.0);(60.0,20.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 4 points are visible: ;(0.0,0.0);(10.0,20.0);(60.0,90.0);(60.0,20.0);
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(80.0, 50.0), (60.0, 90.0), (10.0, 20.0), (0.0, 0.0), (60.0, 20.0), (80.0, 50.0)]
-logger.rgon_1988 - INFO - Start function get_visualization_graph
-logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.puzzle_creator - DEBUG - Edge (10.0,20.0)>>(60.0,90.0) is within piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
-logger.puzzle_creator - DEBUG - Edge (0.0,0.0)>>(60.0,90.0) is crossed by piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
-logger.puzzle_creator - DEBUG - Edge (60.0,20.0)>>(60.0,90.0) is crossed by piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
-logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
-logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
-logger.random_creator - DEBUG - Random int number in range [1,2]
-logger.random_creator - DEBUG - Randomizing results is 4
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (80.0, 50.0);(0.0, 0.0);(10.0, 20.0);(80.0, 50.0);
+logger.puzzle_creator - DEBUG - 1 points are visible: ;(60.0,20.0);
+logger.puzzle_creator - DEBUG - Not enough points to connect (1 < 2)
 logger.puzzle_creator - INFO - n_iter: 7. Next interior point potential to origin a polygon is (60.0,20.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(0.0,100.0);(0.0,0.0);(10.0,90.0);(10.0,20.0);(60.0,90.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 1 points are visible: ;(0.0,0.0);
-logger.puzzle_creator - DEBUG - Not enough points to connect (1 < 2)
+logger.puzzle_creator - DEBUG - 2 points are visible: ;(0.0,0.0);(10.0,20.0);
+logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
+logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(60.0, 20.0), (10.0, 20.0), (0.0, 0.0), (60.0, 20.0)]
+logger.rgon_1988 - INFO - Start function get_visualization_graph
+logger.puzzle_creator - INFO - Filter edges covered by exist pieces
+logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
+logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
+logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
+logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
+logger.random_creator - DEBUG - Random int number in range [1,1]
+logger.random_creator - DEBUG - Randomizing results is 3
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (60.0, 20.0);(0.0, 0.0);(10.0, 20.0);(60.0, 20.0);
 logger.puzzle_creator - INFO - n_iter: 8. Next interior point potential to origin a polygon is (60.0,90.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(0.0,100.0);(0.0,0.0);(10.0,90.0);(10.0,20.0);(60.0,20.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 1 points are visible: ;(10.0,90.0);
-logger.puzzle_creator - DEBUG - Not enough points to connect (1 < 2)
+logger.puzzle_creator - DEBUG - 2 points are visible: ;(10.0,90.0);(10.0,20.0);
+logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
+logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(60.0, 90.0), (10.0, 90.0), (10.0, 20.0), (60.0, 90.0)]
+logger.rgon_1988 - INFO - Start function get_visualization_graph
+logger.puzzle_creator - INFO - Filter edges covered by exist pieces
+logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
+logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
+logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
+logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
+logger.random_creator - DEBUG - Random int number in range [1,1]
+logger.random_creator - DEBUG - Randomizing results is 3
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (60.0, 90.0);(10.0, 20.0);(10.0, 90.0);(60.0, 90.0);
 logger.puzzle_creator - INFO - n_iter: 9. Next interior point potential to origin a polygon is (10.0,20.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
@@ -138,7 +136,7 @@ logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
 logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
 logger.random_creator - DEBUG - Random int number in range [1,2]
 logger.random_creator - DEBUG - Randomizing results is 3
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 20.0);(0.0, 0.0);(0.0, 100.0);(10.0, 20.0);
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 20.0);(0.0, 0.0);(0.0, 100.0);(10.0, 90.0);(10.0, 20.0);
 logger.puzzle_creator - INFO - n_iter: 10. Next interior point potential to origin a polygon is (10.0,90.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
@@ -149,48 +147,33 @@ logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
 logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(10.0, 90.0), (0.0, 100.0), (10.0, 20.0), (10.0, 90.0)]
 logger.rgon_1988 - INFO - Start function get_visualization_graph
 logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
-logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
-logger.random_creator - DEBUG - Random int number in range [1,1]
-logger.random_creator - DEBUG - Randomizing results is 3
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 90.0);(10.0, 20.0);(0.0, 100.0);(10.0, 90.0);
+logger.puzzle_creator - DEBUG - Edge (10.0,20.0)>>(0.0,100.0) is within piece (10.0, 20.0);(0.0, 0.0);(0.0, 100.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
+logger.puzzle_creator - DEBUG - Not enough edge to iterate on the visibility graph
+logger.puzzle_creator - INFO - Check whether to stop board scanning or not
 logger.puzzle_creator - INFO - Start to scan board to from left
 logger.puzzle_creator - INFO - n_iter: 11. Next interior point potential to origin a polygon is (10.0,20.0)
 logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
 logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
 logger.puzzle_creator - DEBUG - Points ahead are ;(10.0,90.0);(60.0,20.0);(60.0,90.0);(80.0,50.0);(100.0,0.0);(100.0,100.0);
 logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 2 points are visible: ;(10.0,90.0);(80.0,50.0);
+logger.puzzle_creator - DEBUG - 4 points are visible: ;(10.0,90.0);(60.0,20.0);(60.0,90.0);(100.0,100.0);
 logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(10.0, 20.0), (10.0, 90.0), (80.0, 50.0), (10.0, 20.0)]
+logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(10.0, 20.0), (10.0, 90.0), (60.0, 90.0), (100.0, 100.0), (60.0, 20.0), (10.0, 20.0)]
 logger.rgon_1988 - INFO - Start function get_visualization_graph
 logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.puzzle_creator - DEBUG - Edge (80.0,50.0)>>(10.0,90.0) is within piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
-logger.puzzle_creator - DEBUG - Not enough edge to iterate on the visibility graph
-logger.puzzle_creator - INFO - n_iter: 12. Next interior point potential to origin a polygon is (10.0,90.0)
-logger.puzzle_creator - INFO - Start _get_points_ahead function. Filter point in space to get reachable points
-logger.puzzle_creator - DEBUG - Filter point that are not ahead the scanning direction
-logger.puzzle_creator - DEBUG - Points ahead are ;(10.0,20.0);(60.0,20.0);(60.0,90.0);(80.0,50.0);(100.0,0.0);(100.0,100.0);
-logger.puzzle_creator - INFO - Start _get_accessible_points method
-logger.puzzle_creator - DEBUG - 3 points are visible: ;(10.0,20.0);(60.0,90.0);(100.0,100.0);
-logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
-logger.rgon_1988_wrap - DEBUG - The stared polygon is  [(10.0, 90.0), (100.0, 100.0), (60.0, 90.0), (10.0, 20.0), (10.0, 90.0)]
-logger.rgon_1988 - INFO - Start function get_visualization_graph
-logger.puzzle_creator - INFO - Filter edges covered by exist pieces
-logger.puzzle_creator - DEBUG - Edge (10.0,20.0)>>(60.0,90.0) is within piece (10.0, 20.0);(80.0, 50.0);(60.0, 90.0);(10.0, 90.0);(10.0, 20.0); ,so remove it from visibility graph
+logger.puzzle_creator - DEBUG - Edge (60.0,20.0)>>(60.0,90.0) is crossed by piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(10.0, 20.0); ,so remove it from visibility graph
+logger.puzzle_creator - DEBUG - Edge (60.0,20.0)>>(10.0,90.0) is crossed by piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(10.0, 20.0); ,so remove it from visibility graph
 logger.rgon_1988 - INFO - Start function get_convex_chain_connectivity
 logger.rgon_1988 - INFO - Start function get_edges_max_chain_length_new
 logger.rgon_1988 - INFO - Start function get_stared_shape_polygon
 logger.random_creator - DEBUG - Randomizing the number of edges to travel on them in the visibility graph
-logger.random_creator - DEBUG - Random int number in range [1,1]
+logger.random_creator - DEBUG - Random int number in range [1,2]
 logger.random_creator - DEBUG - Randomizing results is 3
-logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 90.0);(60.0, 90.0);(100.0, 100.0);(10.0, 90.0);
-logger.puzzle_creator - ERROR - piece (10.0, 90.0);(60.0, 90.0);(100.0, 100.0);(10.0, 90.0); intersects with new piece (10.0, 90.0);(60.0, 90.0);(100.0, 100.0);(10.0, 90.0);
+logger.puzzle_creator - DEBUG - Next Polygon to create is : (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(60.0, 90.0);(10.0, 20.0);
+logger.puzzle_creator - ERROR - piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(10.0, 20.0); intersects with new piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(60.0, 90.0);(10.0, 20.0);
 Traceback (most recent call last):
-  File "C:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\puzzle_creators\skeleton.py", line 194, in create
+  File "C:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\puzzle_creators\skeleton.py", line 204, in create
     self.check_sanity_polygon(polygon)
-  File "C:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\puzzle_creators\skeleton.py", line 268, in check_sanity_polygon
+  File "C:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\src\puzzle_creators\skeleton.py", line 302, in check_sanity_polygon
     raise ValidationErr(f"piece {str(piece)} intersects with new piece {str(curr_piece)}")
-xml.dom.ValidationErr: piece (10.0, 90.0);(60.0, 90.0);(100.0, 100.0);(10.0, 90.0); intersects with new piece (10.0, 90.0);(60.0, 90.0);(100.0, 100.0);(10.0, 90.0);
+xml.dom.ValidationErr: piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(10.0, 20.0); intersects with new piece (10.0, 20.0);(60.0, 20.0);(100.0, 100.0);(60.0, 90.0);(10.0, 20.0);

@@ -65,9 +65,9 @@ class RandomCreator(PuzzleCreator):
         logger.debug(f"Randomizing results is {str(random_num)}")
         return random_num
 
-    def _is_finished_scan(self):
-        self.count_scans +=1
-        return self.count_scans >= 2
+    # def _is_finished_scan(self):
+    #     self.count_scans +=1
+    #     return self.count_scans >= 2 #and super()._is_finished_scan()
 
 
 class RestoreRandom(RandomCreator):

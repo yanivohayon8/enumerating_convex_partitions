@@ -19,7 +19,8 @@ from functools import reduce
 from src.data_structures.shapes import Polygon
 from src.puzzle_creators import Direction
 
-
+from math import pi,atan2
+import numpy as np
 
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.puzzle_creator")
@@ -34,6 +35,8 @@ class PuzzleCreator():
         self.frame_points = []
         self.pieces = [] #MultiPolygon
         self.is_angles_convex = {}
+        self.pieces_area = 0
+        self.frame_polygon = None
     
     def load_sampled_points(self,file_path):
         role_points = {
@@ -46,12 +49,13 @@ class PuzzleCreator():
         for row in df.to_numpy():
             point = Point(row[0],row[1])
             role_points[row[2]].append(point)
+
+        self.frame_polygon = Polygon(self.frame_points)
         
     def plot_puzzle(self,fig,ax):
         scatter_points(ax,self.interior_points,color="blue")
         scatter_points(ax,self.frame_anchor_points,color="red")        
-        frame_polygon = Polygon(self.frame_points)
-        frame_mat_polygon = poly_as_matplotlib(frame_polygon,edgecolor="black",facecolor='white',lw=2)
+        frame_mat_polygon = poly_as_matplotlib(self.frame_polygon,edgecolor="black",facecolor='white',lw=2)
         puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)]) for i,piece in enumerate(self.pieces)]
         puzzle_mat_polygons.insert(0, frame_mat_polygon)
         plot_polygons(ax,puzzle_mat_polygons)
@@ -107,7 +111,6 @@ class PuzzleCreator():
         logger.debug(f"{str(len(visible_points))} points are visible: {str(visible_points_str)}")
         return visible_points
 
-
     def _set_direction_scan(self,direction):
         self.interior_points = sorted(self.interior_points,key=lambda p: p.x,reverse=direction<0)
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
@@ -128,7 +131,7 @@ class PuzzleCreator():
 
                 try:
                     logger.info(f"n_iter: {str(n_iter)}. Next interior point potential to origin a polygon is {str(kernel_point)}")
-                    self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+                    # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
                     # observe surface data
                     points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
                     points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
@@ -191,10 +194,22 @@ class PuzzleCreator():
 
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
-                        self.check_sanity_polygon(polygon)
-                        self.pieces.append(polygon)
+                        is_exist=False
+                        for piece in self.pieces:
+                            if polygon.equals(piece):
+                                logger.debug(f"Tried to create equal piece to exist one. piece: {str(polygon)}. ignore and continue running")
+                                is_exist = True
+                                break
+                        if not is_exist:
+                            self.check_sanity_polygon(polygon)
+                            self.pieces.append(polygon)
+                            self.pieces_area += polygon.area
+                            fig,ax = plt.subplots()
+                            self.plot_puzzle(fig,ax)
+                            fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
+                            plt.close()    
+                   
                     
-                    self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
 
                 # except ValueError as err:
                 #     logger.warning(f"Failed to create polygon from point {str(kernel_point)}. The scan direction is from {scan_direction.name}")     
@@ -202,14 +217,9 @@ class PuzzleCreator():
                 except Exception as err:
                     logger.exception(err)
                     raise err 
-                
-                fig,ax = plt.subplots()
-                self.plot_puzzle(fig,ax)
-                fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
-                plt.close()
-
-            if self._is_finished_scan() and \
-                all(self.is_angles_convex[str(point)] for point in self.interior_points):
+            
+            logger.info("Check whether to stop board scanning or not")
+            if self._is_finished_scan():
                 break
 
             scan_direction = Direction(scan_direction.value * (-1))
@@ -220,13 +230,14 @@ class PuzzleCreator():
     
 
     def _is_edges_angles_convex(self,center_point):
+        # logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
         '''Get pieces containing center point'''
         center_point_coords = list(center_point.coords)[0]
         pieces_contain_point = [list(piece.exterior.coords) for piece in self.pieces \
                                 if center_point_coords in list(piece.exterior.coords)]
 
         '''Get neighbor points - sharing an edge with center_point'''
-        neighbors = []
+        neighbors = set()
         for piece_coords in pieces_contain_point:
             index = piece_coords.index(center_point_coords)
             left_neighbor_index = index-1
@@ -237,18 +248,41 @@ class PuzzleCreator():
                 left_neighbor_index = -2
                 right_neighbot_index = 1
             
-            neighbors.append(Point(piece_coords[left_neighbor_index]))
-            neighbors.append(Point(piece_coords[right_neighbot_index]))
+            neighbors.add(Point(piece_coords[left_neighbor_index]))
+            neighbors.add(Point(piece_coords[right_neighbot_index]))
 
         if len(neighbors) < 2:
             return False
 
-        angles = [Rgon1988.calc_angle_around_point(center_point,point) for point in neighbors]
-        angles = list(map(lambda ang: ang if ang>=0 else 360+ang,angles))
+        def calc_angle(neigh_point):
+            delta_y = neigh_point.y - center_point.y
+            delta_x = neigh_point.x - center_point.x
+            res = atan2(delta_y,delta_x)
+            if res < 0:
+                res+=2*pi
+            return np.degrees(res)
+        
+
+        neighbors = list(neighbors)
+        # neighbors_sorted = Rgon1988.sort_points_clockwise(center_point,neighbors)
+        # neighbors_sorted.insert(0,neighbors_sorted[-1])
+        # neighbors_sorted = list(reversed(neighbors_sorted))
+        angles = list(map(calc_angle,neighbors))
         angles.sort()
-        is_angles_convex = all(ang2-ang1>180 for ang1, ang2 in zip(angles, angles[1:] + [angles[0]]))
-                        
-        return is_angles_convex
+        neighbors_sorted = [point for _,point in sorted(zip(angles,neighbors))]
+        prev_angle = calc_angle(neighbors_sorted[0])
+        prev_point = neighbors_sorted[0]
+
+        for angle,point in zip(angles[1:] + [angles[0]+360],neighbors_sorted[1:] + [neighbors_sorted[0]]):
+            diff = angle - prev_angle
+            if diff > 180:
+                logger.debug(f"Around the center point {str(center_point)} \
+                            the points {str(prev_point)} and {str(point)} angle is {angle}-{prev_point}={diff}>180")
+                return False
+            prev_angle = angle
+            prev_point = point
+        
+        return True
 
 
     def check_sanity_polygon(self,curr_piece:Polygon):
@@ -272,7 +306,14 @@ class PuzzleCreator():
                 raise ValidationErr(f"Piece {str(piece)} created contains interior point {str(inter_point)}")
 
     def _is_finished_scan(self):
-        raise NotImplementedError("need to be implemented")
+        for point in self.interior_points:
+            if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
+                return False
+        
+        if self.pieces_area<self.frame_polygon.area:
+            return False
+        
+        return True
         
     def _create_rgon(self,kernel_point,r,edges_max_chain_length,continuity_edges):
         raise NotImplementedError("need to be implemented")

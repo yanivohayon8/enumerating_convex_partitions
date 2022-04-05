@@ -1,14 +1,15 @@
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 import numpy as np
 from src.data_structures.shapes import Polygon
 # from networkx import DiGraph
 # from src.data_structures import substract_points
 from src.data_structures.graph import Edge,Graph
 from src.data_structures import Point
-
 import random
 import logging
 from src import setup_logger
+
+
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.rgon_1988")
 logger.addHandler(log_handler)
@@ -23,7 +24,7 @@ def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
         calculate the angle between cp to the horizontal axis through c
     '''
     return np.degrees(np.arctan((peripheral_point.y-center_point.y)/abs(center_point.x-peripheral_point.x + epsilon)))
-
+  
 def sort_points_clockwise(center_point,subspace_points):
     pos_angles = []
     pos_angle_points = []

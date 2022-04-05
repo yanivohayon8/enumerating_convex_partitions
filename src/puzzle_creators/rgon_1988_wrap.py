@@ -71,5 +71,7 @@ def get_convex_chain_connectivity(visual_graph):
 def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
     return Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges)
 
-def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
-    return Rgon1988.calc_angle_around_point(center_point,peripheral_point,epsilon=epsilon)
+# def calc_angle_around_point(center_point,peripheral_point,epsilon = 0.00001):
+#     return Rgon1988.calc_angle_around_point(center_point,peripheral_point,epsilon=epsilon)
+def sort_points_clockwise(center_point,subspace_points):
+    return Rgon1988.sort_points_clockwise(center_point,subspace_points)
