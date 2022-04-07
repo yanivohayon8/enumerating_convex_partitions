@@ -1,3 +1,4 @@
+from turtle import pos
 from src.puzzle_creators.skeleton import PuzzleCreator
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
@@ -19,34 +20,40 @@ class RandomCreator(PuzzleCreator):
         super().__init__()
         self.count_scans = 0
 
-    def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
-        rgon = [kernel_point]
-        r = r - 2
-        
-        if r <=0:
+    def _create_rgon(self,possible_rgons):
+        if len(possible_rgons) == 0:
+            logger.debug("No option availiable for creating rgon")
             return None
+        return random.choice(possible_rgons)
 
-
-        potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
-
-        if len(potential_start_edges)==0:
-            return None
+    # def _create_rgon(self, kernel_point, r, edges_max_chain_length, continuity_edges):
+    #     rgon = [kernel_point]
+    #     r = r - 2
         
-        next_edge = Edge(random.choice(potential_start_edges))
-        rgon.append(next_edge.src_point)
+    #     if r <=0:
+    #         return None
 
-        while True:
-            rgon.append(next_edge.dst_point)
-            r-=1
 
-            if r <= 0:
-                break
+    #     potential_start_edges = list(filter(lambda e: edges_max_chain_length[e] >=r ,edges_max_chain_length.keys()))
+
+    #     if len(potential_start_edges)==0:
+    #         return None
+        
+    #     next_edge = Edge(random.choice(potential_start_edges))
+    #     rgon.append(next_edge.src_point)
+
+    #     while True:
+    #         rgon.append(next_edge.dst_point)
+    #         r-=1
+
+    #         if r <= 0:
+    #             break
             
-            potential_start_edges = list(filter(lambda e: edges_max_chain_length[str(e)] >=r ,
-                                                continuity_edges[str(next_edge)]))
-            next_edge = random.choice(potential_start_edges)
+    #         potential_start_edges = list(filter(lambda e: edges_max_chain_length[str(e)] >=r ,
+    #                                             continuity_edges[str(next_edge)]))
+    #         next_edge = random.choice(potential_start_edges)
 
-        return Polygon(rgon)
+    #     return Polygon(rgon)
     
     def _get_next_polygon_num_verticies(self,continuity_edges,edges_max_chain_length):
         logger.debug("Randomizing the number of edges to travel on them in the visibility graph")

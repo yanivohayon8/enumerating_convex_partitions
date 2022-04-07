@@ -1,6 +1,7 @@
 # from turtle import color, right
 # from numpy import poly
 from xml.dom import ValidationErr
+from matplotlib.style import available
 import pandas as pd
 from src.data_structures.graph import Edge
 from src.data_structures import Point,scatter_points,poly_as_matplotlib,plot_polygons
@@ -37,6 +38,7 @@ class PuzzleCreator():
         self.is_angles_convex = {}
         self.pieces_area = 0
         self.frame_polygon = None
+        self.last_possible_rgons ={}
     
     def load_sampled_points(self,file_path):
         role_points = {
@@ -131,66 +133,73 @@ class PuzzleCreator():
 
                 try:
                     logger.info(f"n_iter: {str(n_iter)}. Next interior point potential to origin a polygon is {str(kernel_point)}")
-                    # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-                    # observe surface data
-                    points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
-                    points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
-
-                    if len(points_to_connect) < 2:
-                        logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
-                        # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-                        continue
                     
-                    stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
-                    visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
-                    fig,ax = plt.subplots()
-                    self.plot_puzzle(fig,ax)
-                
-                    [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-                    visual_graph_polygon.plot_directed(ax) # way to plot the graph
-                    fig.savefig(debug_dir + f"/visibility-graph-before-filter/{str(n_iter)}.png")
-                    plt.close()
+                    _key = f"from {scan_direction.name} "+str(kernel_point)
 
-                    # Remove edges that are covered by polygons - do it more elegant less naive
-                    logger.info("Filter edges covered by exist pieces")
-                    vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
-                    lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
+                    if _key not in self.last_possible_rgons.keys():
 
-                    for edge,line in zip(vs_grph_edges,lines):
-                        for piece in self.pieces:
-                            
-                            if line.crosses(piece) and not line.touches(piece):
-                                logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
-                                visual_graph_polygon.remove_edge(edge)
-                                break
+                        # observe surface data
+                        points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
+                        points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
 
-                            if line.within(piece):
-                                logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
-                                visual_graph_polygon.remove_edge(edge)
-                                break
+                        if len(points_to_connect) < 2:
+                            logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
+                            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+                            continue
+                        
+                        stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
+                        visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
+                        fig,ax = plt.subplots()
+                        self.plot_puzzle(fig,ax)
+                    
+                        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+                        visual_graph_polygon.plot_directed(ax) # way to plot the graph
+                        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{str(n_iter)}.png")
+                        plt.close()
 
-                            # if line.covered_by(piece):
-                            #     logger.debug(f"Edge {str(edge)} is covered by piece {str(piece)} ,so remove it from visibility graph")
-                            #     visual_graph_polygon.remove_edge(edge)
-                            #     break
+                        # Remove edges that are covered by polygons - do it more elegant less naive
+                        logger.info("Filter edges covered by exist pieces")
+                        vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
+                        lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
 
-                    fig,ax = plt.subplots()
-                    self.plot_puzzle(fig,ax)
-                    [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-                    visual_graph_polygon.plot_directed(ax) # way to plot the graph
-                    fig.savefig(debug_dir + f"/visibility-graph-filtered/{str(n_iter)}.png")
-                    plt.close()
+                        for edge,line in zip(vs_grph_edges,lines):
+                            for piece in self.pieces:
+                                
+                                if line.crosses(piece) and not line.touches(piece):
+                                    logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
+                                    visual_graph_polygon.remove_edge(edge)
+                                    break
 
-                    if len(list(visual_graph_polygon.get_edges())) == 0:
-                        logger.debug(f"Not enough edge to iterate on the visibility graph")
-                        # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-                        continue
+                                if line.within(piece):
+                                    logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
+                                    visual_graph_polygon.remove_edge(edge)
+                                    break
 
-                    continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
-                    edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
+                        fig,ax = plt.subplots()
+                        self.plot_puzzle(fig,ax)
+                        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+                        visual_graph_polygon.plot_directed(ax) # way to plot the graph
+                        fig.savefig(debug_dir + f"/visibility-graph-filtered/{str(n_iter)}.png")
+                        plt.close()
 
-                    num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
-                    polygon = self._create_rgon(kernel_point,num_edges,edges_max_chain_length,continuity_edges)        
+                        if len(list(visual_graph_polygon.get_edges())) == 0:
+                            logger.debug(f"Not enough edge to iterate on the visibility graph")
+                            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+                            continue
+
+                        continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
+                        edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
+
+                        '''Test'''
+
+                        num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
+                        possible_rgons = self._find_possible_rgons(kernel_point,continuity_edges)
+                        self.last_possible_rgons[_key] = possible_rgons
+                    else:
+                        self.last_possible_rgons[_key] = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),self.last_possible_rgons[_key]))
+                    # polygon = self._create_rgon(kernel_point,num_edges,edges_max_chain_length,continuity_edges)        
+                    
+                    polygon = self._create_rgon(self.last_possible_rgons[_key])
 
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
@@ -204,16 +213,12 @@ class PuzzleCreator():
                             self.check_sanity_polygon(polygon)
                             self.pieces.append(polygon)
                             self.pieces_area += polygon.area
+                            self.last_possible_rgons[_key].remove(polygon)
                             fig,ax = plt.subplots()
                             self.plot_puzzle(fig,ax)
                             fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
                             plt.close()    
                    
-                    
-
-                # except ValueError as err:
-                #     logger.warning(f"Failed to create polygon from point {str(kernel_point)}. The scan direction is from {scan_direction.name}")     
-                #     logger.exception(err)
                 except Exception as err:
                     logger.exception(err)
                     raise err 
@@ -264,9 +269,6 @@ class PuzzleCreator():
         
 
         neighbors = list(neighbors)
-        # neighbors_sorted = Rgon1988.sort_points_clockwise(center_point,neighbors)
-        # neighbors_sorted.insert(0,neighbors_sorted[-1])
-        # neighbors_sorted = list(reversed(neighbors_sorted))
         angles = list(map(calc_angle,neighbors))
         angles.sort()
         neighbors_sorted = [point for _,point in sorted(zip(angles,neighbors))]
@@ -283,7 +285,6 @@ class PuzzleCreator():
             prev_point = point
         
         return True
-
 
     def check_sanity_polygon(self,curr_piece:Polygon):
         coords = curr_piece.exterior.coords
@@ -314,8 +315,51 @@ class PuzzleCreator():
             return False
         
         return True
+
+    def _find_possible_rgons(self,kernel_point,continuity_edges):
+        rgons_strings = set()
+
+        for edge_str in list(continuity_edges.keys()):
+            traverses = [list(dict.fromkeys(tr)) for tr in self._get_traverse(Edge(edge_str),continuity_edges)]
+            # rgons.append(traverses)
+            # find all sequential sub combinations:
+            for trav in traverses:
+                for index_start in range(len(trav)):
+                    for index_end in range(index_start+1,len(trav)):
+                        sub_trav = trav[index_start:index_end+1]
+                        sub_trav.insert(0,str(kernel_point))
+                        rgons_strings.add(";".join(sub_trav))
         
-    def _create_rgon(self,kernel_point,r,edges_max_chain_length,continuity_edges):
+
+        rgons = []
+        for rgon_str in list(rgons_strings):
+            points = rgon_str.split(";")
+            rgons.append(Polygon([Point(eval(point_str)) for point_str in points]))
+
+        return rgons
+
+    def _get_traverse(self,origin_edge,continuity_edges):
+        if len(continuity_edges[str(origin_edge)]) == 0:
+            return [[str(origin_edge.src_point),str(origin_edge.dst_point)]]
+
+        travs = []
+        available_edges = continuity_edges[str(origin_edge)]
+        for next_edge in available_edges:
+            cont_travs = self._get_traverse(next_edge,continuity_edges)
+
+            if isinstance(cont_travs[0],list):
+                flat_travs = [item for sublist in cont_travs for item in sublist]
+                flat_travs.insert(0,str(origin_edge.dst_point))
+                flat_travs.insert(0,str(origin_edge.src_point))
+
+            travs.append(flat_travs)
+        
+        return travs
+
+    # def _create_rgon(self,kernel_point,r,edges_max_chain_length,continuity_edges):
+    #     raise NotImplementedError("need to be implemented")
+    
+    def _create_rgon(self,possible_rgons):
         raise NotImplementedError("need to be implemented")
 
     def _get_next_polygon_num_verticies(self,continuity_edges,edges_max_chain_length):

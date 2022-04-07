@@ -33,7 +33,7 @@ class TestParentCreator(unittest.TestCase):
 class TestRandomCreator(unittest.TestCase):
 
     files_path = 'data/starting_points/'
-    example_name = "general_002.csv" #"TBN_01.csv" #
+    example_name =  "TBN_01.csv" #"general_002.csv"
 
     def test_example_01_restored(self):
         
