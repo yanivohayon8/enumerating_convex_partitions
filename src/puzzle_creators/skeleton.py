@@ -194,6 +194,7 @@ class PuzzleCreator():
 
                         num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
                         possible_rgons = self._find_possible_rgons(kernel_point,continuity_edges)
+                        possible_rgons = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),possible_rgons))
                         self.last_possible_rgons[_key] = possible_rgons
                     else:
                         self.last_possible_rgons[_key] = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),self.last_possible_rgons[_key]))
@@ -203,21 +204,14 @@ class PuzzleCreator():
 
                     if polygon is not None:
                         logger.debug(f"Next Polygon to create is : {str(polygon)}")
-                        is_exist=False
-                        for piece in self.pieces:
-                            if polygon.equals(piece):
-                                logger.debug(f"Tried to create equal piece to exist one. piece: {str(polygon)}. ignore and continue running")
-                                is_exist = True
-                                break
-                        if not is_exist:
-                            self.check_sanity_polygon(polygon)
-                            self.pieces.append(polygon)
-                            self.pieces_area += polygon.area
-                            self.last_possible_rgons[_key].remove(polygon)
-                            fig,ax = plt.subplots()
-                            self.plot_puzzle(fig,ax)
-                            fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
-                            plt.close()    
+                        self.check_sanity_polygon(polygon)
+                        self.pieces.append(polygon)
+                        self.pieces_area += polygon.area
+                        self.last_possible_rgons[_key].remove(polygon)
+                        fig,ax = plt.subplots()
+                        self.plot_puzzle(fig,ax)
+                        fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
+                        plt.close()    
                    
                 except Exception as err:
                     logger.exception(err)
@@ -301,6 +295,9 @@ class PuzzleCreator():
         for piece in self.pieces:
             if not(curr_piece.disjoint(piece) or curr_piece.touches(piece)):
                 raise ValidationErr(f"piece {str(piece)} intersects with new piece {str(curr_piece)}")
+            if curr_piece.equals(piece):
+                raise ValidationErr(f"Tried to create equal piece to exist one. piece: {str(curr_piece)}.")
+
 
         for inter_point in self.interior_points:
             if inter_point.within(curr_piece):
