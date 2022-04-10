@@ -33,7 +33,7 @@ class TestParentCreator(unittest.TestCase):
 class TestRandomCreator(unittest.TestCase):
 
     files_path = 'data/starting_points/'
-    example_name =  "TBN_01.csv" #"general_002.csv"
+    example_name =  "general_002.csv" # "TBN_01.csv"
 
     def test_example_01_restored(self):
         
@@ -97,6 +97,7 @@ class TestRandomCreator(unittest.TestCase):
             creator.plot_puzzle(fig,ax)
             plt.show()
             fig.savefig(debug_dir + "/results.png")
+            creator.write_results(debug_dir + "/puzzle.csv")
 
         except Exception as err:
             # logger.exception(err)

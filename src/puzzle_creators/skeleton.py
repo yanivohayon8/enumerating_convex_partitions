@@ -116,6 +116,7 @@ class PuzzleCreator():
     def _set_direction_scan(self,direction):
         self.interior_points = sorted(self.interior_points,key=lambda p: p.x,reverse=direction<0)
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
+        self.space_points = sorted(self.interior_points + self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
     
     def create(self):
         logger.info("Starts create function")
@@ -128,7 +129,7 @@ class PuzzleCreator():
         n_iter = 0
         while True:
             logger.info(f"Start to scan board to from {str(scan_direction.name)}")
-            for kernel_point in self.interior_points:
+            for kernel_point in self.space_points:
                 n_iter +=1
 
                 try:
@@ -190,9 +191,7 @@ class PuzzleCreator():
                         continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
                         edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
 
-                        '''Test'''
-
-                        num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
+                        # num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
                         possible_rgons = self._find_possible_rgons(kernel_point,continuity_edges)
                         possible_rgons = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),possible_rgons))
                         self.last_possible_rgons[_key] = possible_rgons
@@ -331,7 +330,9 @@ class PuzzleCreator():
         rgons = []
         for rgon_str in list(rgons_strings):
             points = rgon_str.split(";")
-            rgons.append(Polygon([Point(eval(point_str)) for point_str in points]))
+            poly = Polygon([Point(eval(point_str)) for point_str in points])
+            if poly.is_simple:
+                rgons.append(poly)
 
         return rgons
 
@@ -358,7 +359,16 @@ class PuzzleCreator():
     
     def _create_rgon(self,possible_rgons):
         raise NotImplementedError("need to be implemented")
-
-    def _get_next_polygon_num_verticies(self,continuity_edges,edges_max_chain_length):
-        raise NotImplementedError("need to be implemented")
     
+    def write_results(self,output_path):
+        xs = []
+        ys = []
+        piece_id = []
+        for index in range(len(self.pieces)):
+            for coord in self.pieces[index].exterior.coords:
+                xs.append(coord[0])
+                ys.append(coord[1])
+                piece_id.append(index)
+        
+        df = pd.DataFrame({"x":xs,"y":ys,"id":piece_id})
+        df.to_csv(output_path)

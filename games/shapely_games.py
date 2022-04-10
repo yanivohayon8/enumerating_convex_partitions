@@ -10,12 +10,20 @@ from src.data_structures import Point
 from shapely.geometry import MultiPoint,LineString,MultiLineString
 import matplotlib.pyplot as plt
 
+
+no_simple_poly= Polygon([(0.0, 0.0),(80.0, 50.0),(100.0, 100.0),(10.0, 20.0),(60.0, 90.0)])
+simple_poly= Polygon([(0.0, 0.0),(80.0, 50.0),(100.0, 100.0),(60.0, 90.0)])
+print(no_simple_poly.is_simple)
+print(simple_poly.is_simple)
+
+
 tr1 = Polygon([(1,1),(2,2),(3,3)])
 tr2 = Polygon([(2,2),(1,1),(3,3)])
 print(list(tr1.exterior.coords))
 print(list(tr2.exterior.coords))
 
 poly = Polygon([(1,2),(3,4),(5,6)])
+poly.is_simple()
 xs,ys = poly.exterior.coords.xy
 [(x,y) for x,y in zip(xs,ys)]
 
