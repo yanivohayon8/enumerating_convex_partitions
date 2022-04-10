@@ -189,7 +189,7 @@ class PuzzleCreator():
                             continue
 
                         continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
-                        edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
+                        # edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
 
                         # num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
                         possible_rgons = self._find_possible_rgons(kernel_point,continuity_edges)
@@ -354,9 +354,7 @@ class PuzzleCreator():
         
         return travs
 
-    # def _create_rgon(self,kernel_point,r,edges_max_chain_length,continuity_edges):
-    #     raise NotImplementedError("need to be implemented")
-    
+
     def _create_rgon(self,possible_rgons):
         raise NotImplementedError("need to be implemented")
     
@@ -372,3 +370,5 @@ class PuzzleCreator():
         
         df = pd.DataFrame({"x":xs,"y":ys,"id":piece_id})
         df.to_csv(output_path)
+
+    def _get_surface(self,kernel_point)
