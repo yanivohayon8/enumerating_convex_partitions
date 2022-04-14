@@ -23,6 +23,7 @@ from src.puzzle_creators import Direction
 from math import pi,atan2
 import numpy as np
 
+
 log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.puzzle_creator")
 logger.addHandler(log_handler)
@@ -39,6 +40,7 @@ class PuzzleCreator():
         self.pieces_area = 0
         self.frame_polygon = None
         self.last_possible_rgons ={}
+        self.n_iter = 0
     
     def load_sampled_points(self,file_path):
         role_points = {
@@ -54,6 +56,13 @@ class PuzzleCreator():
 
         self.frame_polygon = Polygon(self.frame_points)
         
+        # maybe this should not be here
+        self.scan_direction = Direction.left
+        self._set_direction_scan(self.scan_direction.value)
+
+        for point in self.interior_points:
+            self.is_angles_convex[str(point)] = False
+        
     def plot_puzzle(self,fig,ax):
         scatter_points(ax,self.interior_points,color="blue")
         scatter_points(ax,self.frame_anchor_points,color="red")        
@@ -61,13 +70,16 @@ class PuzzleCreator():
         puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)]) for i,piece in enumerate(self.pieces)]
         puzzle_mat_polygons.insert(0, frame_mat_polygon)
         plot_polygons(ax,puzzle_mat_polygons)
+        for i,mat_poly in enumerate(self.pieces):
+            ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
+                    bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
 
     def _get_points_ahead(self,kernel_point,direction=1):
         logger.info("Start _get_points_ahead function. Filter point in space to get reachable points")
         logger.debug("Filter point that are not ahead the scanning direction")
         # on default - ahead to the left
         filter_condition = lambda item: item.x>=kernel_point.x and item!=kernel_point  
-        space = list(self.interior_points+self.frame_anchor_points)
+        space = self.space_points.copy() #list(self.interior_points+self.frame_anchor_points)
         space.remove(kernel_point)
 
         # if requested ahead to right
@@ -118,114 +130,62 @@ class PuzzleCreator():
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
         self.space_points = sorted(self.interior_points + self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
     
+
+    
     def create(self):
         logger.info("Starts create function")
-        scan_direction = Direction.left
-        self._set_direction_scan(scan_direction.value)
 
-        for point in self.interior_points:
-            self.is_angles_convex[str(point)] = False
+        self.n_iter = 1
 
-        n_iter = 0
         while True:
-            logger.info(f"Start to scan board to from {str(scan_direction.name)}")
+            logger.info(f"Start to scan board to from {str(self.scan_direction.name)}")
             for kernel_point in self.space_points:
-                n_iter +=1
+                self.last_kernel_point = kernel_point # for the power group creator
+                self.n_iter +=1
 
                 try:
-                    logger.info(f"n_iter: {str(n_iter)}. Next interior point potential to origin a polygon is {str(kernel_point)}")
-                    
-                    _key = f"from {scan_direction.name} "+str(kernel_point)
-
-                    if _key not in self.last_possible_rgons.keys():
-
-                        # observe surface data
-                        points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
-                        points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=scan_direction.value)            
-
-                        if len(points_to_connect) < 2:
-                            logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
-                            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-                            continue
-                        
-                        stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
-                        visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
-                        fig,ax = plt.subplots()
-                        self.plot_puzzle(fig,ax)
-                    
-                        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-                        visual_graph_polygon.plot_directed(ax) # way to plot the graph
-                        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{str(n_iter)}.png")
-                        plt.close()
-
-                        # Remove edges that are covered by polygons - do it more elegant less naive
-                        logger.info("Filter edges covered by exist pieces")
-                        vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
-                        lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
-
-                        for edge,line in zip(vs_grph_edges,lines):
-                            for piece in self.pieces:
-                                
-                                if line.crosses(piece) and not line.touches(piece):
-                                    logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
-                                    visual_graph_polygon.remove_edge(edge)
-                                    break
-
-                                if line.within(piece):
-                                    logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
-                                    visual_graph_polygon.remove_edge(edge)
-                                    break
-
-                        fig,ax = plt.subplots()
-                        self.plot_puzzle(fig,ax)
-                        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-                        visual_graph_polygon.plot_directed(ax) # way to plot the graph
-                        fig.savefig(debug_dir + f"/visibility-graph-filtered/{str(n_iter)}.png")
-                        plt.close()
-
-                        if len(list(visual_graph_polygon.get_edges())) == 0:
-                            logger.debug(f"Not enough edge to iterate on the visibility graph")
-                            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-                            continue
-
-                        continuity_edges = Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
-                        # edges_max_chain_length = Rgon1988.get_edges_max_chain_length_new(kernel_point,visual_graph_polygon,continuity_edges)
-
-                        # num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
-                        possible_rgons = self._find_possible_rgons(kernel_point,continuity_edges)
-                        possible_rgons = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),possible_rgons))
-                        self.last_possible_rgons[_key] = possible_rgons
-                    else:
-                        self.last_possible_rgons[_key] = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),self.last_possible_rgons[_key]))
-                    # polygon = self._create_rgon(kernel_point,num_edges,edges_max_chain_length,continuity_edges)        
-                    
-                    polygon = self._create_rgon(self.last_possible_rgons[_key])
-
-                    if polygon is not None:
-                        logger.debug(f"Next Polygon to create is : {str(polygon)}")
-                        self.check_sanity_polygon(polygon)
-                        self.pieces.append(polygon)
-                        self.pieces_area += polygon.area
-                        self.last_possible_rgons[_key].remove(polygon)
-                        fig,ax = plt.subplots()
-                        self.plot_puzzle(fig,ax)
-                        fig.savefig(debug_dir + f"/results/{str(n_iter)}.png")
-                        plt.close()    
+                    possible_rgons = self.prepare_to_create(kernel_point)
+                    polygon = self._create_rgon(possible_rgons)
+                    self.after_rgon_creation(polygon)
                    
                 except Exception as err:
                     logger.exception(err)
                     raise err 
             
-            logger.info("Check whether to stop board scanning or not")
+            
             if self._is_finished_scan():
                 break
 
-            scan_direction = Direction(scan_direction.value * (-1))
-            Rgon1988.direction = scan_direction
-            self._set_direction_scan(scan_direction.value)
+            self.scan_direction = Direction(self.scan_direction.value * (-1))
+            Rgon1988.direction = self.scan_direction
+            self._set_direction_scan(self.scan_direction.value)
         
-        logger.info("Finish to create pieces")
+        # logger.info("Finish to assemble a puzzle")
     
+    
+
+    def plot_results(self,fig_path):
+        fig,ax = plt.subplots()
+        self.plot_puzzle(fig,ax)
+        fig.savefig(fig_path)
+        plt.close()    
+
+    def _count_piece(self,polygon):
+        self.pieces.append(polygon)
+        self.pieces_area += polygon.area
+    
+    def prepare_to_create(self,kernel_point):
+        raise NotImplementedError("need to be implemented")
+
+    def after_rgon_creation(self,polygon):
+        if polygon is not None:
+            logger.debug(f"Next Polygon to create is : {str(polygon)}")
+            self.check_sanity_polygon(polygon)
+            self._count_piece(polygon)
+
+    # def _uncount_piece(self,polygon):
+    #     self.pieces.remove(polygon)
+    #     self.pieces_area -= polygon.area
 
     def _is_edges_angles_convex(self,center_point):
         # logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
@@ -280,6 +240,9 @@ class PuzzleCreator():
         return True
 
     def check_sanity_polygon(self,curr_piece:Polygon):
+        if not curr_piece.is_simple:
+            ValidationErr(f"Polygon must be simple. coords: {str(curr_piece)}")
+        
         coords = curr_piece.exterior.coords
 
         if len(coords) < 4:
@@ -303,16 +266,19 @@ class PuzzleCreator():
                 raise ValidationErr(f"Piece {str(piece)} created contains interior point {str(inter_point)}")
 
     def _is_finished_scan(self):
+        logger.info("Check whether to stop board scanning or not")
+        logger.debug("Checking if all the interior points angles between their edges are less than 180")
         for point in self.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
                 return False
         
         if self.pieces_area<self.frame_polygon.area:
+            logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
             return False
         
         return True
 
-    def _find_possible_rgons(self,kernel_point,continuity_edges):
+    def _find_rgons_comb(self,kernel_point,continuity_edges):
         rgons_strings = set()
 
         for edge_str in list(continuity_edges.keys()):
@@ -331,8 +297,13 @@ class PuzzleCreator():
         for rgon_str in list(rgons_strings):
             points = rgon_str.split(";")
             poly = Polygon([Point(eval(point_str)) for point_str in points])
-            if poly.is_simple:
+
+            try:
+                self.check_sanity_polygon(poly)
                 rgons.append(poly)
+            except ValidationErr as err:
+                pass
+
 
         return rgons
 
@@ -371,4 +342,65 @@ class PuzzleCreator():
         df = pd.DataFrame({"x":xs,"y":ys,"id":piece_id})
         df.to_csv(output_path)
 
-    def _get_surface(self,kernel_point)
+    def _get_surface(self,kernel_point,scan_direction,n_iter=-1):
+        # observe surface data
+        points_to_connect = self._get_points_ahead(kernel_point,direction=self.scan_direction.value)            
+        points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=self.scan_direction.value)            
+
+        if len(points_to_connect) < 2:
+            logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
+            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+            return {}
+        
+        stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
+        visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
+        fig,ax = plt.subplots()
+        self.plot_puzzle(fig,ax)
+    
+        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+        visual_graph_polygon.plot_directed(ax) # way to plot the graph
+        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{str(self.n_iter)}.png")
+        plt.close()
+
+        # Remove edges that are covered by polygons - do it more elegant less naive
+        logger.info("Filter edges covered by exist pieces")
+        vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
+        lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
+
+        for edge,line in zip(vs_grph_edges,lines):
+            for piece in self.pieces:
+                
+                if line.crosses(piece) and not line.touches(piece):
+                    logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
+                    visual_graph_polygon.remove_edge(edge)
+                    break
+
+                if line.within(piece):
+                    logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
+                    visual_graph_polygon.remove_edge(edge)
+                    break
+
+        fig,ax = plt.subplots()
+        self.plot_puzzle(fig,ax)
+        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+        visual_graph_polygon.plot_directed(ax) # way to plot the graph
+        fig.savefig(debug_dir + f"/visibility-graph-filtered/{str(self.n_iter)}.png")
+        plt.close()
+
+        if len(list(visual_graph_polygon.get_edges())) == 0:
+            logger.debug(f"Not enough edge to iterate on the visibility graph")
+            # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
+            return {}
+
+        return Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
+
+    def _find_first_possible_rgons(self,kernel_point,n_iter=-1):
+        continuity_edges = self._get_surface(kernel_point,self.scan_direction,n_iter)
+
+        # num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
+        possible_rgons = self._find_rgons_comb(kernel_point,continuity_edges)
+        possible_rgons = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),possible_rgons))
+        return possible_rgons
+
+    def _filter_poss_rgons(self,last_possible_rgons):
+        return list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in self.pieces),last_possible_rgons))#

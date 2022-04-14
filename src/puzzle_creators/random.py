@@ -20,6 +20,23 @@ class RandomCreator(PuzzleCreator):
         super().__init__()
         self.count_scans = 0
 
+
+    def prepare_to_create(self,kernel_point):
+        logger.info(f"n_iter: {str(self.n_iter)}. Next point potential to origin a polygon is {str(kernel_point)}")
+        
+        _key = f"from {self.scan_direction.name} "+str(kernel_point)
+
+        if _key not in self.last_possible_rgons.keys():
+            logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
+            self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
+            # self._take_snaphot(kernel_point,self.last_possible_rgons[_key])
+        else:
+            logger.info("Prior surface scanning at this point and direction Found, filter possible rgons with the surface current status")
+            self.last_possible_rgons[_key] = self._filter_poss_rgons(self.last_possible_rgons[_key])
+        
+        return self.last_possible_rgons[_key]
+
+
     def _create_rgon(self,possible_rgons):
         if len(possible_rgons) == 0:
             logger.debug("No option availiable for creating rgon")

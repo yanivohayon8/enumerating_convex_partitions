@@ -16,6 +16,7 @@ simple_poly= Polygon([(0.0, 0.0),(80.0, 50.0),(100.0, 100.0),(60.0, 90.0)])
 print(no_simple_poly.is_simple)
 print(simple_poly.is_simple)
 
+print(simple_poly.centroid)
 
 tr1 = Polygon([(1,1),(2,2),(3,3)])
 tr2 = Polygon([(2,2),(1,1),(3,3)])

@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 import unittest
 from src.puzzle_creators.skeleton import PuzzleCreator
 from src.puzzle_creators.random import RandomCreator,RestoreRandom
+from src.puzzle_creators.power_group import PowerGroupCreator,PowerGroupRestore
 import matplotlib.pyplot as plt
 import logging
 from src import setup_logger
@@ -101,9 +102,99 @@ class TestRandomCreator(unittest.TestCase):
 
         except Exception as err:
             # logger.exception(err)
-            plt.close("all")
             raise err
+
+        plt.close("all")
+
+class TestPowergroupCreator(unittest.TestCase):
+    files_path = 'data/starting_points/'
+
+    def test_simple_square(self):
+        example_name = "simple_square"
+        current_working_dir = os.getcwd()
+        output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            os.makedirs(output_dir+"/results")
+            os.makedirs(output_dir+"/visibility-graph-before-filter")
+            os.makedirs(output_dir+"/visibility-graph-filtered")
         
+        for file in os.scandir(os.path.join(output_dir+"/results")):
+            os.remove(file.path)
+        
+        for file in os.scandir(os.path.join(output_dir,"visibility-graph-before-filter")):
+            os.remove(file.path)
+
+        for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
+            os.remove(file.path)    
+
+        setup_logger.set_debug_lastrun_dir(output_dir)
+        log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
+        logger = logging.getLogger("logger.test_puzzle_creator")
+        logger.addHandler(log_handler)
+        logger.debug("Starting....")
+
+        creator = PowerGroupCreator(output_dir)
+        creator.load_sampled_points(self.files_path + example_name +".csv")
+        # fig, ax = plt.subplots()
+
+        try:
+            creator.create_puzzles()
+        except Exception as err:
+            # logger.exception(err)
+            raise err
+
+        plt.close("all")
+
+    def test_simple_square_restored(self):
+        
+        example_name = "simple_square"
+        current_working_dir = os.getcwd()
+        output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            os.makedirs(output_dir+"/results")
+            os.makedirs(output_dir+"/visibility-graph-before-filter")
+            os.makedirs(output_dir+"/visibility-graph-filtered")
+            os.makedirs(output_dir+"/last_decision_junction")
+        
+        for file in os.scandir(os.path.join(output_dir+"/results")):
+            os.remove(file.path)
+        
+        for file in os.scandir(os.path.join(output_dir,"visibility-graph-before-filter")):
+            os.remove(file.path)
+
+        for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
+            os.remove(file.path)    
+        
+        for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
+            os.remove(file.path)    
+
+        log_path = setup_logger.get_cwd()+f"/data/debug_powergroup_creator/{str(example_name)}/logs/run.log" #setup_logger.get_debug_log_file()
+        creator = PowerGroupRestore(output_dir,log_path)
+
+        setup_logger.set_debug_lastrun_dir(output_dir)
+        log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
+        logger = logging.getLogger("logger.test_puzzle_creator")
+        logger.addHandler(log_handler)
+        logger.debug("Starting....")
+
+
+        creator.load_sampled_points(self.files_path + example_name +".csv")
+        # fig, ax = plt.subplots()
+
+        try:
+            creator.create_puzzles()
+            # creator.plot_puzzle(fig,ax)
+            # plt.show()
+            # fig.savefig(debug_dir + "/results.png")
+        except Exception as err:
+            raise err
+
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()
