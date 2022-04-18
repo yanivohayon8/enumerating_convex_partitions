@@ -119,6 +119,8 @@ class TestPowergroupCreator(unittest.TestCase):
             os.makedirs(output_dir+"/results")
             os.makedirs(output_dir+"/visibility-graph-before-filter")
             os.makedirs(output_dir+"/visibility-graph-filtered")
+            os.makedirs(output_dir+"/last_decision_junction")
+            os.makedirs(output_dir+"/last_creation")
         
         for file in os.scandir(os.path.join(output_dir+"/results")):
             os.remove(file.path)
@@ -128,6 +130,12 @@ class TestPowergroupCreator(unittest.TestCase):
 
         for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
             os.remove(file.path)    
+        
+        for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
+            os.remove(file.path)    
+
+        for file in os.scandir(os.path.join(output_dir,"last_creation")):
+            os.remove(file.path)  
 
         setup_logger.set_debug_lastrun_dir(output_dir)
         log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
@@ -159,6 +167,7 @@ class TestPowergroupCreator(unittest.TestCase):
             os.makedirs(output_dir+"/visibility-graph-before-filter")
             os.makedirs(output_dir+"/visibility-graph-filtered")
             os.makedirs(output_dir+"/last_decision_junction")
+            os.makedirs(output_dir+"/last_creation")
         
         for file in os.scandir(os.path.join(output_dir+"/results")):
             os.remove(file.path)
@@ -172,7 +181,10 @@ class TestPowergroupCreator(unittest.TestCase):
         for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
             os.remove(file.path)    
 
-        log_path = setup_logger.get_cwd()+f"/data/debug_powergroup_creator/{str(example_name)}/logs/run.log" #setup_logger.get_debug_log_file()
+        for file in os.scandir(os.path.join(output_dir,"last_creation")):
+            os.remove(file.path)    
+
+        log_path = setup_logger.get_cwd()+f"/data/debug_powergroup_creator/{str(example_name)}/logs/run02.log" #setup_logger.get_debug_log_file()
         creator = PowerGroupRestore(output_dir,log_path)
 
         setup_logger.set_debug_lastrun_dir(output_dir)

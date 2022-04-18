@@ -63,14 +63,16 @@ class PuzzleCreator():
         for point in self.interior_points:
             self.is_angles_convex[str(point)] = False
         
-    def plot_puzzle(self,fig,ax):
+    def plot_puzzle(self,fig,ax,pieces=None,**kwargs):
+        if pieces is None:
+            pieces = self.pieces
         scatter_points(ax,self.interior_points,color="blue")
         scatter_points(ax,self.frame_anchor_points,color="red")        
         frame_mat_polygon = poly_as_matplotlib(self.frame_polygon,edgecolor="black",facecolor='white',lw=2)
-        puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)]) for i,piece in enumerate(self.pieces)]
+        puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)],**kwargs) for i,piece in enumerate(pieces)]
         puzzle_mat_polygons.insert(0, frame_mat_polygon)
         plot_polygons(ax,puzzle_mat_polygons)
-        for i,mat_poly in enumerate(self.pieces):
+        for i,mat_poly in enumerate(pieces):
             ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
                     bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
 
@@ -135,7 +137,9 @@ class PuzzleCreator():
     def create(self):
         logger.info("Starts create function")
 
-        self.n_iter = 1
+        self.n_iter = 0
+        Rgon1988.direction = self.scan_direction
+
 
         while True:
             logger.info(f"Start to scan board to from {str(self.scan_direction.name)}")
@@ -157,7 +161,7 @@ class PuzzleCreator():
                 break
 
             self.scan_direction = Direction(self.scan_direction.value * (-1))
-            Rgon1988.direction = self.scan_direction
+            # Rgon1988.direction = self.scan_direction
             self._set_direction_scan(self.scan_direction.value)
         
         # logger.info("Finish to assemble a puzzle")
@@ -342,7 +346,7 @@ class PuzzleCreator():
         df = pd.DataFrame({"x":xs,"y":ys,"id":piece_id})
         df.to_csv(output_path)
 
-    def _get_surface(self,kernel_point,scan_direction,n_iter=-1):
+    def _get_surface(self,kernel_point,scan_direction,n_iter=-1,fig_prefix=""):
         # observe surface data
         points_to_connect = self._get_points_ahead(kernel_point,direction=self.scan_direction.value)            
         points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=self.scan_direction.value)            
@@ -359,7 +363,7 @@ class PuzzleCreator():
     
         [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
         visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{str(self.n_iter)}.png")
+        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
         plt.close()
 
         # Remove edges that are covered by polygons - do it more elegant less naive
@@ -384,7 +388,7 @@ class PuzzleCreator():
         self.plot_puzzle(fig,ax)
         [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
         visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        fig.savefig(debug_dir + f"/visibility-graph-filtered/{str(self.n_iter)}.png")
+        fig.savefig(debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
         plt.close()
 
         if len(list(visual_graph_polygon.get_edges())) == 0:
