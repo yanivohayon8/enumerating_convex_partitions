@@ -1,4 +1,4 @@
-from src.puzzle_creators import Direction
+from src.puzzle_creators import Direction,Junction
 from src.puzzle_creators.skeleton import PuzzleCreator
 import random
 from src.data_structures import Point
@@ -19,20 +19,44 @@ logger.addHandler(log_handler)
 
 
 class Snapshot():
-    def __init__(self,kernel_point,direction,possible_rgons,\
+    def __init__(self,junction:Junction,possible_rgons,\
         is_angles_convex,last_possible_rgons,pieces,pieces_area) -> None:
-        self.history = []
-        self.first_possible_rgons = possible_rgons 
-        self.kernel_point = kernel_point
-        self.direction = direction
-        self.is_angles_convex = is_angles_convex
-        self.last_possible_rgons = last_possible_rgons # maybe is not necessray
-        self.pieces = pieces
-        self.pieces_area = pieces_area
+        self._junction = junction # key
+        # self._kernel_point = kernel_point # key
+        # self._direction = direction # key
+        # self.history = []
+        self._kernel_first_rgon_options = possible_rgons 
+        self._is_angles_convex = is_angles_convex
+        self._possible_rgon_at = last_possible_rgons #self.last_possible_rgons = last_possible_rgons # maybe is not necessray
+        self._pieces = pieces
+        self._pieces_area = pieces_area
+    
+    def __repr__(self) -> str:
+        return repr(self._junction) 
+    
+    @property
+    def kernel_first_rgon_options(self):
+        return self._kernel_first_rgon_options
+    
+    @property
+    def is_angles_convex(self):
+        return self._is_angles_convex
+    
+    @property
+    def possible_rgon_at(self,junction:Junction):
+        return self._possible_rgon_at[repr(junction)]
+
+    @property
+    def pieces(self):
+        return self._pieces
+
+    @property
+    def pieces_area(self):
+        return self._pieces_area
 
 
-    def is_tried_all_paths(self):
-        return len(self.history) == len(self.first_possible_rgons)
+    def is_tried_all_paths(self,history_choices):
+        return len(history_choices) == len(self.first_possible_rgons)
 
 class PowerGroupCreator(PuzzleCreator):
     
@@ -40,6 +64,7 @@ class PowerGroupCreator(PuzzleCreator):
         super().__init__()
         self.decision_junc_stack = () #[]
         self.output_dir = output_dir
+        self.choices_history_at_snap = {}
     
     def _take_snaphot(self,kernel_point,possible_rgons,curr_pieces):
         logger.info(f"Take a snapshot of the board (Decision Juncion object)")
@@ -63,17 +88,15 @@ class PowerGroupCreator(PuzzleCreator):
     #     return self.decision_junc_stack[-1]
 
     def _filter_poss_rgons(self,kernel_point,last_possible_rgons):
-        snap = self.get_fit_snapshot(kernel_point)
-        possible_rgons = []
-        if snap is not None:
-            possible_rgons =  [rgon for rgon in last_possible_rgons if not any(rgon.equals(piece) for piece in snap.history)] 
+        # snap = self.get_fit_snapshot(kernel_point)
+        # possible_rgons = []
+        # if snap is not None:
+        #     possible_rgons =  [rgon for rgon in last_possible_rgons if not any(rgon.equals(piece) for piece in snap.history)] 
         
-        return super()._filter_poss_rgons(possible_rgons)
+        # return super()._filter_poss_rgons(possible_rgons)
+        return super()._filter_poss_rgons(last_possible_rgons)
 
     def _create_rgon(self, possible_rgons):
-        # - 
-        # optional_rgons = self._filter_poss_rgons(possible_rgons)
-        # last_dec_junc = self._decision_stack_head()
 
         if len(possible_rgons) == 0:
             logger.debug(f"No option availiable for creating rgon at n_iter: {self.n_iter}")
@@ -86,11 +109,11 @@ class PowerGroupCreator(PuzzleCreator):
     def prepare_to_create(self,kernel_point):
         logger.info(f"n_iter: {str(self.n_iter)}. Next point potential to origin a polygon is {str(kernel_point)}")
         
-        snap = self.get_fit_snapshot(kernel_point)
+        # snap = self.get_fit_snapshot(kernel_point)
 
         _key = f"from {self.scan_direction.name} "+str(kernel_point)
 
-        if _key not in self.last_possible_rgons.keys() and snap is None:
+        if _key not in self.last_possible_rgons.keys(): #and snap is None:
             logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
             self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
             
@@ -137,7 +160,10 @@ class PowerGroupCreator(PuzzleCreator):
             last_snap = self.decision_junc_stack[-1]
             _key = f"from {last_snap.direction.name} "+str(last_snap.kernel_point)
             last_possible_rgons = last_snap.last_possible_rgons[1] # maybe get this from a getter
+
+            # for _key in last_possible_rgons.keys():
             last_possible_rgons[_key] = [rgon for rgon in last_possible_rgons[_key] if not any(rgon.equals(piece) for piece in last_snap.history)] 
+
             self.revert(last_snap)
 
             if len(self.decision_junc_stack) == 0:
@@ -206,7 +232,6 @@ class PowerGroupRestore(PowerGroupCreator):
     def _create_rgon(self, possible_rgons):
         if len(self.polygons_to_create)>0:
             next_poly = self.polygons_to_create.pop(0)
-            # optional_rgons  = self._filter_poss_rgons(possible_rgons)
 
             if any(next_poly.equals(poly) for poly in possible_rgons):
                 logger.debug(f"Restoring polygon {str(next_poly)} for the creation procedure")
