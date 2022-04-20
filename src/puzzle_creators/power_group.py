@@ -22,15 +22,15 @@ class Snapshot():
     def __init__(self,kernel_point,direction,possible_rgons,\
         is_angles_convex,last_possible_rgons,pieces,pieces_area) -> None:
         self.history = []
-        self.first_possible_rgons = possible_rgons # maybe is not necessray
+        self.first_possible_rgons = possible_rgons 
         self.kernel_point = kernel_point
         self.direction = direction
         self.is_angles_convex = is_angles_convex
-        self.last_possible_rgons = last_possible_rgons 
+        self.last_possible_rgons = last_possible_rgons # maybe is not necessray
         self.pieces = pieces
         self.pieces_area = pieces_area
 
-    
+
     def is_tried_all_paths(self):
         return len(self.history) == len(self.first_possible_rgons)
 
@@ -38,16 +38,17 @@ class PowerGroupCreator(PuzzleCreator):
     
     def __init__(self,output_dir):
         super().__init__()
-        self.decision_junc_stack = []
+        self.decision_junc_stack = () #[]
         self.output_dir = output_dir
-        # self.puzzle_creator = PuzzleCreator()
     
     def _take_snaphot(self,kernel_point,possible_rgons,curr_pieces):
         logger.info(f"Take a snapshot of the board (Decision Juncion object)")
         # nisuy = [Polygon(p.exterior.coords) for p in self.pieces]
         dec_junc = Snapshot(kernel_point,self.scan_direction,possible_rgons.copy(),\
-                dict(self.is_angles_convex),dict(self.last_possible_rgons),tuple(curr_pieces),self.pieces_area)
+                ("blabla",dict(self.is_angles_convex)),("blabla",dict(self.last_possible_rgons)),tuple(curr_pieces),self.pieces_area)
+        self.decision_junc_stack = list(self.decision_junc_stack)
         self.decision_junc_stack.append(dec_junc)
+        self.decision_junc_stack = tuple(self.decision_junc_stack)
 
     def get_fit_snapshot(self,kernel_point):
         for i in range(len(self.decision_junc_stack)-1,-1,-1):
@@ -58,8 +59,8 @@ class PowerGroupCreator(PuzzleCreator):
 
 
     # Need to be deleted
-    def _decision_stack_head(self):
-        return self.decision_junc_stack[-1]
+    # def _decision_stack_head(self):
+    #     return self.decision_junc_stack[-1]
 
     def _filter_poss_rgons(self,kernel_point,last_possible_rgons):
         snap = self.get_fit_snapshot(kernel_point)
@@ -88,7 +89,6 @@ class PowerGroupCreator(PuzzleCreator):
         snap = self.get_fit_snapshot(kernel_point)
 
         _key = f"from {self.scan_direction.name} "+str(kernel_point)
-        # self.is_decision_point = False
 
         if _key not in self.last_possible_rgons.keys() and snap is None:
             logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
@@ -96,7 +96,6 @@ class PowerGroupCreator(PuzzleCreator):
             
             if len(self.last_possible_rgons[_key]) > 1:
                 self._take_snaphot(kernel_point,self.last_possible_rgons[_key],[Polygon(p.exterior.coords) for p in self.pieces])
-                # self.is_decision_point = True
         else:
             logger.info("Prior surface scanning at this point and direction Found, filter possible rgons with the surface current status")
             self.last_possible_rgons[_key] = self._filter_poss_rgons(kernel_point,self.last_possible_rgons[_key])
@@ -109,12 +108,14 @@ class PowerGroupCreator(PuzzleCreator):
             snap = self.get_fit_snapshot(self.last_kernel_point)
 
             if snap is not None:
+                self.decision_junc_stack = list(self.decision_junc_stack)
                 snap.history.append(polygon)
+                self.decision_junc_stack = tuple(self.decision_junc_stack)
         
             fig,ax = plt.subplots()
             self.plot_puzzle(fig,ax)
             fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}')
-            fig.savefig(self.output_dir+f"/last_creation/{self.n_iter}.png") 
+            fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
             plt.close()
 
 
@@ -126,13 +127,17 @@ class PowerGroupCreator(PuzzleCreator):
             self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
             self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
 
+            self.decision_junc_stack = list(self.decision_junc_stack)
             while self.decision_junc_stack[-1].is_tried_all_paths():
                 self.decision_junc_stack.pop()
                 logger.debug(f"Poped head of stack of snapshots. left with {len(self.decision_junc_stack)}")
             
+            self.decision_junc_stack = tuple(self.decision_junc_stack)
+
             last_snap = self.decision_junc_stack[-1]
             _key = f"from {last_snap.direction.name} "+str(last_snap.kernel_point)
-            last_snap.last_possible_rgons[_key] = [rgon for rgon in last_snap.last_possible_rgons[_key] if not any(rgon.equals(piece) for piece in last_snap.history)] 
+            last_possible_rgons = last_snap.last_possible_rgons[1] # maybe get this from a getter
+            last_possible_rgons[_key] = [rgon for rgon in last_possible_rgons[_key] if not any(rgon.equals(piece) for piece in last_snap.history)] 
             self.revert(last_snap)
 
             if len(self.decision_junc_stack) == 0:
@@ -145,7 +150,7 @@ class PowerGroupCreator(PuzzleCreator):
             axs[0].set_title("Puzzle Snapshot")
             self.plot_puzzle(fig,axs[1],last_snap.history,hatch='\\/...')
             axs[1].set_title("Choises History")
-            self.plot_puzzle(fig,axs[2],last_snap.last_possible_rgons[_key])
+            self.plot_puzzle(fig,axs[2],last_snap.last_possible_rgons[1][_key])
             axs[2].set_title("Possiblities")
 
 
@@ -166,13 +171,10 @@ class PowerGroupCreator(PuzzleCreator):
         kernel_index = self.space_points.index(decision_junction.kernel_point)
         self.space_points = self.space_points[kernel_index:]
         self.scan_direction = decision_junction.direction
-        self.is_angles_convex = decision_junction.is_angles_convex
-        self.last_possible_rgons = decision_junction.last_possible_rgons
+        self.is_angles_convex = decision_junction.is_angles_convex[1] # [1] because of the tuple
+        self.last_possible_rgons = decision_junction.last_possible_rgons[1] # [1] because of the tuple
         self.pieces = list(decision_junction.pieces)
         self.pieces_area = decision_junction.pieces_area
-
-    # def plot_results(self,file_path):
-    #     return super().plot_results(file_path) # 
 
 
     def _get_surface(self, kernel_point, scan_direction, n_iter=-1):

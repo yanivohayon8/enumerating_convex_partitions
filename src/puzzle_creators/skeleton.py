@@ -132,11 +132,9 @@ class PuzzleCreator():
         self.frame_anchor_points = sorted(self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
         self.space_points = sorted(self.interior_points + self.frame_anchor_points,key=lambda p: p.x,reverse=direction<0)
     
-
     
     def create(self):
         logger.info("Starts create function")
-
         self.n_iter = 0
         Rgon1988.direction = self.scan_direction
 
@@ -186,10 +184,6 @@ class PuzzleCreator():
             logger.debug(f"Next Polygon to create is : {str(polygon)}")
             self.check_sanity_polygon(polygon)
             self._count_piece(polygon)
-
-    # def _uncount_piece(self,polygon):
-    #     self.pieces.remove(polygon)
-    #     self.pieces_area -= polygon.area
 
     def _is_edges_angles_convex(self,center_point):
         # logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
@@ -271,14 +265,16 @@ class PuzzleCreator():
 
     def _is_finished_scan(self):
         logger.info("Check whether to stop board scanning or not")
+        logger.debug("Check the sum of the pieces area against the whole framework")
+        if self.pieces_area<self.frame_polygon.area:
+            logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
+            return False
+        
         logger.debug("Checking if all the interior points angles between their edges are less than 180")
         for point in self.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
                 return False
         
-        if self.pieces_area<self.frame_polygon.area:
-            logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
-            return False
         
         return True
 
