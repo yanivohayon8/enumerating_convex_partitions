@@ -46,7 +46,6 @@ class PowerGroupCreator(PuzzleCreator):
         # snap = self.get_fit_snapshot(kernel_point)
 
         _key = f"from {self.scan_direction.name} at "+str(kernel_point)
-        self.is_snapshot_point = False
 
         if _key not in self.last_possible_rgons.keys(): #and snap is None:
             logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
@@ -54,7 +53,6 @@ class PowerGroupCreator(PuzzleCreator):
             
             if len(self.last_possible_rgons[_key]) > 1:
                 logger.info(f"Take a snapshot of the board (Decision Juncion object)")
-                self.is_snapshot_point = True
                 snapshot = Snapshot(Junction(kernel_point,self.scan_direction),dict(self.last_possible_rgons),
                                     self.pieces.copy(),self.pieces_area)
                 
@@ -70,8 +68,7 @@ class PowerGroupCreator(PuzzleCreator):
         super().after_rgon_creation(polygon)
         if polygon is not None:
             
-            if self.is_snapshot_point:
-                self.history_manager.add(repr(self.snapshot_queue[-1]),polygon)
+            self.history_manager.add(Junction(self.last_kernel_point, self.scan_direction),self.snapshot_queue,polygon)
         
             fig,ax = plt.subplots()
             self.plot_puzzle(fig,ax)
@@ -115,10 +112,10 @@ class PowerGroupCreator(PuzzleCreator):
             fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle)} creation.png"
             fig,axs = plt.subplots(1,3,sharey=True)
             self.plot_puzzle(fig,axs[0])
-            axs[0].set_title("Puzzle Snapshot")
+            axs[0].set_title("The Puzzle")
             self.plot_puzzle(fig,axs[1],self.history_manager.choices_history_at_snap[repr(last_snap)],hatch='\\/...')
             axs[1].set_title("Choises History")
-            self.plot_puzzle(fig,axs[2],last_snap.possible_rgon_at[repr(last_snap.junction)])
+            self.plot_puzzle(fig,axs[2],self.last_possible_rgons[repr(last_snap.junction)])
             axs[2].set_title("Possiblities")
 
 

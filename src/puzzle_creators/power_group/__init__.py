@@ -49,8 +49,13 @@ class HistoryManager():
         self.choices_history_at_snap = {}
 
     
-    def add(self,snap_id,piece):
-        if not snap_id in self.choices_history_at_snap.keys():
-            self.choices_history_at_snap[snap_id] = []
+    def add(self,junction,snapshot_queue,piece):
+        for index in range(len(snapshot_queue) - 1,-1,-1):      
+            snap_id = repr(snapshot_queue[index])
+            # Find the corresponding latest snapshot at queue
+            if repr(junction) in repr(snap_id):
+                if not snap_id in self.choices_history_at_snap.keys():
+                    self.choices_history_at_snap[snap_id] = []
         
-        self.choices_history_at_snap[snap_id].append(piece)
+                self.choices_history_at_snap[snap_id].append(piece)
+                break

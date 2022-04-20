@@ -8,6 +8,8 @@ class Polygon(ShapelyPolygon):
         return reduce(lambda acc,vert_str: acc + vert_str+";",\
                 list(map(lambda x: str(x),verticies)),"")
     
+    def __repr__(self) -> str:
+        return str(self)
 
 
 

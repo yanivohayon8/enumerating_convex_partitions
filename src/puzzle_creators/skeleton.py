@@ -266,14 +266,14 @@ class PuzzleCreator():
     def _is_finished_scan(self):
         logger.info("Check whether to stop board scanning or not")
         logger.debug("Check the sum of the pieces area against the whole framework")
-        if self.pieces_area<self.frame_polygon.area:
+        if self.pieces_area < self.frame_polygon.area:
             logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
             return False
         
         logger.debug("Checking if all the interior points angles between their edges are less than 180")
         for point in self.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
-                return False
+                raise ValidationErr("The angle of the polygon are not convex even though the whole puzzle framework is covered")
         
         
         return True
