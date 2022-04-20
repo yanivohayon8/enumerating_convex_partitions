@@ -56,6 +56,14 @@ class PowerGroupCreator(PuzzleCreator):
                 snapshot = Snapshot(Junction(kernel_point,self.scan_direction),dict(self.last_possible_rgons),
                                     self.pieces.copy(),self.pieces_area)
                 
+                fig,axs = plt.subplots(1,2,sharey=True)
+                self.plot_puzzle(fig,axs[0],snapshot.pieces)
+                axs[0].set_title("Puzzle")
+                self.plot_puzzle(fig,axs[1],self.last_possible_rgons[_key])
+                axs[1].set_title("Possibilities")
+                fig.suptitle(f'Snapshot {repr(snapshot)}')
+                fig.savefig(self.output_dir+f"/snapshots/{str(snapshot.id)}.png")
+
                 self.snapshot_queue.append(snapshot)
                 
         else:

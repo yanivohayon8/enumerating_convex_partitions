@@ -122,6 +122,7 @@ class TestPowergroupCreator(unittest.TestCase):
             os.makedirs(output_dir+"/visibility-graph-filtered")
             os.makedirs(output_dir+"/last_decision_junction")
             os.makedirs(output_dir+"/last_creation")
+            os.makedirs(output_dir+"/snapshots")
         
         for file in os.scandir(os.path.join(output_dir+"/results")):
             os.remove(file.path)
@@ -136,6 +137,9 @@ class TestPowergroupCreator(unittest.TestCase):
             os.remove(file.path)    
 
         for file in os.scandir(os.path.join(output_dir,"last_creation")):
+            os.remove(file.path)  
+
+        for file in os.scandir(os.path.join(output_dir,"snapshots")):
             os.remove(file.path)  
 
         setup_logger.set_debug_lastrun_dir(output_dir)
@@ -169,6 +173,7 @@ class TestPowergroupCreator(unittest.TestCase):
             os.makedirs(output_dir+"/visibility-graph-filtered")
             os.makedirs(output_dir+"/last_decision_junction")
             os.makedirs(output_dir+"/last_creation")
+            os.makedirs(output_dir+"/snapshots")
         
         for file in os.scandir(os.path.join(output_dir+"/results")):
             os.remove(file.path)
@@ -183,7 +188,10 @@ class TestPowergroupCreator(unittest.TestCase):
             os.remove(file.path)    
 
         for file in os.scandir(os.path.join(output_dir,"last_creation")):
-            os.remove(file.path)    
+            os.remove(file.path)  
+            
+        for file in os.scandir(os.path.join(output_dir,"snapshots")):
+            os.remove(file.path)  
 
         log_path = setup_logger.get_cwd()+f"/data/debug_powergroup_creator/{str(example_name)}/logs/run02.log" #setup_logger.get_debug_log_file()
         creator = PowerGroupRestore(output_dir,log_path)
