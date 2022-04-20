@@ -36,7 +36,7 @@ class PuzzleCreator():
         self.frame_anchor_points = [] #frame anchor points
         self.frame_points = []
         self.pieces = [] #MultiPolygon
-        self.is_angles_convex = {}
+        # self.is_angles_convex = {}
         self.pieces_area = 0
         self.frame_polygon = None
         self.last_possible_rgons ={}
@@ -60,8 +60,8 @@ class PuzzleCreator():
         self.scan_direction = Direction.left
         self._set_direction_scan(self.scan_direction.value)
 
-        for point in self.interior_points:
-            self.is_angles_convex[str(point)] = False
+        # for point in self.interior_points:
+        #     self.is_angles_convex[str(point)] = False
         
     def plot_puzzle(self,fig,ax,pieces=None,**kwargs):
         if pieces is None:

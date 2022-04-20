@@ -7,12 +7,13 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 import unittest
 from src.puzzle_creators.skeleton import PuzzleCreator
 from src.puzzle_creators.random import RandomCreator,RestoreRandom
-from src.puzzle_creators.power_group import PowerGroupCreator,PowerGroupRestore
+from src.puzzle_creators.power_group.primary import PowerGroupCreator
+from src.puzzle_creators.power_group.restore import PowerGroupRestore
+# from src.puzzle_creators.power_group.restore import PowerGroupRestore
 import matplotlib.pyplot as plt
 import logging
 from src import setup_logger
 
-import shutil
 
 class TestParentCreator(unittest.TestCase):
 

@@ -1,4 +1,3 @@
-from turtle import pos
 from src.puzzle_creators.skeleton import PuzzleCreator
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
