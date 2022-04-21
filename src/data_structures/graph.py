@@ -37,7 +37,9 @@ class Edge(object):
         if isinstance(edge,tuple):
             return self.src_point == edge[0] and self.dst_point == edge[1]
 
-    
+    def __repr__(self) -> str:
+        return str(self)
+
     def __hash__(self):
         return hash((self.src_point,self.dst_point))
 

@@ -11,7 +11,7 @@ from shapely.geometry import MultiPoint,LineString,MultiLineString
 import matplotlib.pyplot as plt
 
 
-no_simple_poly= Polygon([(0.0, 0.0),(80.0, 50.0),(100.0, 100.0),(10.0, 20.0),(60.0, 90.0)])
+no_simple_poly= Polygon([(100.0, 100.0),(0.0, 0.0),(50.0, 60.0),(0.0, 100.0)])
 simple_poly= Polygon([(0.0, 0.0),(80.0, 50.0),(100.0, 100.0),(60.0, 90.0)])
 print(no_simple_poly.is_simple)
 print(simple_poly.is_simple)

@@ -7,11 +7,6 @@ class Snapshot():
     def __init__(self,junction:Junction,possible_rgon_at,pieces,pieces_area) -> None:
         self.id = next(self.id_iter)
         self._junction = junction # key
-        # self._kernel_point = kernel_point # key
-        # self._direction = direction # key
-        # self.history = []
-        # self._kernel_first_rgon_options = possible_rgons # maybe this is not nesseceray
-        # self._is_angles_convex_at_point = is_angles_convex_at_point
         self._possible_rgon_at = possible_rgon_at #self.last_possible_rgons = last_possible_rgons # maybe is not necessray
         self._pieces = tuple(pieces)
         self._pieces_area = pieces_area
@@ -22,10 +17,6 @@ class Snapshot():
     @property
     def junction(self):
         return self._junction
-    
-    # @property
-    # def is_angles_convex_at_point(self):
-    #     return self._is_angles_convex_at_point
     
     @property
     def possible_rgon_at(self):

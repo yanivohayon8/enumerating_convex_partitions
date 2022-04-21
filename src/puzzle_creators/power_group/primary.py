@@ -20,16 +20,6 @@ class PowerGroupCreator(PuzzleCreator):
         self.output_dir = output_dir
         self.history_manager = HistoryManager()
     
-
-    def _filter_poss_rgons(self,kernel_point,last_possible_rgons):
-        # snap = self.get_fit_snapshot(kernel_point)
-        # possible_rgons = []
-        # if snap is not None:
-        #     possible_rgons =  [rgon for rgon in last_possible_rgons if not any(rgon.equals(piece) for piece in snap.history)] 
-        
-        # return super()._filter_poss_rgons(possible_rgons)
-        return super()._filter_poss_rgons(last_possible_rgons)
-
     def _create_rgon(self, possible_rgons):
 
         if len(possible_rgons) == 0:
@@ -68,7 +58,7 @@ class PowerGroupCreator(PuzzleCreator):
                 
         else:
             logger.info("Prior surface scanning at this point and direction Found, filter possible rgons with the surface current status")
-            self.last_possible_rgons[_key] = self._filter_poss_rgons(kernel_point,self.last_possible_rgons[_key])
+            self.last_possible_rgons[_key] = self._filter_poss_rgons(self.last_possible_rgons[_key])
         
         return self.last_possible_rgons[_key]
 
@@ -103,14 +93,6 @@ class PowerGroupCreator(PuzzleCreator):
 
                 self.snapshot_queue.pop()
         
-
-            # last_snap = self.decision_junc_stac[0]
-            # _key = f"from {last_snap.direction.name} "+str(last_snap.kernel_point)
-            # last_possible_rgons = last_snap.last_possible_rgons[1] # maybe get this from a getter
-
-            # # for _key in last_possible_rgons.keys():
-            # last_possible_rgons[_key] = [rgon for rgon in last_possible_rgons[_key] if not any(rgon.equals(piece) for piece in last_snap.history)] 
-
             self.revert(last_snap)
 
             if len(self.snapshot_queue) == 0:
@@ -144,8 +126,6 @@ class PowerGroupCreator(PuzzleCreator):
         kernel_index = self.space_points.index(snapshot.junction.kernel_point)
         self.space_points = self.space_points[kernel_index:]
         self.scan_direction = snapshot.junction.from_direction
-        # self.is_angles_convex = snapshot.is_angles_convex_at_point.copy()
-
         self.last_possible_rgons = snapshot.possible_rgon_at.copy()
         updated_junc_pieces = []
         junction_history = self.history_manager.choices_history_at_snap[repr(snapshot)]
