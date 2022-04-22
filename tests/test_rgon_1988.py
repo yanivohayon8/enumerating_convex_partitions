@@ -9,7 +9,7 @@ from src.hypothesis import rgon_1988 as Rgon1988
 import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
 
-import networkx as nx
+# import networkx as nx
 
 # from src.data_structures import plot_graph
 

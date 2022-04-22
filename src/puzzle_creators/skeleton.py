@@ -279,33 +279,32 @@ class PuzzleCreator():
         return True
 
     def _find_rgons_comb(self,kernel_point,continuity_edges):
-        rgons_strings = set()
+        rgons = []
 
         for edge_str in list(continuity_edges.keys()):
             traverses = [list(dict.fromkeys(tr)) for tr in self._get_traverse(Edge(edge_str),continuity_edges)]
-            # rgons.append(traverses)
             # find all sequential sub combinations:
             for trav in traverses:
                 for index_start in range(len(trav)):
                     for index_end in range(index_start+1,len(trav)):
                         sub_trav = trav[index_start:index_end+1]
                         sub_trav.insert(0,str(kernel_point))
-                        rgons_strings.add(";".join(sub_trav))
+                        poly = Polygon([Point(eval(point_str)) for point_str in sub_trav])
+
+                        try:
+                            self.check_sanity_polygon(poly)
+                            rgons.append(poly)
+                        except ValidationErr as err:
+                            pass
         
+        # Remove duplicates
+        final_rgons = []
+        for rgon in rgons:
 
-        rgons = []
-        for rgon_str in list(rgons_strings):
-            points = rgon_str.split(";")
-            poly = Polygon([Point(eval(point_str)) for point_str in points])
+            if all(not rgon.equals(poly) for poly in final_rgons):
+                final_rgons.append(rgon)
 
-            try:
-                self.check_sanity_polygon(poly)
-                rgons.append(poly)
-            except ValidationErr as err:
-                pass
-
-
-        return rgons
+        return final_rgons
 
     def _get_traverse(self,origin_edge,continuity_edges):
         if len(continuity_edges[str(origin_edge)]) == 0:
