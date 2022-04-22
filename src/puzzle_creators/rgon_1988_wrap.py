@@ -11,9 +11,9 @@ log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 logger = logging.getLogger("logger.rgon_1988_wrap")
 logger.addHandler(log_handler)
 
-direction = Direction.left
+# direction = Direction.left
 
-def mirror_y_axis(mirrored):
+def mirror_y_axis(mirrored,direction):
     if direction.value == 1:
         return mirrored
 
@@ -30,32 +30,32 @@ def mirror_y_axis(mirrored):
         #     grph_mirr.insert_vertex(vert_mirr)
 
         for edge in list(mirrored.get_edges()):
-            edge_mirr = mirror_y_axis(edge)
+            edge_mirr = mirror_y_axis(edge,direction)
             grph_mirr.insert_edge(edge_mirr)
 
         return grph_mirr
     if isinstance(mirrored,Edge):
-        src_point = mirror_y_axis(mirrored.src_point) #Point(-mirrored.src_point.x,mirrored.src_point.y)
-        dst_point = mirror_y_axis(mirrored.dst_point) #Point(-mirrored.dst_point.x,mirrored.dst_point.y)
+        src_point = mirror_y_axis(mirrored.src_point,direction) #Point(-mirrored.src_point.x,mirrored.src_point.y)
+        dst_point = mirror_y_axis(mirrored.dst_point,direction) #Point(-mirrored.dst_point.x,mirrored.dst_point.y)
 
         return Edge(src_point,dst_point)
 
-def get_stared_shape_polygon(kernel_point,subspace_points):
-    kernel_point_mirr = mirror_y_axis(kernel_point)
-    subspace_points_mirr = [mirror_y_axis(point) for point in subspace_points]
+def get_stared_shape_polygon(kernel_point,subspace_points,direction):
+    kernel_point_mirr = mirror_y_axis(kernel_point,direction)
+    subspace_points_mirr = [mirror_y_axis(point,direction) for point in subspace_points]
     stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point_mirr,subspace_points_mirr)
-    stared_polygon = mirror_y_axis(stared_polygon)
+    stared_polygon = mirror_y_axis(stared_polygon,direction)
     logger.debug(f"The stared polygon is  {str(list(stared_polygon.exterior.coords))}")
     return stared_polygon
 
-def get_visualization_graph(kernel_point,stared_polygon):
-    kernel_point_mirr = mirror_y_axis(kernel_point)
-    stared_polygon = mirror_y_axis(stared_polygon)
+def get_visualization_graph(kernel_point,stared_polygon,direction):
+    kernel_point_mirr = mirror_y_axis(kernel_point,direction)
+    stared_polygon = mirror_y_axis(stared_polygon,direction)
     visual_graph = Rgon1988.get_visualization_graph(kernel_point_mirr,stared_polygon)
-    return mirror_y_axis(visual_graph)
+    return mirror_y_axis(visual_graph,direction)
 
-def get_convex_chain_connectivity(visual_graph):
-    visual_graph_mirr = mirror_y_axis(visual_graph)
+def get_convex_chain_connectivity(visual_graph,direction):
+    visual_graph_mirr = mirror_y_axis(visual_graph,direction)
     connectivity = Rgon1988.get_convex_chain_connectivity(visual_graph_mirr)
 
     if direction.value == 1:
@@ -64,7 +64,7 @@ def get_convex_chain_connectivity(visual_graph):
     connectivity_mirr = {}
     for edge_key in connectivity.keys():
         edge_key_mirr = re.sub("-","",edge_key) # This could be prolematic - str is ()--()
-        connectivity_mirr[edge_key_mirr] = [mirror_y_axis(e) for e in connectivity[edge_key]]
+        connectivity_mirr[edge_key_mirr] = [mirror_y_axis(e,direction) for e in connectivity[edge_key]]
     
     return connectivity_mirr
 

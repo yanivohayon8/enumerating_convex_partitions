@@ -159,7 +159,7 @@ class PuzzleCreator():
                 break
 
             self.scan_direction = Direction(self.scan_direction.value * (-1))
-            Rgon1988.direction = self.scan_direction
+            # Rgon1988.direction = self.scan_direction
             self._set_direction_scan(self.scan_direction.value)
         
         # logger.info("Finish to assemble a puzzle")
@@ -351,8 +351,8 @@ class PuzzleCreator():
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
             return {}
         
-        stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect)
-        visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon)
+        stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,self.scan_direction)
+        visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon,self.scan_direction)
         fig,ax = plt.subplots()
         self.plot_puzzle(fig,ax)
     
@@ -391,7 +391,7 @@ class PuzzleCreator():
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
             return {}
 
-        return Rgon1988.get_convex_chain_connectivity(visual_graph_polygon)
+        return Rgon1988.get_convex_chain_connectivity(visual_graph_polygon,self.scan_direction)
 
     def _find_first_possible_rgons(self,kernel_point,n_iter=-1):
         continuity_edges = self._get_surface(kernel_point,self.scan_direction,n_iter)
