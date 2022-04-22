@@ -10,8 +10,6 @@ import unittest
 from src.puzzle_creators.skeleton import PuzzleCreator
 from src.puzzle_creators.random import RandomCreator,RestoreRandom
 from src.puzzle_creators.power_group.primary import PowerGroupCreator
-from src.puzzle_creators.power_group.restore import PowerGroupRestore
-# from src.puzzle_creators.power_group.restore import PowerGroupRestore
 import matplotlib.pyplot as plt
 import logging
 from src import setup_logger
@@ -33,61 +31,6 @@ class TestParentCreator(unittest.TestCase):
 
         pass
 
-
-    
-    # def test_get_surface(self):
-    #     example_name = "simple_square"
-    #     current_working_dir = os.getcwd()
-    #     output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
-
-    #     if not os.path.exists(output_dir):
-    #         os.makedirs(output_dir)
-    #         os.makedirs(output_dir+"/results")
-    #         os.makedirs(output_dir+"/visibility-graph-before-filter")
-    #         os.makedirs(output_dir+"/visibility-graph-filtered")
-    #         os.makedirs(output_dir+"/last_decision_junction")
-    #         os.makedirs(output_dir+"/last_creation")
-    #         os.makedirs(output_dir+"/snapshots")
-        
-    #     for file in os.scandir(os.path.join(output_dir+"/results")):
-    #         os.remove(file.path)
-        
-    #     for file in os.scandir(os.path.join(output_dir,"visibility-graph-before-filter")):
-    #         os.remove(file.path)
-
-    #     for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
-    #         os.remove(file.path)    
-        
-    #     for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
-    #         os.remove(file.path)    
-
-    #     for file in os.scandir(os.path.join(output_dir,"last_creation")):
-    #         os.remove(file.path)  
-
-    #     for file in os.scandir(os.path.join(output_dir,"snapshots")):
-    #         os.remove(file.path)  
-
-    #     setup_logger.set_debug_lastrun_dir(output_dir)
-    #     log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
-    #     logger = logging.getLogger("logger.test_puzzle_creator")
-    #     logger.addHandler(log_handler)
-    #     logger.debug("Starting....")
-
-    #     creator = PowerGroupCreator(output_dir)
-    #     creator.load_sampled_points(self.files_path + example_name +".csv")
-    #     # fig, ax = plt.subplots()
-
-    #     try:
-    #         pass
-    #         # creator._set_direction_scan(Direction.right)
-    #         # creator.scan_direction = Direction.right
-
-    #     except Exception as err:
-    #         # logger.exception(err)
-    #         raise err
-
-    #     plt.close("all")
-        
 
 class TestRandomCreator(unittest.TestCase):
 
@@ -218,9 +161,9 @@ class TestPowergroupCreator(unittest.TestCase):
 
         plt.close("all")
 
-    def test_simple_square_restored(self):
-        
-        example_name = "simple_square"
+
+    def test_simple_square_crossing_cuts(self):
+        example_name = "simple_square_crossing_cuts"
         current_working_dir = os.getcwd()
         output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
 
@@ -247,12 +190,9 @@ class TestPowergroupCreator(unittest.TestCase):
 
         for file in os.scandir(os.path.join(output_dir,"last_creation")):
             os.remove(file.path)  
-            
+
         for file in os.scandir(os.path.join(output_dir,"snapshots")):
             os.remove(file.path)  
-
-        log_path = setup_logger.get_cwd()+f"/data/debug_powergroup_creator/{str(example_name)}/logs/run02.log" #setup_logger.get_debug_log_file()
-        creator = PowerGroupRestore(output_dir,log_path)
 
         setup_logger.set_debug_lastrun_dir(output_dir)
         log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
@@ -260,23 +200,14 @@ class TestPowergroupCreator(unittest.TestCase):
         logger.addHandler(log_handler)
         logger.debug("Starting....")
 
-
+        creator = PowerGroupCreator(output_dir)
         creator.load_sampled_points(self.files_path + example_name +".csv")
         # fig, ax = plt.subplots()
 
         try:
             creator.create_puzzles()
-            # creator.plot_puzzle(fig,ax)
-            # plt.show()
-            # fig.savefig(debug_dir + "/results.png")
         except Exception as err:
+            # logger.exception(err)
             raise err
 
-        pass
-
-
-if __name__ == "__main__":
-    unittest.main()
-    # TestSweepLine.test_line_status_insert()
-    pass
-    
+        plt.close("all")
