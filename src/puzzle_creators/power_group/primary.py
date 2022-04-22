@@ -83,6 +83,9 @@ class PowerGroupCreator(PuzzleCreator):
             self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
             self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
 
+            if len(self.snapshot_queue) == 0:
+                break
+            
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
                 choices_history = self.history_manager.choices_history_at_snap[repr(last_snap)]
@@ -92,11 +95,9 @@ class PowerGroupCreator(PuzzleCreator):
                     break
 
                 self.snapshot_queue.pop()
+
         
             self.revert(last_snap)
-
-            if len(self.snapshot_queue) == 0:
-                break
             
             logger.info("Plot the current state of the puzzle, and the previous choices hatched")
             fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle)} creation.png"

@@ -136,10 +136,10 @@ class PuzzleCreator():
     def create(self):
         logger.info("Starts create function")
         self.n_iter = 0
-        Rgon1988.direction = self.scan_direction
 
 
         while True:
+            # Rgon1988.direction = self.scan_direction
             logger.info(f"Start to scan board to from {str(self.scan_direction.name)}")
             for kernel_point in self.space_points:
                 self.last_kernel_point = kernel_point # for the power group creator
@@ -159,7 +159,7 @@ class PuzzleCreator():
                 break
 
             self.scan_direction = Direction(self.scan_direction.value * (-1))
-            # Rgon1988.direction = self.scan_direction
+            Rgon1988.direction = self.scan_direction
             self._set_direction_scan(self.scan_direction.value)
         
         # logger.info("Finish to assemble a puzzle")
