@@ -53,7 +53,7 @@ class PuzzleCreator():
         for row in df.to_numpy():
             
             if row[0] < 0 or row[1] < 0:
-                raise ValueError(f"All points coordinates must be positive. Recieved as input ({row[0]},{row[1]})")
+                raise ValueError(f"All points coordinates must not be negative. Recieved as input ({row[0]},{row[1]})")
 
             point = Point(row[0],row[1])
             role_points[row[2]].append(point)
