@@ -184,7 +184,7 @@ class PuzzleCreator():
         raise NotImplementedError("need to be implemented")
 
     def after_rgon_creation(self,polygon):
-        if polygon is not None:
+        if isinstance(polygon,Polygon):
             logger.debug(f"Next Polygon to create is : {str(polygon)}")
             self.check_sanity_polygon(polygon)
             self._count_piece(polygon)
@@ -327,7 +327,6 @@ class PuzzleCreator():
             travs.append(flat_travs)
         
         return travs
-
 
     def _create_rgon(self,possible_rgons):
         raise NotImplementedError("need to be implemented")

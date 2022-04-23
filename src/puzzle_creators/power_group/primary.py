@@ -22,10 +22,18 @@ class PowerGroupCreator(PuzzleCreator):
         self.output_dir = output_dir
         self.history_manager = HistoryManager()
         self.puzzles = []
+        self.is_passed_at = {}
     
     def _create_rgon(self, possible_rgons):
 
         if len(possible_rgons) == 0:
+            logger.debug("It seems no rgon is availiable")
+
+            _key = f"from {self.scan_direction.name} at "+str(self.last_kernel_point)
+            if not self.is_passed_at[_key]:
+                logger.debug("Choose to pass rgon creation at this point")
+                return "pass_option"
+
             logger.debug(f"No option availiable for creating rgon at n_iter: {self.n_iter}")
             return None
 
@@ -43,11 +51,12 @@ class PowerGroupCreator(PuzzleCreator):
         if _key not in self.last_possible_rgons.keys(): #and snap is None:
             logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
             self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
-            
+            self.is_passed_at[_key] = False
+
             if len(self.last_possible_rgons[_key]) > 1:
                 logger.info(f"Take a snapshot of the board (Decision Juncion object)")
                 snapshot = Snapshot(Junction(kernel_point,self.scan_direction),dict(self.last_possible_rgons),
-                                    self.pieces.copy(),self.pieces_area)
+                                    self.pieces.copy(),self.pieces_area,dict(self.is_passed_at))
                 
                 fig,axs = plt.subplots(1,2,sharey=True)
                 self.plot_puzzle(fig,axs[0],snapshot.pieces)
@@ -67,15 +76,23 @@ class PowerGroupCreator(PuzzleCreator):
 
     def after_rgon_creation(self, polygon):
         super().after_rgon_creation(polygon)
-        if polygon is not None:
+        if isinstance(polygon,Polygon) or isinstance(polygon,str):
             
-            self.history_manager.add(Junction(self.last_kernel_point, self.scan_direction),self.snapshot_queue,polygon)
+            junction = Junction(self.last_kernel_point, self.scan_direction)
+            self.history_manager.add(junction,self.snapshot_queue,polygon)
         
             fig,ax = plt.subplots()
             self.plot_puzzle(fig,ax)
-            fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}')
+
+            extra_str = ""
+            if isinstance(polygon,str):
+                extra_str = " passed creation"
+                self.is_passed_at[repr(junction)] = True
+
+            fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}' + extra_str)
             fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
             plt.close()
+
 
 
     def create_puzzles(self):
@@ -105,7 +122,7 @@ class PowerGroupCreator(PuzzleCreator):
                 last_snap = self.snapshot_queue[-1]
                 choices_history = self.history_manager.choices_history_at_snap[repr(last_snap)]
 
-                if not last_snap.is_tried_all_paths(choices_history):
+                if not last_snap.is_tried_all_paths(choices_history) and not last_snap in self.history_manager.passed_snapshots:
                     logger.info(f"Did not traversed on all snapshot possibilities at {repr(last_snap)} - preparing to try different rgon options")
                     break
 
@@ -125,8 +142,7 @@ class PowerGroupCreator(PuzzleCreator):
             self.plot_puzzle(fig,axs[1],self.history_manager.choices_history_at_snap[repr(last_snap)],hatch='\\/...')
             axs[1].set_title("Choises History")
             self.plot_puzzle(fig,axs[2],self.last_possible_rgons[repr(last_snap.junction)])
-            axs[2].set_title("Possiblities")
-
+            axs[2].set_title("Possiblities, passing is optional: " + str(last_snap in self.history_manager.passed_snapshots))
 
             fig.suptitle(f'Snapshot at {str(last_snap.junction.kernel_point)}-from {str(last_snap.junction.from_direction)}')
             fig.autofmt_xdate()
@@ -154,6 +170,7 @@ class PowerGroupCreator(PuzzleCreator):
         
         self.pieces = list(snapshot.pieces)
         self.pieces_area = snapshot.pieces_area
+        self.is_passed_at = snapshot.is_passed_at
 
 
     def _get_surface(self, kernel_point, scan_direction, n_iter=-1):
