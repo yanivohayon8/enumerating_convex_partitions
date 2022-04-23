@@ -111,37 +111,16 @@ class TestPowergroupCreator(unittest.TestCase):
     files_path = 'data/starting_points/'
    
 
-    def test_simple_square(self):
-        example_name = "simple_square"
+    def _run(self,example_name):
         current_working_dir = os.getcwd()
         output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
-
+        dirs = ["results","visibility-graph-before-filter","visibility-graph-filtered",
+                "last_decision_junction","last_creation","snapshots"]
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-            os.makedirs(output_dir+"/results")
-            os.makedirs(output_dir+"/visibility-graph-before-filter")
-            os.makedirs(output_dir+"/visibility-graph-filtered")
-            os.makedirs(output_dir+"/last_decision_junction")
-            os.makedirs(output_dir+"/last_creation")
-            os.makedirs(output_dir+"/snapshots")
+            [os.makedirs(output_dir+ f"/{_dir}") for _dir in dirs]
         
-        for file in os.scandir(os.path.join(output_dir+"/results")):
-            os.remove(file.path)
-        
-        for file in os.scandir(os.path.join(output_dir,"visibility-graph-before-filter")):
-            os.remove(file.path)
-
-        for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
-            os.remove(file.path)    
-        
-        for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
-            os.remove(file.path)    
-
-        for file in os.scandir(os.path.join(output_dir,"last_creation")):
-            os.remove(file.path)  
-
-        for file in os.scandir(os.path.join(output_dir,"snapshots")):
-            os.remove(file.path)  
+        [[os.remove(file.path) for file in os.scandir(os.path.join(output_dir+f"/{_dir}"))] for _dir in dirs]
 
         setup_logger.set_debug_lastrun_dir(output_dir)
         log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
@@ -161,53 +140,12 @@ class TestPowergroupCreator(unittest.TestCase):
 
         plt.close("all")
 
+
+    def test_simple_square(self):
+        self._run("simple_square")
+        
+    def test_empty_triangle(self):
+        self._run("triangle_intpoint_0_01")
 
     def test_simple_square_crossing_cuts(self):
-        example_name = "simple_square_crossing_cuts"
-        current_working_dir = os.getcwd()
-        output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
-
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            os.makedirs(output_dir+"/results")
-            os.makedirs(output_dir+"/visibility-graph-before-filter")
-            os.makedirs(output_dir+"/visibility-graph-filtered")
-            os.makedirs(output_dir+"/last_decision_junction")
-            os.makedirs(output_dir+"/last_creation")
-            os.makedirs(output_dir+"/snapshots")
-        
-        for file in os.scandir(os.path.join(output_dir+"/results")):
-            os.remove(file.path)
-        
-        for file in os.scandir(os.path.join(output_dir,"visibility-graph-before-filter")):
-            os.remove(file.path)
-
-        for file in os.scandir(os.path.join(output_dir,"visibility-graph-filtered")):
-            os.remove(file.path)    
-        
-        for file in os.scandir(os.path.join(output_dir,"last_decision_junction")):
-            os.remove(file.path)    
-
-        for file in os.scandir(os.path.join(output_dir,"last_creation")):
-            os.remove(file.path)  
-
-        for file in os.scandir(os.path.join(output_dir,"snapshots")):
-            os.remove(file.path)  
-
-        setup_logger.set_debug_lastrun_dir(output_dir)
-        log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
-        logger = logging.getLogger("logger.test_puzzle_creator")
-        logger.addHandler(log_handler)
-        logger.debug("Starting....")
-
-        creator = PowerGroupCreator(output_dir)
-        creator.load_sampled_points(self.files_path + example_name +".csv")
-        # fig, ax = plt.subplots()
-
-        try:
-            creator.create_puzzles()
-        except Exception as err:
-            # logger.exception(err)
-            raise err
-
-        plt.close("all")
+        self._run("simple_square_crossing_cuts")
