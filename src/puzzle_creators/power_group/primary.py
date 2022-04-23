@@ -148,7 +148,7 @@ class PowerGroupCreator(PuzzleCreator):
             fig.autofmt_xdate()
 
             fig.savefig(fig_path)
-            plt.close()    
+            plt.close("all")    
 
             for file in os.scandir(os.path.join(self.output_dir,"last_creation")):
                 os.remove(file.path) 
