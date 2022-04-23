@@ -1,4 +1,6 @@
 
+# from data_structures.shapes import Polygon
+from src.data_structures.shapes import Polygon
 from src.puzzle_creators.power_group import HistoryManager,Snapshot
 from src.puzzle_creators import Junction
 from src.puzzle_creators.skeleton import PuzzleCreator
@@ -19,6 +21,7 @@ class PowerGroupCreator(PuzzleCreator):
         self.snapshot_queue = [] #[]
         self.output_dir = output_dir
         self.history_manager = HistoryManager()
+        self.puzzles = []
     
     def _create_rgon(self, possible_rgons):
 
@@ -77,11 +80,24 @@ class PowerGroupCreator(PuzzleCreator):
 
     def create_puzzles(self):
         self.n_puzzle = 1
+        
         while True:
             super().create()
-            logger.info("Finish to assemble a puzzle number:" + str(self.n_puzzle))
-            self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
-            self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
+            logger.info("Finish to assemble puzzle - check if it is equal to previous puzzle (recursive algo duplicates)")
+            
+            if not any(all(any(curr_puzzle_piece.equals(exist_puzz_piece) for curr_puzzle_piece in self.pieces) for exist_puzz_piece in exist_puzzle) for exist_puzzle in self.puzzles):
+                new_puzzle = []
+                for piece in self.pieces:
+                    deep_copy_poly = Polygon(piece.exterior.coords)
+                    new_puzzle.append(deep_copy_poly)
+
+                self.puzzles.append(new_puzzle)
+                logger.info("Finish to assemble a puzzle number:" + str(self.n_puzzle) +". save to file")
+                self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
+                self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
+                self.n_puzzle+=1
+            else:
+                logger.info("already created this puzlle")
 
             
 
@@ -117,7 +133,6 @@ class PowerGroupCreator(PuzzleCreator):
 
             fig.savefig(fig_path)
             plt.close()    
-            self.n_puzzle+=1
 
             for file in os.scandir(os.path.join(self.output_dir,"last_creation")):
                 os.remove(file.path) 

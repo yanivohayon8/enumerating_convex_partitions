@@ -3,7 +3,7 @@ from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 import logging
 from src import setup_logger
-from src.puzzle_creators import Direction
+# from src.puzzle_creators import Direction
 from src.data_structures.graph import Graph,Edge
 import re
 
