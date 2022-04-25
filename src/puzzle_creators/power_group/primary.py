@@ -65,7 +65,7 @@ class PowerGroupCreator(PuzzleCreator):
                 axs[1].set_title("Possibilities")
                 fig.suptitle(f'Snapshot {repr(snapshot)}')
                 fig.savefig(self.output_dir+f"/snapshots/{str(snapshot.id)}.png")
-
+                plt.close(fig)
                 self.snapshot_queue.append(snapshot)
                 
         else:
@@ -91,7 +91,7 @@ class PowerGroupCreator(PuzzleCreator):
 
             fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}' + extra_str)
             fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
-            plt.close()
+            plt.close(fig)
 
 
 
@@ -135,7 +135,7 @@ class PowerGroupCreator(PuzzleCreator):
             self.revert(last_snap)
             
             logger.info("Plot the current state of the puzzle, and the previous choices hatched")
-            fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle)} creation.png"
+            fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle-1)} creation.png"
             fig,axs = plt.subplots(1,3,sharey=True)
             self.plot_puzzle(fig,axs[0])
             axs[0].set_title("The Puzzle")

@@ -149,3 +149,10 @@ class TestPowergroupCreator(unittest.TestCase):
 
     def test_simple_square_crossing_cuts(self):
         self._run("simple_square_crossing_cuts")
+    
+    def test_triangle_intpoint_1_01(self):
+        self._run("triangle_intpoint_1_01")
+    
+    def test_square_int_2_anchor_4_01(self):
+        self._run("square_int_2_anchor_4_01")
+        
