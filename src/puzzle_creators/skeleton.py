@@ -31,7 +31,7 @@ debug_dir = setup_logger.get_debug_lastrun_dir()
 
 class PuzzleCreator():
 
-    def __init__(self):
+    def __init__(self,is_debug=False):
         self.interior_points = []
         self.frame_anchor_points = [] #frame anchor points
         self.frame_points = []
@@ -41,6 +41,8 @@ class PuzzleCreator():
         self.frame_polygon = None
         self.last_possible_rgons ={}
         self.n_iter = 0
+        self.is_debug = is_debug
+        
     
     def load_sampled_points(self,file_path):
         role_points = {
@@ -140,6 +142,7 @@ class PuzzleCreator():
     def create(self):
         logger.info("Starts create function")
         self.n_iter = 0
+        self.num_iter_no_new_piece = 0
 
 
         while True:
@@ -166,6 +169,11 @@ class PuzzleCreator():
             # Rgon1988.direction = self.scan_direction
             self._set_direction_scan(self.scan_direction.value)
             plt.close("all")
+
+            if self.num_iter_no_new_piece > 3*len(self.space_points):
+                msg ="scanned the board for more than 3 times without any change. exiting"
+                logger.error(msg)
+                raise ValueError(msg)
         # logger.info("Finish to assemble a puzzle")
     
     
@@ -356,13 +364,15 @@ class PuzzleCreator():
         
         stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,self.scan_direction)
         visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon,self.scan_direction)
-        fig,ax = plt.subplots()
-        self.plot_puzzle(fig,ax)
-    
-        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-        visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        fig.savefig(debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
-        plt.close(fig)
+        
+
+        if self.is_debug:
+            fig,ax = plt.subplots()
+            self.plot_puzzle(fig,ax)
+            [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+            visual_graph_polygon.plot_directed(ax) # way to plot the graph
+            fig.savefig(debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
+            plt.close(fig)
 
         # Remove edges that are covered by polygons - do it more elegant less naive
         logger.info("Filter edges covered by exist pieces")
@@ -381,13 +391,14 @@ class PuzzleCreator():
                     logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
                     visual_graph_polygon.remove_edge(edge)
                     break
-
-        fig,ax = plt.subplots()
-        self.plot_puzzle(fig,ax)
-        [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-        visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        fig.savefig(debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
-        plt.close(fig)
+        
+        if self.is_debug:
+            fig,ax = plt.subplots()
+            self.plot_puzzle(fig,ax)
+            [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+            visual_graph_polygon.plot_directed(ax) # way to plot the graph
+            fig.savefig(debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
+            plt.close(fig)
 
         if len(list(visual_graph_polygon.get_edges())) == 0:
             logger.debug(f"Not enough edge to iterate on the visibility graph")

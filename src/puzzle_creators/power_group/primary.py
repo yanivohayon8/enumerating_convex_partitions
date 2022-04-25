@@ -58,14 +58,15 @@ class PowerGroupCreator(PuzzleCreator):
                 snapshot = Snapshot(Junction(kernel_point,self.scan_direction),dict(self.last_possible_rgons),
                                     self.pieces.copy(),self.pieces_area,dict(self.is_passed_at))
                 
-                fig,axs = plt.subplots(1,2,sharey=True)
-                self.plot_puzzle(fig,axs[0],snapshot.pieces)
-                axs[0].set_title("Puzzle")
-                self.plot_puzzle(fig,axs[1],self.last_possible_rgons[_key])
-                axs[1].set_title("Possibilities")
-                fig.suptitle(f'Snapshot {repr(snapshot)}')
-                fig.savefig(self.output_dir+f"/snapshots/{str(snapshot.id)}.png")
-                plt.close(fig)
+                if self.is_debug:
+                    fig,axs = plt.subplots(1,2,sharey=True)
+                    self.plot_puzzle(fig,axs[0],snapshot.pieces)
+                    axs[0].set_title("Puzzle")
+                    self.plot_puzzle(fig,axs[1],self.last_possible_rgons[_key])
+                    axs[1].set_title("Possibilities")
+                    fig.suptitle(f'Snapshot {repr(snapshot)}')
+                    fig.savefig(self.output_dir+f"/snapshots/{str(snapshot.id)}.png")
+                    plt.close(fig)
                 self.snapshot_queue.append(snapshot)
                 
         else:
@@ -80,18 +81,24 @@ class PowerGroupCreator(PuzzleCreator):
             
             junction = Junction(self.last_kernel_point, self.scan_direction)
             self.history_manager.add(junction,self.snapshot_queue,polygon)
-        
-            fig,ax = plt.subplots()
-            self.plot_puzzle(fig,ax)
 
-            extra_str = ""
-            if isinstance(polygon,str):
-                extra_str = " passed creation"
-                self.is_passed_at[repr(junction)] = True
+            self.num_iter_no_new_piece+=1
 
-            fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}' + extra_str)
-            fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
-            plt.close(fig)
+            if self.is_debug:
+                fig,ax = plt.subplots()
+                self.plot_puzzle(fig,ax)
+
+                extra_str = ""
+                if isinstance(polygon,str):
+                    extra_str = " passed creation"
+                    self.is_passed_at[repr(junction)] = True
+
+                
+                fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}' + extra_str)
+                fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
+                plt.close(fig)
+        else:
+            self.num_iter_no_new_piece+=1
 
 
 
@@ -134,21 +141,22 @@ class PowerGroupCreator(PuzzleCreator):
         
             self.revert(last_snap)
             
-            logger.info("Plot the current state of the puzzle, and the previous choices hatched")
-            fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle-1)} creation.png"
-            fig,axs = plt.subplots(1,3,sharey=True)
-            self.plot_puzzle(fig,axs[0])
-            axs[0].set_title("The Puzzle")
-            self.plot_puzzle(fig,axs[1],self.history_manager.choices_history_at_snap[repr(last_snap)],hatch='\\/...')
-            axs[1].set_title("Choises History")
-            self.plot_puzzle(fig,axs[2],self.last_possible_rgons[repr(last_snap.junction)])
-            axs[2].set_title("Possiblities, passing is optional: " + str(last_snap in self.history_manager.passed_snapshots))
+            if self.is_debug:
+                logger.info("Plot the current state of the puzzle, and the previous choices hatched")
+                fig_path = self.output_dir+f"/last_decision_junction/After puzzle {str(self.n_puzzle-1)} creation.png"
+                fig,axs = plt.subplots(1,3,sharey=True)
+                self.plot_puzzle(fig,axs[0])
+                axs[0].set_title("The Puzzle")
+                self.plot_puzzle(fig,axs[1],self.history_manager.choices_history_at_snap[repr(last_snap)],hatch='\\/...')
+                axs[1].set_title("Choises History")
+                self.plot_puzzle(fig,axs[2],self.last_possible_rgons[repr(last_snap.junction)])
+                axs[2].set_title("Possiblities, passing is optional: " + str(last_snap in self.history_manager.passed_snapshots))
 
-            fig.suptitle(f'Snapshot at {str(last_snap.junction.kernel_point)}-from {str(last_snap.junction.from_direction)}')
-            fig.autofmt_xdate()
+                fig.suptitle(f'Snapshot at {str(last_snap.junction.kernel_point)}-from {str(last_snap.junction.from_direction)}')
+                fig.autofmt_xdate()
 
-            fig.savefig(fig_path)
-            plt.close("all")    
+                fig.savefig(fig_path)
+                plt.close("all")    
 
             for file in os.scandir(os.path.join(self.output_dir,"last_creation")):
                 os.remove(file.path) 

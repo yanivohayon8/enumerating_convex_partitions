@@ -155,4 +155,7 @@ class TestPowergroupCreator(unittest.TestCase):
     
     def test_square_int_2_anchor_4_01(self):
         self._run("square_int_2_anchor_4_01")
+
+    def test_square_int_2_anchor_8_01(self):
+        self._run("square_int_2_anchor_8_01")
         
