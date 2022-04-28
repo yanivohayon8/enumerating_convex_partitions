@@ -9,6 +9,7 @@ class Junction():
     def __init__(self,kernel_point,from_direction:Direction) -> None:
         self._kernel_point = kernel_point
         self._from_direction = from_direction
+        # self._n_iter = n_iter
     
     def __repr__(self) -> str:
         return f"from {self._from_direction.name} at {str(self._kernel_point)}"
@@ -20,3 +21,7 @@ class Junction():
     @property
     def from_direction(self):
         return self._from_direction
+
+    # @property
+    # def n_iter(self):
+    #     return self._n_iter

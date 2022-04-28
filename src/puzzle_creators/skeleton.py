@@ -24,10 +24,6 @@ from math import pi,atan2
 import numpy as np
 
 
-log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
-logger = logging.getLogger("logger.puzzle_creator")
-logger.addHandler(log_handler)
-debug_dir = setup_logger.get_debug_lastrun_dir()
 
 class PuzzleCreator():
 
@@ -42,6 +38,11 @@ class PuzzleCreator():
         self.last_possible_rgons ={}
         self.n_iter = 0
         self.is_debug = is_debug
+        self.fig, self.ax = plt.subplots()
+        log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
+        self.logger = logging.getLogger("logger.puzzle_creator")
+        self.logger.addHandler(log_handler)
+        self.debug_dir = setup_logger.get_debug_lastrun_dir()
         
     
     def load_sampled_points(self,file_path):
@@ -83,8 +84,8 @@ class PuzzleCreator():
                     bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
 
     def _get_points_ahead(self,kernel_point,direction=1):
-        logger.info("Start _get_points_ahead function. Filter point in space to get reachable points")
-        logger.debug("Filter point that are not ahead the scanning direction")
+        self.logger.info("Start _get_points_ahead function. Filter point in space to get reachable points")
+        self.logger.debug("Filter point that are not ahead the scanning direction")
         # on default - ahead to the left
         filter_condition = lambda item: item.x>=kernel_point.x and item!=kernel_point  
         space = self.space_points.copy() #list(self.interior_points+self.frame_anchor_points)
@@ -97,11 +98,11 @@ class PuzzleCreator():
 
         space = list(filter(filter_condition,space)) 
         space_str = reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),space)))
-        logger.debug(f"Points ahead are {str(space_str)}")
+        self.logger.debug(f"Points ahead are {str(space_str)}")
         return space
 
     def _get_accessible_points(self,kernel_point,space,direction=1):
-        logger.info("Start _get_accessible_points method")
+        self.logger.info("Start _get_accessible_points method")
         # fig,ax = plt.subplots()
         # ax.title.set_text(f"Debug accesible point")
         # self.plot_puzzle(fig,ax)
@@ -130,7 +131,7 @@ class PuzzleCreator():
         # plt.close()
 
         visible_points_str = reduce(lambda acc,x: acc + x + ";" ,["",""] + list(map(lambda x: str(x),visible_points)))
-        logger.debug(f"{str(len(visible_points))} points are visible: {str(visible_points_str)}")
+        self.logger.debug(f"{str(len(visible_points))} points are visible: {str(visible_points_str)}")
         return visible_points
 
     def _set_direction_scan(self,direction):
@@ -140,14 +141,14 @@ class PuzzleCreator():
     
     
     def create(self):
-        logger.info("Starts create function")
+        self.logger.info("Starts create function")
         self.n_iter = 0
         self.num_iter_no_new_piece = 0
 
 
         while True:
             # Rgon1988.direction = self.scan_direction
-            logger.info(f"Start to scan board to from {str(self.scan_direction.name)}")
+            self.logger.info(f"Start to scan board to from {str(self.scan_direction.name)}")
             for kernel_point in self.space_points:
                 self.last_kernel_point = kernel_point # for the power group creator
                 self.n_iter +=1
@@ -158,7 +159,7 @@ class PuzzleCreator():
                     self.after_rgon_creation(polygon)
                    
                 except Exception as err:
-                    logger.exception(err)
+                    self.logger.exception(err)
                     raise err 
             
             
@@ -168,21 +169,23 @@ class PuzzleCreator():
             self.scan_direction = Direction(self.scan_direction.value * (-1))
             # Rgon1988.direction = self.scan_direction
             self._set_direction_scan(self.scan_direction.value)
-            plt.close("all")
+            # plt.close("all")
 
             if self.num_iter_no_new_piece > 3*len(self.space_points):
                 msg ="scanned the board for more than 3 times without any change. exiting"
-                logger.error(msg)
+                self.logger.error(msg)
                 raise ValueError(msg)
-        # logger.info("Finish to assemble a puzzle")
+        # self.logger.info("Finish to assemble a puzzle")
     
     
 
     def plot_results(self,fig_path):
-        fig,ax = plt.subplots()
+        # fig,ax = plt.subplots()
+        fig,ax = self.fig,self.ax
+        ax.cla()
         self.plot_puzzle(fig,ax)
         fig.savefig(fig_path)
-        plt.close(fig)    
+        # plt.close(fig)    
 
     def _count_piece(self,polygon):
         self.pieces.append(polygon)
@@ -193,12 +196,12 @@ class PuzzleCreator():
 
     def after_rgon_creation(self,polygon):
         if isinstance(polygon,Polygon):
-            logger.debug(f"Next Polygon to create is : {str(polygon)}")
+            self.logger.debug(f"Next Polygon to create is : {str(polygon)}")
             self.check_sanity_polygon(polygon)
             self._count_piece(polygon)
 
     def _is_edges_angles_convex(self,center_point):
-        # logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
+        # self.logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
         '''Get pieces containing center point'''
         center_point_coords = list(center_point.coords)[0]
         pieces_contain_point = [list(piece.exterior.coords) for piece in self.pieces \
@@ -241,7 +244,7 @@ class PuzzleCreator():
         for angle,point in zip(angles[1:] + [angles[0]+360],neighbors_sorted[1:] + [neighbors_sorted[0]]):
             diff = angle - prev_angle
             if diff > 180:
-                logger.debug(f"Around the center point {str(center_point)} \
+                self.logger.debug(f"Around the center point {str(center_point)} \
                             the points {str(prev_point)} and {str(point)} angle is {angle}-{prev_point}={diff}>180")
                 return False
             prev_angle = angle
@@ -276,13 +279,13 @@ class PuzzleCreator():
                 raise ValidationErr(f"Piece {str(piece)} created contains interior point {str(inter_point)}")
 
     def _is_finished_scan(self):
-        logger.info("Check whether to stop board scanning or not")
-        logger.debug("Check the sum of the pieces area against the whole framework")
+        self.logger.info("Check whether to stop board scanning or not")
+        self.logger.debug("Check the sum of the pieces area against the whole framework")
         if self.pieces_area < self.frame_polygon.area:
-            logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
+            self.logger.debug(f"The sum of the pieces is less than the whole framework: {self.pieces_area}<{self.frame_polygon.area}")
             return False
         
-        logger.debug("Checking if all the interior points angles between their edges are less than 180")
+        self.logger.debug("Checking if all the interior points angles between their edges are less than 180")
         for point in self.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
                 raise ValidationErr("The angle of the polygon are not convex even though the whole puzzle framework is covered")
@@ -358,7 +361,7 @@ class PuzzleCreator():
         points_to_connect = self._get_accessible_points(kernel_point,points_to_connect,direction=self.scan_direction.value)            
 
         if len(points_to_connect) < 2:
-            logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
+            self.logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
             return {}
         
@@ -366,16 +369,18 @@ class PuzzleCreator():
         visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon,self.scan_direction)
         
 
-        if self.is_debug:
-            fig,ax = plt.subplots()
-            self.plot_puzzle(fig,ax)
-            [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-            visual_graph_polygon.plot_directed(ax) # way to plot the graph
-            fig.savefig(debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
-            plt.close(fig)
+        # if self.is_debug:
+        #     # fig,ax = plt.subplots()
+        #     fig,ax = self.fig,self.ax
+        #     ax.cla()
+        #     self.plot_puzzle(fig,ax)
+        #     [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
+        #     visual_graph_polygon.plot_directed(ax) # way to plot the graph
+        #     fig.savefig(self.debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
+        #     # plt.close(fig)
 
         # Remove edges that are covered by polygons - do it more elegant less naive
-        logger.info("Filter edges covered by exist pieces")
+        self.logger.info("Filter edges covered by exist pieces")
         vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
         lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
 
@@ -383,25 +388,27 @@ class PuzzleCreator():
             for piece in self.pieces:
                 
                 if line.crosses(piece) and not line.touches(piece):
-                    logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
+                    self.logger.debug(f"Edge {str(edge)} is crossed by piece {str(piece)} ,so remove it from visibility graph")
                     visual_graph_polygon.remove_edge(edge)
                     break
 
                 if line.within(piece):
-                    logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
+                    self.logger.debug(f"Edge {str(edge)} is within piece {str(piece)} ,so remove it from visibility graph")
                     visual_graph_polygon.remove_edge(edge)
                     break
         
         if self.is_debug:
-            fig,ax = plt.subplots()
+            # fig,ax = plt.subplots()
+            fig,ax = self.fig,self.ax
+            ax.cla()
             self.plot_puzzle(fig,ax)
             [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
             visual_graph_polygon.plot_directed(ax) # way to plot the graph
-            fig.savefig(debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
-            plt.close(fig)
+            fig.savefig(self.debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
+            # plt.close(fig)
 
         if len(list(visual_graph_polygon.get_edges())) == 0:
-            logger.debug(f"Not enough edge to iterate on the visibility graph")
+            self.logger.debug(f"Not enough edge to iterate on the visibility graph")
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
             return {}
 

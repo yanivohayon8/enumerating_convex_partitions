@@ -39,14 +39,14 @@ class TestRandomCreator(unittest.TestCase):
 
     def test_example_01_restored(self):
         
-        debug_dir = setup_logger.get_debug_lastrun_dir()
-        for file in os.scandir(os.path.join(debug_dir,"results")):
+        self.debug_dir = setup_logger.get_debug_lastrun_dir()
+        for file in os.scandir(os.path.join(self.debug_dir,"results")):
             os.remove(file.path)
 
-        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-before-filter")):
+        for file in os.scandir(os.path.join(self.debug_dir,"visibility-graph-before-filter")):
             os.remove(file.path)
 
-        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-filtered")):
+        for file in os.scandir(os.path.join(self.debug_dir,"visibility-graph-filtered")):
             os.remove(file.path)    
 
         log_path = setup_logger.get_cwd()+"/data/debug/TBN_01_02/run.log" #setup_logger.get_debug_log_file()
@@ -65,7 +65,7 @@ class TestRandomCreator(unittest.TestCase):
             creator.create()
             creator.plot_puzzle(fig,ax)
             plt.show()
-            fig.savefig(debug_dir + "/results.png")
+            fig.savefig(self.debug_dir + "/results.png")
         except Exception as err:
             raise err
 
@@ -74,14 +74,14 @@ class TestRandomCreator(unittest.TestCase):
     def test_example_01_logged(self):
         
 
-        debug_dir = setup_logger.get_debug_lastrun_dir()
-        for file in os.scandir(os.path.join(debug_dir,"results")):
+        self.debug_dir = setup_logger.get_debug_lastrun_dir()
+        for file in os.scandir(os.path.join(self.debug_dir,"results")):
             os.remove(file.path)
 
-        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-before-filter")):
+        for file in os.scandir(os.path.join(self.debug_dir,"visibility-graph-before-filter")):
             os.remove(file.path)
 
-        for file in os.scandir(os.path.join(debug_dir,"visibility-graph-filtered")):
+        for file in os.scandir(os.path.join(self.debug_dir,"visibility-graph-filtered")):
             os.remove(file.path)    
             
         # Override last running directory
@@ -98,8 +98,8 @@ class TestRandomCreator(unittest.TestCase):
             creator.create()
             creator.plot_puzzle(fig,ax)
             plt.show()
-            fig.savefig(debug_dir + "/results.png")
-            creator.write_results(debug_dir + "/puzzle.csv")
+            fig.savefig(self.debug_dir + "/results.png")
+            creator.write_results(self.debug_dir + "/puzzle.csv")
 
         except Exception as err:
             # logger.exception(err)
@@ -128,7 +128,7 @@ class TestPowergroupCreator(unittest.TestCase):
         logger.addHandler(log_handler)
         logger.debug("Starting....")
 
-        creator = PowerGroupCreator(output_dir)
+        creator = PowerGroupCreator(output_dir,is_debug=True)
         creator.load_sampled_points(self.files_path + example_name +".csv")
         # fig, ax = plt.subplots()
 
