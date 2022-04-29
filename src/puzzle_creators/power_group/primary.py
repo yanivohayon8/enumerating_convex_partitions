@@ -1,5 +1,6 @@
 
 # from data_structures.shapes import Polygon
+from random import random
 from src.data_structures.shapes import Polygon
 from src.puzzle_creators.power_group import HistoryManager,Snapshot
 from src.puzzle_creators import Junction
@@ -9,11 +10,13 @@ import os
 import logging
 from src import setup_logger
 
+import random
+
 # log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
 # logger = logging.getLogger("logger.power_group")
 # logger.addHandler(log_handler)
 
-import time
+# import time
 
 class PowerGroupCreator(PuzzleCreator):
     
@@ -24,6 +27,7 @@ class PowerGroupCreator(PuzzleCreator):
         self.history_manager = HistoryManager()
         self.puzzles = []
         self.is_passed_at = {}
+        self.number_duplicates = 0
     
     def _create_rgon(self, possible_rgons):
 
@@ -49,14 +53,17 @@ class PowerGroupCreator(PuzzleCreator):
 
         _key = f"from {self.scan_direction.name} at "+str(kernel_point)
         # _key = 
-        is_exist_snap =True #any(_key == repr(snap.junction) for snap in self.snapshot_queue)
+        # is_exist_snap = any(_key == repr(snap.junction) for snap in self.snapshot_queue)
+        # if is_exist_snap:
+        #     self.logger.info(f"The junction {_key} already has snapshot")
+        #     pass
 
-        if _key not in self.last_possible_rgons.keys():# or is_exist_snap: 
+        if _key not in self.last_possible_rgons.keys(): 
             self.logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
             self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
             self.is_passed_at[_key] = False
 
-            if len(self.last_possible_rgons[_key]) > 1: #and not is_exist_snap:
+            if len(self.last_possible_rgons[_key]) > 1:
                 snapshot = Snapshot(Junction(kernel_point,self.scan_direction),dict(self.last_possible_rgons),
                                     self.pieces.copy(),self.pieces_area,dict(self.is_passed_at))
                 self.logger.info(f"Take a snapshot (id:{str(snapshot.id)}) of the board")
@@ -71,12 +78,32 @@ class PowerGroupCreator(PuzzleCreator):
                     fig.savefig(self.output_dir+f"/snapshots/{str(snapshot.id)}.png")
                     plt.close(fig)
                 self.snapshot_queue.append(snapshot)
-                
+            
+            return self.last_possible_rgons[_key]        
         else:
             self.logger.info("Prior surface scanning at this point and direction Found, filter possible rgons with the surface current status")
-            self.last_possible_rgons[_key] = self._filter_poss_rgons(self.last_possible_rgons[_key])
-        
-        return self.last_possible_rgons[_key]
+            self.last_possible_rgons[_key] =  self._filter_poss_rgons(self.last_possible_rgons[_key])
+            return self.last_possible_rgons[_key]
+            # if len(self.last_possible_rgons[_key]) > 0:
+            #     return self.last_possible_rgons[_key]
+
+            # else:
+            #     exist_snap_id = None
+            #     for snap in self.snapshot_queue[::-1]:
+            #         if _key == repr(snap.junction):
+            #             exist_snap_id = repr(snap)
+            #             break
+                
+            #     # made a floop from the creation of the snapshot till itself - maybe we had to choose 
+            #     # more than one at on of the creation so restore from it
+            #     if exist_snap_id is not None:
+            #         self.logger.info(f"{_key} we need to create polygon again and all the possiblities are done. restore from history(maybe we had to choose more than one at creation point)")
+            #         history = [poly for poly in self.history_manager.get_history(exist_snap_id) if isinstance(poly,Polygon)]
+            #         return self._filter_poss_rgons(history)
+            #     else:
+            #         self.logger.error("I can't believe I am here")
+            #         return []
+
 
     def after_rgon_creation(self, polygon):
         super().after_rgon_creation(polygon)
@@ -85,7 +112,8 @@ class PowerGroupCreator(PuzzleCreator):
             junction = Junction(self.last_kernel_point, self.scan_direction)
             self.history_manager.add(junction,self.snapshot_queue,polygon)
 
-            self.num_iter_no_new_piece+=1
+            # self.num_iter_no_new_piece+=1
+            self.num_iter_no_new_piece = 0
 
             if self.is_debug:
                 # fig,ax = plt.subplots()
@@ -100,7 +128,7 @@ class PowerGroupCreator(PuzzleCreator):
 
                 
                 fig.suptitle(f'At {str(self.last_kernel_point)}-from {str(self.scan_direction.name)}' + extra_str)
-                fig.savefig(self.output_dir+f"/last_creation/n_iter_{self.n_iter}.png") 
+                fig.savefig(self.output_dir+f"/last_creation/{self.n_puzzle}_{self.n_iter}.png") 
                 fig.suptitle("")
                 # plt.close(fig)
         else:
@@ -112,24 +140,32 @@ class PowerGroupCreator(PuzzleCreator):
         self.n_puzzle = 1
         
         while True:
-            super().create()
-            self.logger.info("Finish to assemble puzzle - check if it is equal to previous puzzle (recursive algo duplicates)")
-            
-            if not any(all(any(curr_puzzle_piece.equals(exist_puzz_piece) for curr_puzzle_piece in self.pieces) for exist_puzz_piece in exist_puzzle) for exist_puzzle in self.puzzles):
-                new_puzzle = []
-                for piece in self.pieces:
-                    deep_copy_poly = Polygon(piece.exterior.coords)
-                    new_puzzle.append(deep_copy_poly)
+            try:
+                super().create()
+                self.logger.info("Finish to assemble puzzle - check if it is equal to previous puzzle (recursive algo duplicates)")
+                
+                if not any(all(any(curr_puzzle_piece.equals(exist_puzz_piece) for curr_puzzle_piece in self.pieces) for exist_puzz_piece in exist_puzzle) for exist_puzzle in self.puzzles):
+                    new_puzzle = []
+                    for piece in self.pieces:
+                        deep_copy_poly = Polygon(piece.exterior.coords)
+                        new_puzzle.append(deep_copy_poly)
 
-                self.puzzles.append(new_puzzle)
-                self.logger.info("Finish to assemble a puzzle number:" + str(self.n_puzzle) +". save to file")
-                self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
-                self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
-                self.n_puzzle+=1
-            else:
-                self.logger.info("already created this puzlle")
-
-            
+                    self.puzzles.append(new_puzzle)
+                    self.logger.info("Finish to assemble a puzzle number:" + str(self.n_puzzle) +". save to file")
+                    self.write_results(self.output_dir+f"/results/{str(self.n_puzzle)}.csv")
+                    self.plot_results(self.output_dir+f"/results/{str(self.n_puzzle)}.png")
+                    
+                else:
+                    self.number_duplicates +=1
+                    self.logger.info(f"already created this puzlle. Number of duplicate so far is {self.number_duplicates}")
+            except StopIteration as err:
+                identifier = random.randint(0,1000)
+                self.logger.error(f"Failed to create a puzzle. identifier: {identifier}. Started {repr(self.snapshot_queue[-1])}")
+                self.plot_results(self.output_dir+f"/failure/{str(self.n_puzzle)}_identifier_{identifier}.png")
+                # curr_snapshot = self.snapshot_queue[-1]
+                # self.last_possible_rgons[repr(curr_snapshot.junction)] = self.history_manager.snap_poss_sub_history(curr_snapshot)
+                # maybe add here to right the state into a file and then restore.
+            self.n_puzzle+=1
 
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
@@ -169,8 +205,8 @@ class PowerGroupCreator(PuzzleCreator):
                 plt.close(fig1)
                 self.logger.info(f"Let's go back to work")
 
-            for file in os.scandir(os.path.join(self.output_dir,"last_creation")):
-                os.remove(file.path) 
+            # for file in os.scandir(os.path.join(self.output_dir,"last_creation")):
+            #     os.remove(file.path) 
         
 
     def revert(self,snapshot:Snapshot):
@@ -180,12 +216,13 @@ class PowerGroupCreator(PuzzleCreator):
         self.space_points = self.space_points[kernel_index:]
         self.scan_direction = snapshot.junction.from_direction
         self.last_possible_rgons = snapshot.possible_rgon_at.copy()
-        updated_junc_pieces = []
-        junction_history = self.history_manager.choices_history_at_snap[repr(snapshot)]
-        for rgon in snapshot.possible_rgon_at[repr(snapshot.junction)]:
-            if not any(rgon.equals(piece) for piece in junction_history):
-                updated_junc_pieces.append(rgon)
-        self.last_possible_rgons[repr(snapshot.junction)] = updated_junc_pieces
+        # updated_junc_pieces = []
+        # junction_history = self.history_manager.choices_history_at_snap[repr(snapshot)]
+        # for rgon in snapshot.possible_rgon_at[repr(snapshot.junction)]:
+        #     if not any(rgon.equals(piece) for piece in junction_history):
+        #         updated_junc_pieces.append(rgon)
+        # self.last_possible_rgons[repr(snapshot.junction)] = updated_junc_pieces
+        self.last_possible_rgons[repr(snapshot.junction)] = self.history_manager.snap_poss_sub_history(snapshot)
         
         self.pieces = list(snapshot.pieces)
         self.pieces_area = snapshot.pieces_area
