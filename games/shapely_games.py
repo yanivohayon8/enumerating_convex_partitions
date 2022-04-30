@@ -9,6 +9,11 @@ from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from shapely.geometry import MultiPoint,LineString,MultiLineString
 import matplotlib.pyplot as plt
+from numpy import argmin
+
+tr1 = Polygon([(90,0),(91,2),(93,3)])
+xs,ys = tr1.exterior.coords.xy
+left_most_point = min(xs[1:-1])#xs[1:-1].index(min(xs[1:-1]))
 
 
 no_simple_poly= Polygon([(100.0, 100.0),(0.0, 0.0),(50.0, 60.0),(0.0, 100.0)])

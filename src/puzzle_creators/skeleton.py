@@ -171,8 +171,8 @@ class PuzzleCreator():
             self._set_direction_scan(self.scan_direction.value)
             # plt.close("all")
 
-            if self.num_iter_no_new_piece > 3*len(self.space_points):
-                msg ="scanned the board for more than 3 times without any change."
+            if self.scan_direction.name == "left":
+                msg =f"Attempt to scan the board from left to right again."
                 self.logger.error(msg)
                 raise StopIteration(msg)
         # self.logger.info("Finish to assemble a puzzle")

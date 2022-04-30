@@ -13,6 +13,7 @@ from src.puzzle_creators.power_group.primary import PowerGroupCreator
 import matplotlib.pyplot as plt
 import logging
 from src import setup_logger
+import time
 
 
 class TestParentCreator(unittest.TestCase):
@@ -115,7 +116,7 @@ class TestPowergroupCreator(unittest.TestCase):
         current_working_dir = os.getcwd()
         output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
         dirs = ["results","visibility-graph-before-filter","visibility-graph-filtered",
-                "last_decision_junction","last_creation","snapshots"]
+                "last_decision_junction","last_creation","snapshots","failure"]
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
             [os.makedirs(output_dir+ f"/{_dir}") for _dir in dirs]
@@ -128,15 +129,21 @@ class TestPowergroupCreator(unittest.TestCase):
         logger.addHandler(log_handler)
         logger.debug("Starting....")
 
-        creator = PowerGroupCreator(output_dir,is_debug=True)
+        creator = PowerGroupCreator(output_dir,is_debug=False)
         creator.load_sampled_points(self.files_path + example_name +".csv")
         # fig, ax = plt.subplots()
 
-        try:
-            creator.create_puzzles()
-        except Exception as err:
-            # logger.exception(err)
-            raise err
+        # try:
+        #     start_time = time.time()
+        #     creator.create_puzzles()
+        # except Exception as err:
+        #     # logger.exception(err)
+        #     raise err
+
+        start_time = time.time()
+        creator.create_puzzles()
+        end_time = time.time()
+        logger.info(f"Took the script to run {end_time-start_time}")
 
         plt.close("all")
 

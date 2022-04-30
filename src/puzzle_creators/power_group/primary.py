@@ -215,7 +215,7 @@ class PowerGroupCreator(PuzzleCreator):
         kernel_index = self.space_points.index(snapshot.junction.kernel_point)
         self.space_points = self.space_points[kernel_index:]
         self.scan_direction = snapshot.junction.from_direction
-        self.last_possible_rgons = snapshot.possible_rgon_at.copy()
+        self.last_possible_rgons = {} #snapshot.possible_rgon_at.copy()
         # updated_junc_pieces = []
         # junction_history = self.history_manager.choices_history_at_snap[repr(snapshot)]
         # for rgon in snapshot.possible_rgon_at[repr(snapshot.junction)]:

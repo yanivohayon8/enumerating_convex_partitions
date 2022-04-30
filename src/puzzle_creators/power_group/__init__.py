@@ -62,3 +62,17 @@ class HistoryManager():
                     self.passed_snapshots.append(snap_id)
 
                 break
+
+    # def get_history(self,snap_id):
+    #     if not snap_id in self.choices_history_at_snap.keys():
+    #         return []
+    #     return self.choices_history_at_snap[snap_id]
+    
+    def snap_poss_sub_history(self,snapshot:Snapshot):
+        updated_junc_pieces = []
+        junction_history = self.choices_history_at_snap[repr(snapshot)]
+        for rgon in snapshot.possible_rgon_at[repr(snapshot.junction)]:
+            if not any(rgon.equals(piece) for piece in junction_history):
+                updated_junc_pieces.append(rgon)
+        
+        return updated_junc_pieces
