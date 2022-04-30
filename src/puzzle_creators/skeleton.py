@@ -172,9 +172,9 @@ class PuzzleCreator():
             # plt.close("all")
 
             if self.num_iter_no_new_piece > 3*len(self.space_points):
-                msg ="scanned the board for more than 3 times without any change. exiting"
+                msg ="scanned the board for more than 3 times without any change."
                 self.logger.error(msg)
-                raise ValueError(msg)
+                raise StopIteration(msg)
         # self.logger.info("Finish to assemble a puzzle")
     
     
@@ -315,9 +315,15 @@ class PuzzleCreator():
         # Remove duplicates
         final_rgons = []
         for rgon in rgons:
-
             if all(not rgon.equals(poly) for poly in final_rgons):
                 final_rgons.append(rgon)
+        
+        # sorting by the most left point of the polygon without kernel (ease on debug)
+        def left_most_point_x(poly):
+            xs,ys = poly.exterior.coords.xy
+            return min(xs[1:-1])
+
+        final_rgons.sort(key = left_most_point_x )
 
         return final_rgons
 
