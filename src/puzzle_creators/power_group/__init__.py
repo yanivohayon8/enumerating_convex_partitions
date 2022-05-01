@@ -5,13 +5,14 @@ import itertools
 class Snapshot():
     id_iter = itertools.count()
 
-    def __init__(self,junction:Junction,possible_rgon_at,pieces,pieces_area,is_passed_at) -> None:
+    def __init__(self,junction:Junction,possible_rgon_at,pieces,pieces_area,is_passed_at,puzzle_name) -> None:
         self.id = next(self.id_iter)
         self._junction = junction # key
         self._possible_rgon_at = possible_rgon_at #self.last_possible_rgons = last_possible_rgons # maybe is not necessray
         self._pieces = tuple(pieces)
         self._pieces_area = pieces_area
         self._is_passed_at = is_passed_at
+        self.puzzle_name = puzzle_name
     
     def __repr__(self) -> str:
         return f"id:{self.id};{repr(self._junction) }"

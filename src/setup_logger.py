@@ -1,11 +1,13 @@
 import os
 import logging
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger("logger")
 
 def get_file_handler(filepath,**kwargs):
     log_handler = logging.FileHandler(filepath,**kwargs)
-    log_handler.setLevel(logging.DEBUG)
+    # log_handler.setLevel(logging.DEBUG)
+    log_handler.setLevel(logging.ERROR)
     log_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
     return log_handler
 

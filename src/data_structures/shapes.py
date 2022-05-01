@@ -11,6 +11,10 @@ class Polygon(ShapelyPolygon):
     def __repr__(self) -> str:
         return str(self)
 
+    def __hash__(self) -> int:
+        xs,ys = self.exterior.coords.xy
+        # return hash(tuple(reduce(lambda acc,x:acc+x,[[x,y] for x,y in zip(xs,ys)])))
+        return hash(tuple(reduce(lambda acc,x:acc+x,[f"{x},{y}" for x,y in zip(xs,ys)])))
 
 
 

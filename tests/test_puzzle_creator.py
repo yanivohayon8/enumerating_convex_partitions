@@ -129,7 +129,7 @@ class TestPowergroupCreator(unittest.TestCase):
         logger.addHandler(log_handler)
         logger.debug("Starting....")
 
-        creator = PowerGroupCreator(output_dir,is_debug=False)
+        creator = PowerGroupCreator(output_dir,is_debug=True)
         creator.load_sampled_points(self.files_path + example_name +".csv")
         # fig, ax = plt.subplots()
 
