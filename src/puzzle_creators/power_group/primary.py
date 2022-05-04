@@ -115,22 +115,24 @@ class PowerGroupCreator(PuzzleCreator):
             
             junction = Junction(self.last_kernel_point, self.scan_direction)
             self.history_manager.add(junction,self.snapshot_queue,polygon)
-
-            choise_name = "s"
             postfix = ""
-            for index in range(len(self.snapshot_queue) - 1,-1,-1):      
-                snap_id = repr(self.snapshot_queue[index])
-                # Find the corresponding latest snapshot at queue
-                if repr(junction) in repr(snap_id):
-                    poss_rgon_at_create = self.snapshot_queue[index].possible_rgon_at[repr(junction)]            
-                    if isinstance(polygon,Polygon):
-                        poly_index = poss_rgon_at_create.index(polygon)
-                        choise_name = f"{poly_index+1}"
-                    if isinstance(polygon,str):
-                        choise_name = "p"
-                    postfix = f"-{len(poss_rgon_at_create)}"
-                
-                    break
+            if isinstance(polygon,str):
+                choise_name = "p"
+            else:
+                choise_name = "s"
+                postfix = ""
+                for index in range(len(self.snapshot_queue) - 1,-1,-1):      
+                    snap_id = repr(self.snapshot_queue[index])
+                    # Find the corresponding latest snapshot at queue
+                    if repr(junction) in repr(snap_id):
+                        poss_rgon_at_create = self.snapshot_queue[index].possible_rgon_at[repr(junction)]            
+                        if isinstance(polygon,Polygon):
+                            poly_index = poss_rgon_at_create.index(polygon)
+                            choise_name = f"{poly_index+1}"
+                        
+                        postfix = f"-{len(poss_rgon_at_create)}"
+                    
+                        break
             
             self.puzzle_name = self.puzzle_name + f"{choise_name}{postfix}_"
 

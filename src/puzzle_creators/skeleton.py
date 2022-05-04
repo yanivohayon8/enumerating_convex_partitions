@@ -163,8 +163,8 @@ class PuzzleCreator():
                     raise err 
             
             
-            if self._is_finished_scan():
-                break
+                if self._is_finished_scan():
+                    return
 
             self.scan_direction = Direction(self.scan_direction.value * (-1))
             # Rgon1988.direction = self.scan_direction

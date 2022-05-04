@@ -1,3 +1,4 @@
+from cmath import log
 import sys
 import os
 
@@ -13,7 +14,9 @@ from src.puzzle_creators.power_group.primary import PowerGroupCreator
 import matplotlib.pyplot as plt
 import logging
 from src import setup_logger
-import time
+from glob import glob as glob_glob
+from ntpath import split as ntpath_split
+
 
 
 class TestParentCreator(unittest.TestCase):
@@ -112,9 +115,7 @@ class TestPowergroupCreator(unittest.TestCase):
     files_path = 'data/starting_points/'
    
 
-    def _run(self,example_name):
-        current_working_dir = os.getcwd()
-        output_dir = os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
+    def _run(self,example_name,output_dir):
         dirs = ["results","visibility-graph-before-filter","visibility-graph-filtered",
                 "last_decision_junction","last_creation","snapshots","failure"]
         if not os.path.exists(output_dir):
@@ -129,40 +130,86 @@ class TestPowergroupCreator(unittest.TestCase):
         logger.addHandler(log_handler)
         logger.debug("Starting....")
 
-        creator = PowerGroupCreator(output_dir,is_debug=True)
+        creator = PowerGroupCreator(output_dir,is_debug=False)
         creator.load_sampled_points(self.files_path + example_name +".csv")
         # fig, ax = plt.subplots()
 
-        # try:
-        #     start_time = time.time()
-        #     creator.create_puzzles()
-        # except Exception as err:
-        #     # logger.exception(err)
-        #     raise err
+        try:
+            # start_time = time.time()
+            creator.create_puzzles()
+            
+        except Exception as err:
+            logger.exception(err)
+            logger.error(err)
+            raise Exception(err)
+        finally:
+            plt.close("all")
 
-        start_time = time.time()
-        creator.create_puzzles()
-        end_time = time.time()
-        logger.info(f"Took the script to run {end_time-start_time}")
+    def _validate_results(self,result_path):
+        # gather traces
+        results_paths = glob_glob(result_path+"/*.csv")
+        results_traces = [ntpath_split(path)[1].split(".")[0] for path in results_paths]
+        puzzles_traces = []
 
-        plt.close("all")
+        for trace_str in results_traces:
+            trace_str = trace_str.replace("s_","")
+            recursive_calls = trace_str.split("_")
+            trace = []
+            for recursive_call in recursive_calls:
+                curr,total = recursive_call.split("-")
+                curr = eval(curr)
+                total = eval(total)
+                trace.append((curr,total))
+            puzzles_traces.append(trace)
+        
+        # analayz consistency
+        
 
+
+    def _output_dir(self,example_name):
+        current_working_dir = os.getcwd()
+        return os.path.join(current_working_dir,"data","debug_powergroup_creator",example_name)
+        
 
     def test_simple_square(self):
-        self._run("simple_square")
+        example_name = "simple_square"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
         
     def test_empty_triangle(self):
-        self._run("triangle_intpoint_0_01")
+        example_name = "simple_square"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
 
     def test_simple_square_crossing_cuts(self):
-        self._run("simple_square_crossing_cuts")
+        example_name = "simple_square_crossing_cuts"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
     
     def test_triangle_intpoint_1_01(self):
-        self._run("triangle_intpoint_1_01")
+        example_name = "triangle_intpoint_1_01"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
     
     def test_square_int_2_anchor_4_01(self):
-        self._run("square_int_2_anchor_4_01")
+        example_name = "square_int_2_anchor_4_01"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
 
     def test_square_int_2_anchor_8_01(self):
-        self._run("square_int_2_anchor_8_01")
+        example_name = "square_int_2_anchor_8_01"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
+        self._validate_results(output_dir+"/results")
+        # C:\Users\yaniv\Desktop\MSCBenGurion\iCVL\rgons\data\debug_powergroup_creator\square_int_2_anchor_8_01\results
+
+    def test_square_int_4_anchor_4_01(self):
+        example_name = "square_int_4_anchor_4_01"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
+    
+    def test_square_int_5_anchor_4_01(self):
+        example_name = "square_int_5_anchor_4_01"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
         
