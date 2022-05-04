@@ -64,7 +64,13 @@ class PowerGroupCreator(PuzzleCreator):
 
         if _key not in self.last_possible_rgons.keys(): 
             self.logger.info("No prior surface scanning at this point and direction, searching for possible polygons.")
-            self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
+
+            try:
+                self.last_possible_rgons[_key] = self._find_first_possible_rgons(kernel_point,self.n_iter)
+            except ValueError as err:
+                self.last_possible_rgons[_key] = None
+                return None
+
             self.is_passed_at[_key] = False
 
             if len(self.last_possible_rgons[_key]) > 1:
@@ -86,6 +92,10 @@ class PowerGroupCreator(PuzzleCreator):
             return self.last_possible_rgons[_key]        
         else:
             self.logger.info("Prior surface scanning at this point and direction Found, filter possible rgons with the surface current status")
+
+            if self.last_possible_rgons[_key] is None:
+                return None
+
             self.last_possible_rgons[_key] =  self._filter_poss_rgons(self.last_possible_rgons[_key])
             return self.last_possible_rgons[_key]
             # if len(self.last_possible_rgons[_key]) > 0:
@@ -156,8 +166,8 @@ class PowerGroupCreator(PuzzleCreator):
                 fig.savefig(self.output_dir+f"/last_creation/{self.n_puzzle}_{self.n_iter}.png") 
                 fig.suptitle("")
                 # plt.close(fig)
-        else:
-            self.num_iter_no_new_piece+=1
+        elif polygon is None:
+            self.puzzle_name = self.puzzle_name + f"n_"
 
 
 

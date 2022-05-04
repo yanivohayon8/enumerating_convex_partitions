@@ -155,7 +155,12 @@ class PuzzleCreator():
 
                 try:
                     possible_rgons = self.prepare_to_create(kernel_point)
-                    polygon = self._create_rgon(possible_rgons)
+
+                    if possible_rgons is not None:
+                        polygon = self._create_rgon(possible_rgons)                    
+                    else:
+                        polygon = None
+                        
                     self.after_rgon_creation(polygon)
                    
                 except Exception as err:
@@ -369,7 +374,8 @@ class PuzzleCreator():
         if len(points_to_connect) < 2:
             self.logger.debug(f"Not enough points to connect ({len(points_to_connect)} < 2)")
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-            return {}
+            # return {}
+            raise ValueError(f"Not enough points to connect ({len(points_to_connect)} < 2)")
         
         stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,self.scan_direction)
         visual_graph_polygon = Rgon1988.get_visualization_graph(kernel_point,stared_polygon,self.scan_direction)
@@ -416,12 +422,16 @@ class PuzzleCreator():
         if len(list(visual_graph_polygon.get_edges())) == 0:
             self.logger.debug(f"Not enough edge to iterate on the visibility graph")
             # self.is_angles_convex[str(kernel_point)] = self._is_edges_angles_convex(kernel_point)
-            return {}
+            # return {}
+            raise ValueError("Not enough edge to iterate on the visibility graph")
 
         return Rgon1988.get_convex_chain_connectivity(visual_graph_polygon,self.scan_direction)
 
     def _find_first_possible_rgons(self,kernel_point,n_iter=-1):
-        continuity_edges = self._get_surface(kernel_point,self.scan_direction,n_iter)
+        try:
+            continuity_edges = self._get_surface(kernel_point,self.scan_direction,n_iter)
+        except ValueError as err:
+            raise err
 
         # num_edges = self._get_next_polygon_num_verticies(continuity_edges,edges_max_chain_length)
         possible_rgons = self._find_rgons_comb(kernel_point,continuity_edges)
