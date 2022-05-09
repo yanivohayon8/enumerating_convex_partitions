@@ -1,7 +1,8 @@
+from functools import reduce
 import imp
 from src.puzzle_creators.single_scanner.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
 from src.puzzle_creators.single_scanner.record import HistoryManager,Snapshot,Choice
-from src.puzzle_creators.single_scanner.puzzle_obj import Piece, Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
+from src.puzzle_creators.single_scanner.puzzle_obj import Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
 from src.data_structures import Point
 import matplotlib.pyplot as plt
 
@@ -20,14 +21,25 @@ class Creator():
         self.history_manager = HistoryManager()
         self.fig, self.ax = plt.subplots()
 
-    def find_combinations(self,kernel_point,points_to_connect,possible_pieces):
-        stared_polygon_coords = get_stared_shaped_polygon(kernel_point,points_to_connect).exterior.coords
+    def find_combinations(self,kernel_point,possible_polygons):
+        connected_points = set()
+        for pol in possible_polygons:
+            coords = pol.exterior.coords
+            for cor in coords:
+                p = Point(cor)
+                if p!=kernel_point:
+                    connected_points.add(Point(cor))
+
+        connected_points = list(connected_points)
+        # connected_points = list(reduce(lambda acc,lst: acc+lst.exterior.coords,possible_polygons,[]))
+        # connected_points = [Point(cor) for cor in connected_points]
+        stared_polygon_coords = get_stared_shaped_polygon(kernel_point,connected_points).exterior.coords
         start_point,end_point = stared_polygon_coords[-2],stared_polygon_coords[1]
 
         polygons_start_at_point = {}
-        for piece in possible_pieces:
-            coords = [Point(cor) for cor in piece.polygon.exterior.coords[1:-1]]
-            poly = get_stared_shaped_polygon(Point(piece.polygon.exterior.coords[0]),coords)
+        for polygon in possible_polygons:
+            coords = [Point(cor) for cor in polygon.exterior.coords[1:-1]]
+            poly = get_stared_shaped_polygon(Point(polygon.exterior.coords[0]),coords)
             first_point_str = str(poly.exterior.coords[-2])
 
             if first_point_str not in polygons_start_at_point.keys():
@@ -64,10 +76,11 @@ class Creator():
             try:
                 potential_points = self.board.potential_points(kernel_point,self.board.space_points)
                 points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
-                possible_pieces = find_possible_rgons(kernel_point,puzzle,points_to_connect)
-                possible_polygons_combs = self.find_combinations(kernel_point,points_to_connect,possible_pieces)
-                n = len(possible_polygons_combs)
-                options = [Choice(c,is_single=n==1) for c in possible_polygons_combs + ["pass"]]
+                possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
+                possible_polygons_combs = self.find_combinations(kernel_point,possible_polygons)
+                total_poss = possible_polygons_combs + ["pass"]
+                n = len(total_poss)
+                options = [Choice(c,f"{index+1}-{n-1}",is_single=n-1==1) for index,c in enumerate(total_poss)]
                 
                 if len(options) == 1:
                     puzzle.record_choice("n")
@@ -80,9 +93,10 @@ class Creator():
                 next_choice_index = self.history_manager.next_availiable(repr(snapshot))
                 curr_choice = options[next_choice_index]
                 
-                if isinstance(curr_choice.val,Piece):
-                    puzzle.check_sanity_polygon(curr_choice.val.polygon)                
-                    puzzle._count_piece(curr_choice)
+                if isinstance(curr_choice.val,list):
+                    for poly in curr_choice.val:
+                        puzzle.check_sanity_polygon(poly)                
+                        puzzle._count_piece(poly)
 
                 puzzle.record_choice(curr_choice.name)
 

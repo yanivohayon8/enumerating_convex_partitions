@@ -47,18 +47,18 @@ class Board():
         return list(filter(lambda point: point.x>=kernel_point.x and point!=kernel_point,space )) 
 
 
-class Piece():
-    def __init__(self,polygon,name) -> None:
-        self.polygon = polygon
-        self.name = name # E.g. s or 1-4
+# class Piece():
+#     def __init__(self,polygon,name) -> None:
+#         self.polygon = polygon
+#         self.name = name # E.g. s or 1-4
     
-    def __repr__(self):
-        return self.name
+#     def __repr__(self):
+#         return self.name
 
 class Puzzle():
     
     def __init__(self,board) -> None:
-        self.pieces = [] 
+        self.polygons = [] 
         self.pieces_area = 0
         self.board = board
         self.name = ""
@@ -66,9 +66,9 @@ class Puzzle():
     def __repr__(self) -> str:
         return self.name #str(reduce(lambda acc,x: acc + x.name + "_",self.pieces))
 
-    @property
-    def polygons(self):
-        return [piece.polygon for piece in self.pieces]
+    # @property
+    # def polygons(self):
+    #     return [piece.polygon for piece in self.pieces]
 
     def plot(self,fig,ax,pieces=None,**kwargs):
         self.board.plot(ax)
@@ -80,15 +80,14 @@ class Puzzle():
             ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
                     bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
     
-    def _count_piece(self,choice):
-        if isinstance(choice.val,Piece):
-            self.pieces.append(choice.val)
-            self.pieces_area += choice.val.polygon.area
+    def _count_piece(self,poly):
+        # if isinstance(choice.val,Piece):
+        self.polygons.append(poly)
+        self.pieces_area += poly.area
 
     def record_choice(self,choice_name):
         self.name = self.name + choice_name + "_"
         
-
     def check_sanity_polygon(self,curr_polygon:Polygon):
         if not curr_polygon.is_simple:
             raise PuzzleErr(f"Polygon must be simple. coords: {str(curr_polygon)}")
@@ -119,8 +118,8 @@ class Puzzle():
         xs = []
         ys = []
         piece_id = []
-        for index in range(len(self.pieces)):
-            for coord in self.pieces[index].polygon.exterior.coords:
+        for index in range(len(self.polygons)):
+            for coord in self.polygons[index].exterior.coords[:-1]:
                 xs.append(coord[0])
                 ys.append(coord[1])
                 piece_id.append(index)

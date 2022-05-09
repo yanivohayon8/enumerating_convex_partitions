@@ -1,7 +1,3 @@
-from secrets import choice
-from src.puzzle_creators.single_scanner.puzzle_obj import Piece
-
-
 class Snapshot():
     def __init__(self,kernel_point,puzzle,options) -> None:
         self._kernel_point = kernel_point
@@ -44,13 +40,16 @@ class HistoryManager():
         return choice
 
 class Choice():
-    def __init__(self,val,is_single=False) -> None:
-        if isinstance(val,Piece): # This should be list of pieces
-            self.name = val.name
+    def __init__(self,val,name,is_single=False) -> None:
+        if isinstance(val,list): # This should be list of pieces
+            self.name = name
             if is_single:
                 self.name = "s"
             self.val = val
         if isinstance(val,str):
             self.name = "p"
             self.val = None
+    
+    def __repr__(self) -> str:
+        return self.name
         
