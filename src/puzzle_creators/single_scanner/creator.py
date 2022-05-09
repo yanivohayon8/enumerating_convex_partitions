@@ -1,4 +1,4 @@
-from src.puzzle_creators.single_scanner.surface import find_possible_rgons
+from src.puzzle_creators.single_scanner.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
 from src.puzzle_creators.single_scanner.record import HistoryManager,Snapshot,Choice
 from src.puzzle_creators.single_scanner.puzzle_obj import Piece, Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
 import matplotlib.pyplot as plt
@@ -18,18 +18,22 @@ class Creator():
         self.history_manager = HistoryManager()
         self.fig, self.ax = plt.subplots()
 
-    def find_combinations(self,possible_polygons):
+    def find_combinations(self,kernel_point,points_to_connect,possible_polygons):
+        stared_polygon_coords = get_stared_shaped_polygon(kernel_point,points_to_connect).exterior.coords
+        end_point,start_point = stared_polygon_coords[-2],stared_polygon_coords[0]
+        # raise NotImplementedError("Implement Me")
         return possible_polygons
 
-    def create_single(self)->Puzzle:
+    def create_single(self,scanned_points)->Puzzle:
         
         puzzle = Puzzle(self.board)
 
-        for kernel_point in self.board.space_points:
+        for kernel_point in scanned_points:
             try:
                 potential_points = self.board.potential_points(kernel_point,self.board.space_points)
-                possible_polygons = find_possible_rgons(kernel_point,puzzle,potential_points)
-                possible_polygons_combs = self.find_combinations(possible_polygons)
+                points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
+                possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
+                possible_polygons_combs = self.find_combinations(kernel_point,points_to_connect,possible_polygons)
                 n = len(possible_polygons_combs)
                 options = [Choice(c,is_single=n==1) for c in possible_polygons_combs + ["pass"]]
                 
@@ -57,12 +61,18 @@ class Creator():
 
 
     def create_puzzles(self):
+        
+        start_point_index = 0
+        scanned_points = self.board.space_points[start_point_index:]
+        last_point_x = max([p.x for p in scanned_points])
+        scanned_points = list(filter(lambda p: p.x < last_point_x,scanned_points))
+
         while True:
 
-            puzzle = self.create_single()
+            puzzle = self.create_single(scanned_points)
 
             try:
-                puzzle.is_completed(self.board.frame_polygon)
+                # puzzle.is_completed(self.board.frame_polygon)
                 puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
                 self.ax.cla()
                 puzzle.plot(self.fig,self.ax)
@@ -81,5 +91,4 @@ class Creator():
                 self.snapshot_queue.pop()
 
             if len(self.snapshot_queue) == 0:
-                # self.logger.info("Finish to create all puzzles")
                 break

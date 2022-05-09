@@ -7,7 +7,7 @@ from src.data_structures import Point
 from src.puzzle_creators.single_scanner import puzzle_obj
 
 
-def _get_accessible_points(kernel_point,pieces,space):
+def get_accessible_points(kernel_point,pieces,space):
         visible_points = []
         ker_to_p_lines = [LineString([kernel_point,point])for point in space]
 
@@ -30,10 +30,13 @@ def _get_accessible_points(kernel_point,pieces,space):
 
         return visible_points
 
-def _get_surface(kernel_point,pieces,potential_points,scan_direction=Direction.left,fig_prefix=""):
+def get_stared_shaped_polygon(kernel_point,points_to_connect,scan_direction=Direction.left):
+    return Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,scan_direction)
+
+def _get_surface(kernel_point,pieces,points_to_connect,scan_direction=Direction.left,fig_prefix=""):
         # observe surface data
         # points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
-        points_to_connect = _get_accessible_points(kernel_point,pieces,potential_points)            
+        # points_to_connect = get_accessible_points(kernel_point,pieces,potential_points)            
 
         if len(points_to_connect) < 2:
             raise ValueError(f"Not enough points to connect ({len(points_to_connect)} < 2)")
@@ -137,10 +140,10 @@ def _get_traverse(origin_edge,continuity_edges):
     return travs
 
 
-def find_possible_rgons(kernel_point,puzzle,potential_points,scan_direction=Direction.left):
+def find_possible_rgons(kernel_point,puzzle,points_to_connect,scan_direction=Direction.left):
         polygons = puzzle.polygons
         try:
-            continuity_edges = _get_surface(kernel_point,polygons,potential_points,scan_direction)
+            continuity_edges = _get_surface(kernel_point,polygons,points_to_connect,scan_direction)
         except ValueError as err:
             return []
 
