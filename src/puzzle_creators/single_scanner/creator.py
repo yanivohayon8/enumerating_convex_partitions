@@ -1,6 +1,8 @@
+import imp
 from src.puzzle_creators.single_scanner.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
 from src.puzzle_creators.single_scanner.record import HistoryManager,Snapshot,Choice
 from src.puzzle_creators.single_scanner.puzzle_obj import Piece, Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
+from src.data_structures import Point
 import matplotlib.pyplot as plt
 
 # class CreatorState():
@@ -18,11 +20,41 @@ class Creator():
         self.history_manager = HistoryManager()
         self.fig, self.ax = plt.subplots()
 
-    def find_combinations(self,kernel_point,points_to_connect,possible_polygons):
+    def find_combinations(self,kernel_point,points_to_connect,possible_pieces):
         stared_polygon_coords = get_stared_shaped_polygon(kernel_point,points_to_connect).exterior.coords
-        end_point,start_point = stared_polygon_coords[-2],stared_polygon_coords[0]
-        # raise NotImplementedError("Implement Me")
-        return possible_polygons
+        start_point,end_point = stared_polygon_coords[-2],stared_polygon_coords[1]
+
+        polygons_start_at_point = {}
+        for piece in possible_pieces:
+            coords = [Point(cor) for cor in piece.polygon.exterior.coords[1:-1]]
+            poly = get_stared_shaped_polygon(Point(piece.polygon.exterior.coords[0]),coords)
+            first_point_str = str(poly.exterior.coords[-2])
+
+            if first_point_str not in polygons_start_at_point.keys():
+                polygons_start_at_point[str(first_point_str)] = []
+            
+            polygons_start_at_point[str(first_point_str)].append(poly)
+        
+        possibilities = []
+        for poly in polygons_start_at_point[str(start_point)]:
+            comb = [poly]
+            poly_end_point = poly.exterior.coords[1]
+            poss_start_with_poly = self.combs_rec(poly_end_point,end_point,polygons_start_at_point,comb)
+            possibilities.append(poss_start_with_poly)
+
+        return possibilities
+
+    def combs_rec(self,start_point,end_point,polygons_start_at_point,comb):
+        if start_point == end_point:
+            return comb
+        poss = []
+        for next_poly in polygons_start_at_point[str(start_point)]:
+            next_end_point = next_poly.exterior.coords[1]
+            next_comb = self.combs_rec(next_end_point,end_point,polygons_start_at_point,comb + [next_poly])
+            poss = poss + next_comb
+        
+        return poss
+
 
     def create_single(self,scanned_points)->Puzzle:
         
@@ -32,8 +64,8 @@ class Creator():
             try:
                 potential_points = self.board.potential_points(kernel_point,self.board.space_points)
                 points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
-                possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
-                possible_polygons_combs = self.find_combinations(kernel_point,points_to_connect,possible_polygons)
+                possible_pieces = find_possible_rgons(kernel_point,puzzle,points_to_connect)
+                possible_polygons_combs = self.find_combinations(kernel_point,points_to_connect,possible_pieces)
                 n = len(possible_polygons_combs)
                 options = [Choice(c,is_single=n==1) for c in possible_polygons_combs + ["pass"]]
                 
