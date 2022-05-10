@@ -121,7 +121,7 @@ class Creator():
                 # puzzle.is_completed(self.board.frame_polygon)
                 puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
                 self.ax.cla()
-                puzzle.plot(self.fig,self.ax)
+                puzzle.plot(self.ax,self.snapshot_queue)
                 self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
             except PuzzleAreaErr :
                 pass

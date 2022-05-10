@@ -70,7 +70,7 @@ class Puzzle():
     # def polygons(self):
     #     return [piece.polygon for piece in self.pieces]
 
-    def plot(self,fig,ax,pieces=None,**kwargs):
+    def plot_naive(self,fig,ax,pieces=None,**kwargs):
         self.board.plot(ax)
         if pieces is None:
             pieces = self.polygons
@@ -80,6 +80,40 @@ class Puzzle():
             ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
                     bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
     
+    def plot(self,ax,snapshot_queue,**kwargs):
+        self.board.plot(ax)
+        decompose_name = self.name.split("_")[:-1]
+        decompose_name.reverse()
+        puzzle_mat_polygons = []
+        color_index = 0
+        piece_index = -1
+        snapshot_head_index = -1
+        for iter in decompose_name:
+            if iter == "n":
+                continue
+            if iter == "p":
+                snapshot_head_index= snapshot_head_index - 1
+                continue
+            if iter == "s":
+                choice_index = 0
+            else:
+                choice_index = eval(iter.split("-")[0]) - 1
+
+            pieces = snapshot_queue[snapshot_head_index].options[choice_index].val
+            for piece in pieces:
+                puzzle_mat_polygons.append(poly_as_matplotlib(self.polygons[piece_index],
+                    color=PLOT_COLORS[color_index%len(PLOT_COLORS)],**kwargs))
+                ax.text(self.polygons[piece_index].centroid.x,
+                    self.polygons[piece_index].centroid.y,iter,style='italic',
+                bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
+                piece_index-=1
+            color_index+=1
+            snapshot_head_index=snapshot_head_index - 1
+
+        if -piece_index != len(self.polygons)+1 :
+            raise Exception("You did not printed all the pieces")
+        plot_polygons(ax,puzzle_mat_polygons)
+
     def _count_piece(self,poly):
         # if isinstance(choice.val,Piece):
         self.polygons.append(poly)
