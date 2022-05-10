@@ -97,7 +97,7 @@ class Puzzle():
             if iter == "s":
                 choice_index = 0
             else:
-                choice_index = eval(iter.split("-")[0]) - 1
+                choice_index = eval(iter.split("-")[0]) - 1 # -1 because of naming in creator
 
             pieces = snapshot_queue[snapshot_head_index].options[choice_index].val
             for piece in pieces:

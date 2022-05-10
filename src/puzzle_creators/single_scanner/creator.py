@@ -78,11 +78,11 @@ class Creator():
                 points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
                 possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
                 possible_polygons_combs = self.find_combinations(kernel_point,possible_polygons)
-                total_poss = possible_polygons_combs + ["pass"]
+                total_poss = possible_polygons_combs
                 n = len(total_poss)
-                options = [Choice(c,f"{index+1}-{n-1}",is_single=n-1==1) for index,c in enumerate(total_poss)]
+                options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(total_poss)]
                 
-                if len(options) == 1:
+                if len(options) == 0:
                     puzzle.record_choice("n")
                     continue
 
