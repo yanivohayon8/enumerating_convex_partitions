@@ -101,10 +101,10 @@ class Puzzle():
 
             pieces = snapshot_queue[snapshot_head_index].options[choice_index].val
             for piece in pieces:
-                puzzle_mat_polygons.append(poly_as_matplotlib(self.polygons[piece_index],
+                puzzle_mat_polygons.append(poly_as_matplotlib(piece, #self.polygons[piece_index]
                     color=PLOT_COLORS[color_index%len(PLOT_COLORS)],**kwargs))
-                ax.text(self.polygons[piece_index].centroid.x,
-                    self.polygons[piece_index].centroid.y,iter,style='italic',
+                ax.text(piece.centroid.x,
+                    piece.centroid.y,iter,style='italic',
                 bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
                 piece_index-=1
             color_index+=1
