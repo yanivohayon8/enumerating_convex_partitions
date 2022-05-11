@@ -77,15 +77,16 @@ class Creator():
                 potential_points = self.board.potential_points(kernel_point,self.board.space_points)
                 points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
                 possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
+
+                if len(possible_polygons) == 0:
+                    puzzle.record_choice("n")
+                    continue
+
                 possible_polygons_combs = self.find_combinations(kernel_point,possible_polygons)
                 total_poss = possible_polygons_combs
                 n = len(total_poss)
                 options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(total_poss)]
                 
-                if len(options) == 0:
-                    puzzle.record_choice("n")
-                    continue
-
                 if not self.history_manager.is_recorded(repr(kernel_point)):
                     copy_polygons = [Polygon(poly.exterior.coords) for poly in puzzle.polygons]
                     snapshot = Snapshot(kernel_point,
@@ -106,8 +107,8 @@ class Creator():
                 if puzzle.is_filled():
                     return puzzle
 
-            except ValueError as err:
-                raise err
+            # except ValueError as err:
+            #     raise err
             
             except Exception as err:
                 self.ax.cla()
