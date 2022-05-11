@@ -57,11 +57,11 @@ class Board():
 
 class Puzzle():
     
-    def __init__(self,board) -> None:
-        self.polygons = [] 
-        self.pieces_area = 0
+    def __init__(self,board,polygons=[],name="",pieces_area=0) -> None:
+        self.polygons = polygons
+        self.pieces_area = pieces_area
         self.board = board
-        self.name = ""
+        self.name = name
     
     def __repr__(self) -> str:
         return self.name #str(reduce(lambda acc,x: acc + x.name + "_",self.pieces))
@@ -213,11 +213,15 @@ class Puzzle():
         
         return True
     
+
+    def is_filled(self):
+        return self.pieces_area >= self.board.frame_polygon.area
+
     def is_completed(self,frame_polygon):
-        if self.pieces_area < frame_polygon.area:
+        if not self.is_filled:
             raise PuzzleAreaErr("Sum of piece's area is less than its convex hull area")
         
-        for point in self.interior_points:
+        for point in self.board.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
                 raise PuzzleEdgeAnglesErr("The angle of the polygon are not convex even though the whole puzzle framework is covered")
                 

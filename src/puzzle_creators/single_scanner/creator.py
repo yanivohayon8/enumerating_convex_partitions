@@ -1,9 +1,11 @@
 from functools import reduce
 import imp
+from turtle import pu
 from src.puzzle_creators.single_scanner.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
 from src.puzzle_creators.single_scanner.record import HistoryManager,Snapshot,Choice
 from src.puzzle_creators.single_scanner.puzzle_obj import Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
 from src.data_structures import Point
+from src.data_structures.shapes import Polygon
 import matplotlib.pyplot as plt
 
 # class CreatorState():
@@ -68,10 +70,8 @@ class Creator():
         return poss
 
 
-    def create_single(self,scanned_points)->Puzzle:
+    def create_single(self,puzzle:Puzzle,scanned_points)->Puzzle:
         
-        puzzle = Puzzle(self.board)
-
         for kernel_point in scanned_points:
             try:
                 potential_points = self.board.potential_points(kernel_point,self.board.space_points)
@@ -86,11 +86,14 @@ class Creator():
                     puzzle.record_choice("n")
                     continue
 
-                snapshot = Snapshot(kernel_point,puzzle,options)
-                if not self.history_manager.is_recorded(snapshot):
+                if not self.history_manager.is_recorded(repr(kernel_point)):
+                    copy_polygons = [Polygon(poly.exterior.coords) for poly in puzzle.polygons]
+                    snapshot = Snapshot(kernel_point,
+                                        Puzzle(self.board,copy_polygons,puzzle.name,puzzle.pieces_area),
+                                        options)
                     self.snapshot_queue.append(snapshot)
 
-                next_choice_index = self.history_manager.next_availiable(repr(snapshot))
+                next_choice_index = self.history_manager.next_availiable(repr(kernel_point))
                 curr_choice = options[next_choice_index]
                 
                 if isinstance(curr_choice.val,list):
@@ -100,22 +103,27 @@ class Creator():
 
                 puzzle.record_choice(curr_choice.name)
 
+                if puzzle.is_filled():
+                    return puzzle
+
             except ValueError as err:
+                raise err
+            
+            except Exception as err:
+                self.ax.cla()
+                puzzle.plot(self.ax,self.snapshot_queue)
+                self.fig.savefig(self.output_dir+f"/failure/{kernel_point} {str(puzzle.name)}.png")
+                print("Failure . puzzle name " + puzzle.name + ". svae fig in failure folder.")
                 raise err
 
         return puzzle
 
 
-    def create_puzzles(self):
-        
-        start_point_index = 0
-        scanned_points = self.board.space_points[start_point_index:]
-        last_point_x = max([p.x for p in scanned_points])
-        scanned_points = list(filter(lambda p: p.x < last_point_x,scanned_points))
+    def create_puzzles(self):        
+        scanned_points,puzzle = self.initialize(self.board.space_points[0])
 
         while True:
-
-            puzzle = self.create_single(scanned_points)
+            puzzle = self.create_single(puzzle,scanned_points)
 
             try:
                 # puzzle.is_completed(self.board.frame_polygon)
@@ -138,3 +146,22 @@ class Creator():
 
             if len(self.snapshot_queue) == 0:
                 break
+
+            scanned_points,puzzle = self.initialize(last_snap.kernel_point,last_snap.puzzle)
+    
+    def initialize(self,start_kernel_point,puzzle=None):
+        start_point_index = self.board.space_points.index(start_kernel_point)
+        scanned_points = self.board.space_points[start_point_index:]
+        last_point_x = max([p.x for p in scanned_points])
+        scanned_points = list(filter(lambda p: p.x < last_point_x,scanned_points))
+        remember_history_points = [str(p) for p in self.board.space_points[:start_point_index+1]]
+        self.history_manager.clear(remember_history_points)
+
+        if puzzle is None:
+            puzzle = Puzzle(self.board)
+        else:
+            puzzle = Puzzle(self.board,polygons=list(puzzle.polygons),
+                    name=puzzle.name,pieces_area=puzzle.pieces_area)
+        
+        return scanned_points,puzzle
+        
