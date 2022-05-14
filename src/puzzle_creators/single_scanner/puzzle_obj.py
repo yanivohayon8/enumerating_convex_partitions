@@ -165,8 +165,8 @@ class Puzzle():
         # self.logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
         '''Get pieces containing center point'''
         center_point_coords = list(center_point.coords)[0]
-        pieces_contain_point = [list(piece.polygon.exterior.coords) for piece in self.pieces \
-                                if center_point_coords in list(piece.polygon.exterior.coords)]
+        pieces_contain_point = [list(polygon.exterior.coords) for polygon in self.polygons \
+                                if center_point_coords in list(polygon.exterior.coords)]
 
         '''Get neighbor points - sharing an edge with center_point'''
         neighbors = set()
@@ -217,8 +217,8 @@ class Puzzle():
     def is_filled(self):
         return self.pieces_area >= self.board.frame_polygon.area
 
-    def is_completed(self,frame_polygon):
-        if not self.is_filled:
+    def is_completed(self):
+        if not self.is_filled():
             raise PuzzleAreaErr("Sum of piece's area is less than its convex hull area")
         
         for point in self.board.interior_points:

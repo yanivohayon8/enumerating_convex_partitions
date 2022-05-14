@@ -143,16 +143,16 @@ class Creator():
         while True:
             puzzle = self.create_single(puzzle,scanned_points)
 
-            try:
-                # puzzle.is_completed(self.board.frame_polygon)
-                puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
-                self.ax.cla()
-                puzzle.plot(self.ax,self.snapshot_queue)
-                self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
-            except PuzzleAreaErr :
-                pass
-            except PuzzleEdgeAnglesErr:
-                pass
+            # try:
+            puzzle.is_completed()
+            puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
+            self.ax.cla()
+            puzzle.plot(self.ax,self.snapshot_queue)
+            self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+            # except PuzzleAreaErr :
+            #     pass
+            # except PuzzleEdgeAnglesErr:
+            #     pass
             
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
