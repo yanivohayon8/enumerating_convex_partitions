@@ -83,16 +83,16 @@ class Puzzle():
     def plot(self,ax,snapshot_queue,**kwargs):
         self.board.plot(ax)
         decompose_name = self.name.split("_")[:-1]
-        decompose_name.reverse()
+        # decompose_name.reverse()
         puzzle_mat_polygons = []
         color_index = 0
-        piece_index = -1
-        snapshot_head_index = -1
+        piece_index = 0
+        snapshot_head_index = 0
         for iter in decompose_name:
             if iter == "n":
                 continue
             if iter == "p":
-                snapshot_head_index= snapshot_head_index - 1
+                snapshot_head_index= snapshot_head_index + 1
                 continue
             if iter == "s":
                 choice_index = 0
@@ -106,12 +106,12 @@ class Puzzle():
                 ax.text(piece.centroid.x,
                     piece.centroid.y,iter,style='italic',
                 bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
-                piece_index-=1
+                # piece_index+=1
             color_index+=1
-            snapshot_head_index=snapshot_head_index - 1
+            snapshot_head_index=snapshot_head_index + 1
 
-        if -piece_index != len(self.polygons)+1 :
-            raise Exception("You did not printed all the pieces")
+        # if piece_index != len(self.polygons)+1 :
+            # raise Exception("You did not printed all the pieces")
         plot_polygons(ax,puzzle_mat_polygons)
 
     def _count_piece(self,poly):
