@@ -57,11 +57,11 @@ class Board():
 
 class Puzzle():
     
-    def __init__(self,board) -> None:
-        self.polygons = [] 
-        self.pieces_area = 0
+    def __init__(self,board,polygons=[],name="",pieces_area=0) -> None:
+        self.polygons = polygons
+        self.pieces_area = pieces_area
         self.board = board
-        self.name = ""
+        self.name = name
     
     def __repr__(self) -> str:
         return self.name #str(reduce(lambda acc,x: acc + x.name + "_",self.pieces))
@@ -70,7 +70,7 @@ class Puzzle():
     # def polygons(self):
     #     return [piece.polygon for piece in self.pieces]
 
-    def plot_naive(self,fig,ax,pieces=None,**kwargs):
+    def plot_naive(self,ax,pieces=None,**kwargs):
         self.board.plot(ax)
         if pieces is None:
             pieces = self.polygons
@@ -83,35 +83,35 @@ class Puzzle():
     def plot(self,ax,snapshot_queue,**kwargs):
         self.board.plot(ax)
         decompose_name = self.name.split("_")[:-1]
-        decompose_name.reverse()
+        # decompose_name.reverse()
         puzzle_mat_polygons = []
         color_index = 0
-        piece_index = -1
-        snapshot_head_index = -1
+        piece_index = 0
+        snapshot_head_index = 0
         for iter in decompose_name:
             if iter == "n":
                 continue
             if iter == "p":
-                snapshot_head_index= snapshot_head_index - 1
+                snapshot_head_index= snapshot_head_index + 1
                 continue
             if iter == "s":
                 choice_index = 0
             else:
-                choice_index = eval(iter.split("-")[0]) - 1
+                choice_index = eval(iter.split("-")[0]) - 1 # -1 because of naming in creator
 
             pieces = snapshot_queue[snapshot_head_index].options[choice_index].val
             for piece in pieces:
-                puzzle_mat_polygons.append(poly_as_matplotlib(self.polygons[piece_index],
+                puzzle_mat_polygons.append(poly_as_matplotlib(piece, #self.polygons[piece_index]
                     color=PLOT_COLORS[color_index%len(PLOT_COLORS)],**kwargs))
-                ax.text(self.polygons[piece_index].centroid.x,
-                    self.polygons[piece_index].centroid.y,iter,style='italic',
+                ax.text(piece.centroid.x,
+                    piece.centroid.y,iter,style='italic',
                 bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
-                piece_index-=1
+                # piece_index+=1
             color_index+=1
-            snapshot_head_index=snapshot_head_index - 1
+            snapshot_head_index=snapshot_head_index + 1
 
-        if -piece_index != len(self.polygons)+1 :
-            raise Exception("You did not printed all the pieces")
+        # if piece_index != len(self.polygons)+1 :
+            # raise Exception("You did not printed all the pieces")
         plot_polygons(ax,puzzle_mat_polygons)
 
     def _count_piece(self,poly):
@@ -213,11 +213,15 @@ class Puzzle():
         
         return True
     
+
+    def is_filled(self):
+        return self.pieces_area >= self.board.frame_polygon.area
+
     def is_completed(self,frame_polygon):
-        if self.pieces_area < frame_polygon.area:
+        if not self.is_filled:
             raise PuzzleAreaErr("Sum of piece's area is less than its convex hull area")
         
-        for point in self.interior_points:
+        for point in self.board.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:
                 raise PuzzleEdgeAnglesErr("The angle of the polygon are not convex even though the whole puzzle framework is covered")
                 

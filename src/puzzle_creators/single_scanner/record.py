@@ -17,7 +17,7 @@ class Snapshot():
         return self._options
     
     def __repr__(self) -> str:
-        return repr(self.kernel_point) + ";" +  repr(self.puzzle)
+        return repr(self.kernel_point)# + ";" +  repr(self.puzzle)
 
     def is_tried_all_paths(self,next_choice_index):
         return next_choice_index >= len(self.options)
@@ -38,6 +38,15 @@ class HistoryManager():
         choice = self.head_availiable(snap_repr)
         self.choices_history_at_snap[snap_repr] +=1
         return choice
+
+    def clear(self,remember_keys):
+        new_dict = {}
+        for _key in remember_keys:
+            if _key in self.choices_history_at_snap.keys():
+                new_dict[_key] = self.choices_history_at_snap[_key]
+        
+        self.choices_history_at_snap = new_dict
+
 
 class Choice():
     def __init__(self,val,name,is_single=False) -> None:
