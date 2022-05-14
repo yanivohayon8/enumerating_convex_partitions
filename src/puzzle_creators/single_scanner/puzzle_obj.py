@@ -70,7 +70,7 @@ class Puzzle():
     # def polygons(self):
     #     return [piece.polygon for piece in self.pieces]
 
-    def plot_naive(self,fig,ax,pieces=None,**kwargs):
+    def plot_naive(self,ax,pieces=None,**kwargs):
         self.board.plot(ax)
         if pieces is None:
             pieces = self.polygons

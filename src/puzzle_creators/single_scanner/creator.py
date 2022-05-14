@@ -41,7 +41,8 @@ class Creator():
         polygons_start_at_point = {}
         for polygon in possible_polygons:
             coords = [Point(cor) for cor in polygon.exterior.coords[1:-1]]
-            poly = get_stared_shaped_polygon(Point(polygon.exterior.coords[0]),coords)
+            k_point = Point(polygon.exterior.coords[0])
+            poly = get_stared_shaped_polygon(k_point,coords)
             first_point_str = str(poly.exterior.coords[-2])
 
             if first_point_str not in polygons_start_at_point.keys():
@@ -54,18 +55,31 @@ class Creator():
             comb = [poly]
             poly_end_point = poly.exterior.coords[1]
             poss_start_with_poly = self.combs_rec(poly_end_point,end_point,polygons_start_at_point,comb)
-            possibilities.append(poss_start_with_poly)
+            # acc = []
+            # self.combs_rec(poly_end_point,end_point,polygons_start_at_point,comb,acc)
+
+            # possibilities.append(poss_start_with_poly)
+            possibilities = possibilities + poss_start_with_poly
+            # possibilities = possibilities + acc
 
         return possibilities
 
     def combs_rec(self,start_point,end_point,polygons_start_at_point,comb):
         if start_point == end_point:
-            return comb
+            return [comb]
+        
         poss = []
         for next_poly in polygons_start_at_point[str(start_point)]:
+            comb_copy = comb[:]
+            comb_copy.append(next_poly)
             next_end_point = next_poly.exterior.coords[1]
-            next_comb = self.combs_rec(next_end_point,end_point,polygons_start_at_point,comb + [next_poly])
-            poss = poss + next_comb
+            next_combs = self.combs_rec(next_end_point,end_point,
+                                        polygons_start_at_point,comb_copy)
+            
+            # for _ in next_combs:
+            #     poss.append(_)
+            poss = poss + next_combs
+            # poss.append(next_combs)
         
         return poss
 
@@ -111,10 +125,13 @@ class Creator():
             #     raise err
             
             except Exception as err:
+                print("Failure . puzzle name " + puzzle.name + ". svae fig in failure folder.")
+                self.ax.cla()
+                puzzle.plot_naive(self.ax)
+                self.fig.savefig(self.output_dir+f"/failure/naive {kernel_point} {str(puzzle.name)}.png")
                 self.ax.cla()
                 puzzle.plot(self.ax,self.snapshot_queue)
                 self.fig.savefig(self.output_dir+f"/failure/{kernel_point} {str(puzzle.name)}.png")
-                print("Failure . puzzle name " + puzzle.name + ". svae fig in failure folder.")
                 raise err
 
         return puzzle
