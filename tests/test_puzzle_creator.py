@@ -1,4 +1,3 @@
-from cmath import log
 import sys
 import os
 
@@ -18,7 +17,7 @@ import logging
 from src import setup_logger
 from glob import glob as glob_glob
 from ntpath import split as ntpath_split
-
+from src.puzzle_creators.statistics import df_raw_data
 
 
 
@@ -128,4 +127,69 @@ class TestSingleScanCreator(unittest.TestCase):
         example_name = "square_int_5_anchor_4_01"
         output_dir = self._output_dir(example_name)
         self._run(example_name,output_dir)
+
+
+class TestStatistics(unittest.TestCase):
+
+    def test_first_stats(self):
+        current_working_dir = os.getcwd()
+        files_paths = os.path.join(current_working_dir,"data","puzzles")
+        df_data = df_raw_data(files_paths)
+        df_data["min_puzzles"] = df_data.groupby(["n_interior","n_convex_hull"])["n_puzzles"].transform("min")
+        df_data["max_puzzles"] = df_data.groupby(["n_interior","n_convex_hull"])["n_puzzles"].transform("max")
+        df_data.to_csv("data/first_stats.csv",index=False)
+
+
+
+class TestSampledPointsCreator(unittest.TestCase):
+    files_path = "data/run from/" #'data/sampled_points/'
+   
+
+    def _run(self,example_name,output_dir):
+        # dirs = ["results","visibility-graph-before-filter","visibility-graph-filtered",
+        #         "last_decision_junction","last_creation","snapshots","failure"]
+        dirs = ["results","failure"]
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            [os.makedirs(output_dir+ f"/{_dir}") for _dir in dirs]
         
+        [[os.remove(file.path) for file in os.scandir(os.path.join(output_dir+f"/{_dir}"))] for _dir in dirs]
+
+        board = Board()
+        board.load_sampled_points(self.files_path + example_name + ".csv")
+
+        creator = Creator(board,output_dir)
+        # fig, ax = plt.subplots()
+
+        try:
+            # start_time = time.time()
+            creator.create_puzzles()
+            
+        except Exception as err:
+            pass
+            # logger.exception(err)
+            # logger.error(err)
+            raise err
+        finally:
+            plt.close("all")
+            del creator
+
+
+    def _output_dir(self,example_name):
+        current_working_dir = os.getcwd()
+        return os.path.join(current_working_dir,"data","puzzles",example_name)
+        
+
+    def test_run_from(self):
+        for file in os.listdir(self.files_path):
+            example_name = file.split(".")[0]
+            output_dir = self._output_dir(example_name)
+            self._run(example_name,output_dir)
+            print("Finish with example " + str(example_name))
+
+    def test_single(self):
+        example_name = "frame-4-frame_anchor-4-int-2-103"
+        output_dir = self._output_dir(example_name)
+        self._run(example_name,output_dir)
+
+

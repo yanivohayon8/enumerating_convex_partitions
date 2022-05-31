@@ -1,4 +1,5 @@
 from numpy.random import randint
+import random
 from src.data_structures import Point
 import pandas as pd
 
@@ -11,7 +12,7 @@ import pandas as pd
 #         self.frame_anchor_points = frame_anchor_points
 #         self.frame_points = frame_points
 
-def sample_internal(n_int_points,frame_polygon,epsilon = 5):
+def sample_int(n_int_points,frame_polygon,epsilon = 5):
     x_min, y_min, x_max, y_max = frame_polygon.bounds
     points = []
     while n_int_points > 0:
@@ -21,6 +22,16 @@ def sample_internal(n_int_points,frame_polygon,epsilon = 5):
         if frame_polygon.contains(sampled_point):
             points.append(sampled_point)
             n_int_points = n_int_points - 1
+    
+    return points
+
+def sample_float(n_points,x_min, y_min, x_max, y_max):
+    points = []
+    while n_points > 0:
+        x = random.uniform(x_min,x_max)
+        y = random.uniform(y_min,y_max)
+        points.append(Point((x,y)))
+        n_points = n_points - 1
     
     return points
 

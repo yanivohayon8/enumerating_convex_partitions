@@ -215,11 +215,11 @@ class Puzzle():
     
 
     def is_filled(self):
-        return self.pieces_area >= self.board.frame_polygon.area
+        return round(self.pieces_area,5) >= round(self.board.frame_polygon.area,5)
 
     def is_completed(self):
         if not self.is_filled():
-            raise PuzzleAreaErr("Sum of piece's area is less than its convex hull area")
+            raise PuzzleAreaErr(f"Sum of piece's area {self.pieces_area} is less than its convex hull area {self.board.frame_polygon.area}")
         
         for point in self.board.interior_points:
             if not self._is_edges_angles_convex(point): #self.is_angles_convex[str(point)]:

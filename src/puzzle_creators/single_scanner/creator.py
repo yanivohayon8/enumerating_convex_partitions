@@ -143,16 +143,18 @@ class Creator():
         while True:
             puzzle = self.create_single(puzzle,scanned_points)
 
-            # try:
-            puzzle.is_completed()
-            puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
-            self.ax.cla()
-            puzzle.plot(self.ax,self.snapshot_queue)
-            self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
-            # except PuzzleAreaErr :
-            #     pass
-            # except PuzzleEdgeAnglesErr:
-            #     pass
+            try:
+                puzzle.is_completed()
+                puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
+                # self.ax.cla()
+                # puzzle.plot(self.ax,self.snapshot_queue)
+                # self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+            except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
+                self.ax.cla()
+                puzzle.plot(self.ax,self.snapshot_queue)
+                self.fig.savefig(self.output_dir+f"/failure/{str(puzzle.name)}.png")
+                print("Plotted failure on failure directory")
+                raise e
             
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
@@ -176,7 +178,7 @@ class Creator():
         self.history_manager.clear(remember_history_points)
 
         if puzzle is None:
-            puzzle = Puzzle(self.board)
+            puzzle = Puzzle(self.board,polygons=[],name="",pieces_area=0)
         else:
             puzzle = Puzzle(self.board,polygons=list(puzzle.polygons),
                     name=puzzle.name,pieces_area=puzzle.pieces_area)
