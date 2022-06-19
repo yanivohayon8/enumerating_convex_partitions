@@ -66,19 +66,26 @@ class Puzzle():
     def __repr__(self) -> str:
         return self.name #str(reduce(lambda acc,x: acc + x.name + "_",self.pieces))
 
-    # @property
-    # def polygons(self):
-    #     return [piece.polygon for piece in self.pieces]
+    def load_polygons(self,df_puzzle_csv:pd.DataFrame):
+        self.pieces_area = 0
+        self.polygons = []
+        pieces_ids = df_puzzle_csv["id"].unique().tolist()
+        for piece_id in pieces_ids:
+            verts_rows = df_puzzle_csv.loc[df_puzzle_csv["id"]==piece_id, ["x","y"]]
+            polygon = Polygon(verts_rows.values.tolist())
+            self.pieces_area += polygon.area
+            self.polygons.append(polygon)
 
-    def plot_naive(self,ax,pieces=None,**kwargs):
+    def plot_naive(self,ax,pieces=None,is_annotate=True,**kwargs):
         self.board.plot(ax)
         if pieces is None:
             pieces = self.polygons
         puzzle_mat_polygons = [poly_as_matplotlib(piece,color=PLOT_COLORS[i%len(PLOT_COLORS)],**kwargs) for i,piece in enumerate(pieces)]
         plot_polygons(ax,puzzle_mat_polygons)
-        for i,mat_poly in enumerate(pieces):
-            ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
-                    bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
+        if is_annotate:
+            for i,mat_poly in enumerate(pieces):
+                ax.text(mat_poly.centroid.x,mat_poly.centroid.y,str(i+1),style='italic',
+                        bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
     
     def plot(self,ax,snapshot_queue,**kwargs):
         self.board.plot(ax)

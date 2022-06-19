@@ -38,8 +38,32 @@ def save_sample_poly_hist(csvs,output_path):
     df_poly_hist = pd.DataFrame()
     df_poly_hist["Count"] = df_sample.polygon_type.value_counts()
     df_poly_hist["Percentage"] = df_sample.polygon_type.value_counts(normalize=True).mul(100).round(2)
-    
+    # df_poly_hist.columns = ["polygon_type","Count","Percentage"]
     df_poly_hist.to_csv(output_path)
-        
 
+def save_sample_vert_degree_hist(csvs,output_path):
+    deg_vert_puzzle = []
+    
+    for csv in csvs:
+        df_puzzle = pd.read_csv(csv)
+
+        df_next_poly = df_puzzle.loc[df_puzzle["id"] == 0]
+        bla = pd.merge(df_next_poly,df_next_poly,on=["x","y"])
+
+
+
+        '''# df_deg = df_puzzle.groupby(["x","y"]).size().reset_index(["x","y"])
+
+        df_deg.columns = ["x","y","degree"]
+        # verts_degs = df_deg.values.tolist()
+        name = csv.split("\\")[-1].split(".")[0]
+        df_deg["puzzle"] = [name] * len(df_deg)
+        # [vert.append(name) for vert in verts_degs]
+        # deg_vert_puzzle = deg_vert_puzzle + verts_degs
+        '''# puzzle_names.append(csv.split("\\")[-1].split(".")[0])
+    
+    df_vert_degrees = pd.DataFrame(deg_vert_puzzle)
+    df_vert_degrees.to_csv(output_path)
+
+    raise NotImplementedError("asdf")
 

@@ -6,10 +6,13 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
+import pandas as pd
+
 import unittest
 # from src.puzzle_creators.skeleton import PuzzleCreator
 # from src.puzzle_creators.power_group.primary import PowerGroupCreator
 from src.puzzle_creators.single_scanner.creator import Creator
+from src.puzzle_creators.single_scanner.adjasments import transform_peleg_output
 from src.puzzle_creators.single_scanner.puzzle_obj import Board
 
 import matplotlib.pyplot as plt
@@ -192,4 +195,19 @@ class TestSampledPointsCreator(unittest.TestCase):
         output_dir = self._output_dir(example_name)
         self._run(example_name,output_dir)
 
-
+    def test_save_trans_peleg_output_format(self):
+        example_name = "convex_hull-3-int-2-2299"
+        output_dir = self._output_dir(example_name)
+        puzzle_name = "s_1-3_"
+        first_df = pd.read_csv(f"{output_dir}/results/{puzzle_name}.csv")
+        puzzle_peleg = transform_peleg_output(first_df)
+        puzzle_peleg.to_csv(output_dir+f"/pelegoutput_{puzzle_name}.csv",index=False)
+    
+    def test_plot_board(self):
+        example_name = "frame-4-frame_anchor-4-int-1-600"
+        board = Board()
+        board.load_sampled_points(self.files_path + example_name +".csv")
+        ax = plt.subplot()
+        board.plot(ax)
+        plt.show()
+        pass
