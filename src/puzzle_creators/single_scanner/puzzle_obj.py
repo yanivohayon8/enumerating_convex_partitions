@@ -155,7 +155,7 @@ class Puzzle():
             if inter_point.within(curr_polygon):
                 raise PuzzleErr(f"Piece {str(piece)} created contains interior point {str(inter_point)}")
 
-    def write_results(self,output_path):
+    def write_results(self,output_path,is_peleg_format=False):
         xs = []
         ys = []
         piece_id = []
@@ -166,7 +166,12 @@ class Puzzle():
                 piece_id.append(index)
         
         df = pd.DataFrame({"x":xs,"y":ys,"id":piece_id})
-        df.to_csv(output_path)
+
+        if is_peleg_format:
+            df.columns = ["x","y","piece"]
+
+        df.to_csv(output_path,index=False)
+        #df.to_csv(output_path)
 
     def _is_edges_angles_convex(self,center_point):
         # self.logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")

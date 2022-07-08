@@ -7,9 +7,9 @@ from src import setup_logger
 from src.data_structures.graph import Graph,Edge
 import re
 
-log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
-logger = logging.getLogger("logger.rgon_1988_wrap")
-logger.addHandler(log_handler)
+# log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
+# logger = logging.getLogger("logger.rgon_1988_wrap")
+# logger.addHandler(log_handler)
 
 # direction = Direction.left
 
@@ -45,7 +45,7 @@ def get_stared_shape_polygon(kernel_point,subspace_points,direction):
     subspace_points_mirr = [mirror_y_axis(point,direction) for point in subspace_points]
     stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point_mirr,subspace_points_mirr)
     stared_polygon = mirror_y_axis(stared_polygon,direction)
-    logger.debug(f"The stared polygon is  {str(list(stared_polygon.exterior.coords))}")
+    # logger.debug(f"The stared polygon is  {str(list(stared_polygon.exterior.coords))}")
     return stared_polygon
 
 def get_visualization_graph(kernel_point,stared_polygon,direction):

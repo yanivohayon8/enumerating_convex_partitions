@@ -16,12 +16,13 @@ import matplotlib.pyplot as plt
 
 class Creator():
 
-    def __init__(self,board,output_dir) -> None:
+    def __init__(self,board,output_dir,is_peleg_format=False) -> None:
         self.board = board
         self.output_dir = output_dir
         self.snapshot_queue = []
         self.history_manager = HistoryManager()
         self.fig, self.ax = plt.subplots()
+        self.is_peleg_format = is_peleg_format
 
     def find_combinations(self,kernel_point,possible_polygons):
         connected_points = set()
@@ -145,7 +146,7 @@ class Creator():
 
             try:
                 puzzle.is_completed()
-                puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv")
+                puzzle.write_results(self.output_dir+f"/results/{str(puzzle.name)}.csv",is_peleg_format=self.is_peleg_format)
                 # self.ax.cla()
                 # puzzle.plot(self.ax,self.snapshot_queue)
                 # self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
