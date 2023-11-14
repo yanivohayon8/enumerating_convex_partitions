@@ -21,7 +21,7 @@ from src import setup_logger
 from glob import glob as glob_glob
 from ntpath import split as ntpath_split
 from src.puzzle_creators.statistics import df_raw_data
-
+import numpy as np
 
 
 
@@ -166,7 +166,7 @@ class TestSampledPointsCreator(unittest.TestCase):
 
         try:
             # start_time = time.time()
-            creator.create_puzzles()
+            creator.create_puzzles(num_puzzles=np.inf)
             
         except Exception as err:
             pass
@@ -196,9 +196,9 @@ class TestSampledPointsCreator(unittest.TestCase):
         self._run(example_name,output_dir)
 
     def test_save_trans_peleg_output_format(self):
-        example_name = "convex_hull-3-int-2-2299"
+        example_name = "sample_range-10000-convex_hull-8-int-10-6475"
         output_dir = self._output_dir(example_name)
-        puzzle_name = "s_1-3_"
+        puzzle_name = "1-66723_1-3_s_s_1-2112_n_n_1-485_s_1-125_1-45_n_s_s_n_s_"
         first_df = pd.read_csv(f"{output_dir}/results/{puzzle_name}.csv")
         puzzle_peleg = transform_peleg_output(first_df)
         puzzle_peleg.to_csv(output_dir+f"/pelegoutput_{puzzle_name}.csv",index=False)

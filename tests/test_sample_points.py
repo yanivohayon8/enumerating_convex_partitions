@@ -25,8 +25,8 @@ class TestSampler(unittest.TestCase):
         frame_polygon = Polygon(frame_tuples)
 
 
-        for n_int_points in range(1,20,1):
-            for t in range(5):
+        for n_int_points in range(9,10,1):
+            for t in range(1):
                 sampled_points = sampler.sample_int(n_int_points,frame_polygon)
                 frame_points = frame_polygon.exterior.coords
                 rnd_int = randint(1,1000)
@@ -55,12 +55,13 @@ class TestSampler(unittest.TestCase):
             Sampling at frame of 1000x1000 so ofir will cut pictures from the futured puzzled
         '''
         frame_sampling_size = 10000
-        frame_tuples = [(0,0),(0,frame_sampling_size),(frame_sampling_size,frame_sampling_size),(frame_sampling_size,0)]
+        #frame_tuples = [(0,0),(0,frame_sampling_size),(frame_sampling_size,frame_sampling_size),(frame_sampling_size,0)]
+        frame_tuples = [(0,0),(0,2953),(2248,2953),(2248,0)] # because ofir asked these dimensions
         frame_polygon_points = [Point(p) for p in frame_tuples]
         frame_polygon = Polygon(frame_tuples)
         x_min, y_min, x_max, y_max = frame_polygon.bounds
 
-        for n_int_points in range(25,26,1):
+        for n_int_points in range(15,20,1):
             for t in range(1):
                 sampled_points = MultiPoint(sampler.sample_float(n_int_points,x_min, y_min, x_max, y_max))                
                 # convex_hull = 

@@ -35,7 +35,7 @@ def sample_float(n_points,x_min, y_min, x_max, y_max):
     
     return points
 
-def write_sampling(output_file,internal_points,frame_points,frame_anchor_points):
+def write_sampling(output_file,internal_points,frame_points,frame_anchor_points,is_write=True):
     xs = []
     ys = []
     roles = []
@@ -60,6 +60,9 @@ def write_sampling(output_file,internal_points,frame_points,frame_anchor_points)
         "role":roles
     })
 
-    df.to_csv(output_file,index=False)
+    if is_write:
+        df.to_csv(output_file,index=False)
+    
+    return df
 
 
