@@ -174,7 +174,6 @@ class Puzzle():
         #df.to_csv(output_path)
 
     def _is_edges_angles_convex(self,center_point):
-        # self.logger.debug(f"Find out wheter the angles between edges of point {str(center_point)} are all less than 180")
         '''Get pieces containing center point'''
         center_point_coords = list(center_point.coords)[0]
         pieces_contain_point = [list(polygon.exterior.coords) for polygon in self.polygons \

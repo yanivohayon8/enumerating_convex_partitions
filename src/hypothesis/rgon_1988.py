@@ -38,7 +38,6 @@ def sort_points_clockwise(center_point,subspace_points):
     return pos_angle_points + neg_angle_points
 
 def get_stared_shape_polygon(kernel_point,subspace_points):
-    # logger.info("Start function get_stared_shape_polygon")
     polygon_points = [kernel_point]
     [polygon_points.append(Point(point.x,point.y)) for point in sort_points_clockwise(kernel_point,
                                                                                     subspace_points)]
@@ -63,7 +62,6 @@ def get_visualization_graph(kernel_point,stared_polygon):
         This method implement the "Visibility" procedure in the rgon paper
 
     '''
-    # logger.info("Start function get_visualization_graph")
 
     # copy_polygon = stared_polygon.make_copy()
     # copy_polygon.reverse_direction() # This is under the assumption it came from came stared polygon function above
@@ -132,7 +130,6 @@ def get_convex_chain_connectivity(visual_graph):
         Assumption - we get the visualizatin graph from the visualizatin method above 
         and the vertecies are sorted clockwise as demanded
     '''
-    # logger.info("Start function get_convex_chain_connectivity")
 
     continuity_edges = {}
 
@@ -190,7 +187,6 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
 #     return edges_max_chain_length
     
 def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
-    # logger.info("Start function get_edges_max_chain_length_new")
 
     edges_max_chain_length = {}
 

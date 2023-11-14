@@ -16,7 +16,6 @@ from src.puzzle_creators.single_scanner.adjasments import transform_peleg_output
 from src.puzzle_creators.single_scanner.puzzle_obj import Board
 
 import matplotlib.pyplot as plt
-import logging
 from glob import glob as glob_glob
 from ntpath import split as ntpath_split
 from src.puzzle_creators.statistics import df_raw_data
@@ -51,8 +50,6 @@ class TestSingleScanCreator(unittest.TestCase):
             
         except Exception as err:
             pass
-            # logger.exception(err)
-            # logger.error(err)
             raise err
         finally:
             plt.close("all")
@@ -164,8 +161,6 @@ class TestSampledPointsCreator(unittest.TestCase):
             
         except Exception as err:
             pass
-            # logger.exception(err)
-            # logger.error(err)
             raise err
         finally:
             plt.close("all")
