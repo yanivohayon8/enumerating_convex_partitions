@@ -2,14 +2,10 @@ from src.hypothesis import rgon_1988 as Rgon1988
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 import logging
-from src import setup_logger
 # from src.puzzle_creators import Direction
 from src.data_structures.graph import Graph,Edge
 import re
 
-# log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
-# logger = logging.getLogger("logger.rgon_1988_wrap")
-# logger.addHandler(log_handler)
 
 # direction = Direction.left
 

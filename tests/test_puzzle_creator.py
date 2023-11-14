@@ -17,7 +17,6 @@ from src.puzzle_creators.single_scanner.puzzle_obj import Board
 
 import matplotlib.pyplot as plt
 import logging
-from src import setup_logger
 from glob import glob as glob_glob
 from ntpath import split as ntpath_split
 from src.puzzle_creators.statistics import df_raw_data
@@ -38,11 +37,6 @@ class TestSingleScanCreator(unittest.TestCase):
         
         [[os.remove(file.path) for file in os.scandir(os.path.join(output_dir+f"/{_dir}"))] for _dir in dirs]
 
-        # setup_logger.set_debug_lastrun_dir(output_dir)
-        # log_handler = setup_logger.get_file_handler(os.path.join(output_dir,"run.log"),mode="w")
-        # logger = logging.getLogger("logger.test_puzzle_creator")
-        # logger.addHandler(log_handler)
-        # logger.debug("Starting....")
 
 
         board = Board()

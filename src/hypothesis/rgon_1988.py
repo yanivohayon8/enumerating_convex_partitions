@@ -1,4 +1,3 @@
-# from asyncio.windows_events import NULL
 import numpy as np
 from src.data_structures.shapes import Polygon
 # from networkx import DiGraph
@@ -6,13 +5,6 @@ from src.data_structures.shapes import Polygon
 from src.data_structures.graph import Edge,Graph
 from src.data_structures import Point
 import random
-import logging
-from src import setup_logger
-
-
-# log_handler = setup_logger.get_file_handler(setup_logger.get_debug_log_file())
-# logger = logging.getLogger("logger.rgon_1988")
-# logger.addHandler(log_handler)
 
 
 
