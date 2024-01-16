@@ -148,9 +148,9 @@ def find_possible_rgons(kernel_point,puzzle,points_to_connect,scan_direction=Dir
             return []
 
         possible_rgons = _find_rgons_comb(kernel_point,continuity_edges,puzzle)
-        possible_rgons = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in polygons),possible_rgons))
+        possible_rgons_filtered = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in polygons),possible_rgons))
 
         # n = len(possible_rgons)
         # pieces = [puzzle_obj.Piece(poly,f"{index+1}-{n}") for index,poly in enumerate(possible_rgons)]
         # pieces = [puzzle_obj.Piece(poly,repr(poly)) for index,poly in enumerate(possible_rgons)]
-        return possible_rgons
+        return possible_rgons_filtered

@@ -316,24 +316,26 @@ class Creator():
             puzzle = self.create_single_limited(puzzle,scanned_points)
 
             try:
-                # puzzle.is_completed()
-                # # dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
-                # my_time = datetime.now().strftime("%d-%m-%Y")
-                # rnd_int = randint(1,99999999)
-                # # dst_path = self.output_dir+f"/{my_time}_numPieces_{len(puzzle.polygons)}_rand_{rnd_int}.csv"
-                # dst_path = self.output_dir+f"/numPieces_{len(puzzle.polygons)}_rand_{rnd_int}.csv"
-                # puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
-                # # self.ax.cla()
-                # # puzzle.plot(self.ax,self.snapshot_queue)
-                # # self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
-                
                 puzzle.is_completed()
-                dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
-                
+                # dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
+                my_time = datetime.now().strftime("%d-%m-%Y")
+                rnd_int = randint(1,99999999)
+                # dst_path = self.output_dir+f"/{my_time}_numPieces_{len(puzzle.polygons)}_rand_{rnd_int}.csv"
+
+                file_name = f"numPieces_{len(puzzle.polygons)}_rand_{rnd_int}"
+                dst_path = self.output_dir+f"/{file_name}.csv"
                 puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
                 self.ax.cla()
                 puzzle.plot(self.ax,self.snapshot_queue)
-                self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+                self.fig.savefig(self.output_dir+f"/results/{file_name}.png")
+                
+                # puzzle.is_completed()
+                # dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
+                
+                # puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
+                # self.ax.cla()
+                # puzzle.plot(self.ax,self.snapshot_queue)
+                # self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
                 # self.ax.cla()
                 # puzzle.plot(self.ax,self.snapshot_queue)

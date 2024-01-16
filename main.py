@@ -56,7 +56,7 @@ if __name__ == "__main__":
             board.load_sampled_points(dst_file)
             puzzles_dst_folder = args.puzzles_dst_folder+"/"+img_name
             creator = Creator(board,puzzles_dst_folder)
-            dirs_to_create = [puzzles_dst_folder]
+            dirs_to_create = [puzzles_dst_folder,puzzles_dst_folder+"/results"]
 
             for _dir in dirs_to_create:
                 if not os.path.exists(_dir):
