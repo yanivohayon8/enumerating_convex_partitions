@@ -66,7 +66,10 @@ def sort_hull_interior_(sampled_points:list):
     sampled_points_ = MultiPoint(sampled_points)                
     convex_hull = sampled_points_.convex_hull
     interior_points = [point for point in sampled_points_ if not convex_hull.touches(point)]
-    convex_hull_points = MultiPoint(list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1])
+    # convex_hull_points = MultiPoint(list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1])
+    
+    xs, ys = sampled_points_.convex_hull.exterior.xy
+    convex_hull_points = [Point(x,y) for x, y in zip(xs,ys)]
 
     return interior_points,convex_hull_points
 

@@ -13,7 +13,7 @@ import unittest
 # from src.puzzle_creators.power_group.primary import PowerGroupCreator
 from src.puzzle_creators.single_scanner.creator import Creator
 from src.puzzle_creators.single_scanner.adjasments import transform_peleg_output
-from src.puzzle_creators.single_scanner.puzzle_obj import Board
+from src.seed_points.board import Board
 
 import matplotlib.pyplot as plt
 from glob import glob as glob_glob

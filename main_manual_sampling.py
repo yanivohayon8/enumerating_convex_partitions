@@ -5,7 +5,7 @@ from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from shapely.geometry import MultiPoint
 from datetime import datetime
-from src.puzzle_creators.single_scanner.puzzle_obj import Board
+from src.seed_points.board import Board
 from src.puzzle_creators.single_scanner.creator import Creator
 import matplotlib.pyplot as plt
 import pandas as pd

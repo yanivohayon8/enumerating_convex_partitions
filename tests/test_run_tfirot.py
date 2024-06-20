@@ -1,6 +1,8 @@
 import sys
 import os
 
+from src.seed_points.board import Board
+
 # from src.puzzle_creators import Direction
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -11,7 +13,7 @@ import matplotlib.pyplot as plt
 import unittest
 import glob
 
-from src.puzzle_creators.single_scanner.puzzle_obj import Board, Puzzle
+from src.puzzle_creators.single_scanner.puzzle_obj import Puzzle
 
 class TestRePAIRJune2022(unittest.TestCase):
 
