@@ -1,10 +1,15 @@
 from src.rgon_1988 import wrap as Rgon1988
 from shapely.geometry import LineString
-from src.puzzle_creators import Direction
 from src.data_structures.graph import Edge
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from src.puzzle_creators.single_scanner import puzzle_obj
+from enum import Enum
+
+
+class Direction(Enum):
+    left = 1
+    right = -1
 
 
 def get_accessible_points(kernel_point,pieces,space):
