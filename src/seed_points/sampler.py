@@ -74,9 +74,9 @@ def sort_hull_interior_(sampled_points:list):
 def sample_AABB(num_points, x_max, y_max,x_min=0, y_min=0,output_dir=None):
     sampled_points = sample_float_(num_points,x_min, y_min, x_max, y_max)
     interior_points,convex_hull_points = sort_hull_interior_(sampled_points)
-    df = arange_df_(interior_points,convex_hull_points)
 
     if not output_dir is None:
+        df = arange_df_(interior_points,convex_hull_points)
         current_time = datetime.now().strftime("%H-%M-%S")
         file_name = f"CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
         out_path = os.path.join(output_dir,file_name)
@@ -84,7 +84,7 @@ def sample_AABB(num_points, x_max, y_max,x_min=0, y_min=0,output_dir=None):
     else:
         out_path = None
 
-    return df,out_path
+    return interior_points,convex_hull_points,out_path
 
 def sample_image(num_points,img_path,output_dir=None):
     img = Image.open(img_path)
@@ -96,9 +96,9 @@ def sample_image(num_points,img_path,output_dir=None):
 
     sampled_points = sample_float_(num_points,x_min, y_min, x_max, y_max)
     interior_points,convex_hull_points = sort_hull_interior_(sampled_points)
-    df = arange_df_(interior_points,convex_hull_points)
 
     if not output_dir is None:
+        df = arange_df_(interior_points,convex_hull_points)
         current_time = datetime.now().strftime("%H-%M-%S")
         img_name = os.path.basename(img_path)
         file_name = f"{img_name}-CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
@@ -107,5 +107,5 @@ def sample_image(num_points,img_path,output_dir=None):
     else:
         out_path = None
 
-    return df,out_path
+    return interior_points,convex_hull_points,out_path
     
