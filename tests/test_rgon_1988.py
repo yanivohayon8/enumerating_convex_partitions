@@ -7,7 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import pandas as pd
-from src.hypothesis import internals as Rgon1988Internals
+from src.rgon_1988 import internals as Rgon1988Internals
 import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
 import matplotlib.patches as patches

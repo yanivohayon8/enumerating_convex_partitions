@@ -1,4 +1,4 @@
-from src.hypothesis import internals as Rgon1988
+from src.rgon_1988 import internals as Rgon1988Internals
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 # from src.puzzle_creators import Direction
@@ -38,19 +38,19 @@ def mirror_y_axis(mirrored,direction):
 def get_stared_shape_polygon(kernel_point,subspace_points,direction):
     kernel_point_mirr = mirror_y_axis(kernel_point,direction)
     subspace_points_mirr = [mirror_y_axis(point,direction) for point in subspace_points]
-    stared_polygon = Rgon1988.get_stared_shape_polygon(kernel_point_mirr,subspace_points_mirr)
+    stared_polygon = Rgon1988Internals.get_stared_shape_polygon(kernel_point_mirr,subspace_points_mirr)
     stared_polygon = mirror_y_axis(stared_polygon,direction)
     return stared_polygon
 
 def get_visualization_graph(kernel_point,stared_polygon,direction):
     kernel_point_mirr = mirror_y_axis(kernel_point,direction)
     stared_polygon = mirror_y_axis(stared_polygon,direction)
-    visual_graph = Rgon1988.get_visualization_graph(kernel_point_mirr,stared_polygon)
+    visual_graph = Rgon1988Internals.get_visualization_graph(kernel_point_mirr,stared_polygon)
     return mirror_y_axis(visual_graph,direction)
 
 def get_convex_chain_connectivity(visual_graph,direction):
     visual_graph_mirr = mirror_y_axis(visual_graph,direction)
-    connectivity = Rgon1988.get_convex_chain_connectivity(visual_graph_mirr)
+    connectivity = Rgon1988Internals.get_convex_chain_connectivity(visual_graph_mirr)
 
     if direction.value == 1:
         return connectivity

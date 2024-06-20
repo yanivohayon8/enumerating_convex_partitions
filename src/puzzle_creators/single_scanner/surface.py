@@ -1,4 +1,4 @@
-from src.puzzle_creators import rgon_1988_wrap as Rgon1988
+from src.rgon_1988 import wrap as Rgon1988
 from shapely.geometry import LineString
 from src.puzzle_creators import Direction
 from src.data_structures.graph import Edge
@@ -8,27 +8,27 @@ from src.puzzle_creators.single_scanner import puzzle_obj
 
 
 def get_accessible_points(kernel_point,pieces,space):
-        visible_points = []
-        ker_to_p_lines = [LineString([kernel_point,point])for point in space]
+    visible_points = []
+    ker_to_p_lines = [LineString([kernel_point,point])for point in space]
 
-        for point,curr_ker_to_p_line in zip(space,ker_to_p_lines):
+    for point,curr_ker_to_p_line in zip(space,ker_to_p_lines):
 
-            # If the kernel, current point and other point forms a line, 
-            # the far distant point is not visible
-            if any(curr_ker_to_p_line.contains(line) and not line.equals(curr_ker_to_p_line)\
-                for line in ker_to_p_lines):
-                continue
-            
-            # if other piece is blocking view to point
-            if any((curr_ker_to_p_line.crosses(piece) and not curr_ker_to_p_line.touches(piece) or curr_ker_to_p_line.within(piece))\
-                for piece in pieces):
-                continue
-            
-            # If it does visible
-            visible_points.append(point)
-            x, y = curr_ker_to_p_line.xy
+        # If the kernel, current point and other point forms a line, 
+        # the far distant point is not visible
+        if any(curr_ker_to_p_line.contains(line) and not line.equals(curr_ker_to_p_line)\
+            for line in ker_to_p_lines):
+            continue
+        
+        # if other piece is blocking view to point
+        if any((curr_ker_to_p_line.crosses(piece) and not curr_ker_to_p_line.touches(piece) or curr_ker_to_p_line.within(piece))\
+            for piece in pieces):
+            continue
+        
+        # If it does visible
+        visible_points.append(point)
+        x, y = curr_ker_to_p_line.xy
 
-        return visible_points
+    return visible_points
 
 def get_stared_shaped_polygon(kernel_point,points_to_connect,scan_direction=Direction.left):
     return Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,scan_direction)
