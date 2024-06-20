@@ -9,11 +9,15 @@ from functools import reduce
 
 class Board():
 
-    def __init__(self) -> None:
-        self.interior_points = []
-        self.frame_anchor_points = [] #frame anchor points
-        self.frame_polygon = None 
-        self.space_points = []
+    def __init__(self,interior_points=None,convex_hull_points=None,file_path=None) -> None:
+
+        if file_path:
+            self.load_sampled_points(file_path)
+        else:
+            self.interior_points =  interior_points if interior_points is not None else []
+            self.frame_anchor_points = convex_hull_points if convex_hull_points is not None else []
+            self.frame_polygon = Polygon(convex_hull_points) if  len(convex_hull_points) > 2 else None
+            self.space_points = sorted(self.interior_points + self.frame_anchor_points, key=lambda p: p.x)
     
     def load_sampled_points(self,file_path):
         frame_points = []
@@ -46,14 +50,6 @@ class Board():
     def potential_points(self,kernel_point,space):
         return list(filter(lambda point: point.x>=kernel_point.x and point!=kernel_point,space )) 
 
-
-# class Piece():
-#     def __init__(self,polygon,name) -> None:
-#         self.polygon = polygon
-#         self.name = name # E.g. s or 1-4
-    
-#     def __repr__(self):
-#         return self.name
 
 class Puzzle():
     
