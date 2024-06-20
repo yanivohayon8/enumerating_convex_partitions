@@ -75,7 +75,7 @@ class TestDeprecatedTests(unittest.TestCase):
 
 class TestSampler(unittest.TestCase):
 
-    def test_toy_AABB_without_saving(self):
+    def test_toy_AABB(self):
         df,_ = sampler.sample_AABB(5,1000,1000)
 
         assert _ is None
@@ -84,6 +84,23 @@ class TestSampler(unittest.TestCase):
 
     def test_toy_AABB_saving(self):
         df,out_path = sampler.sample_AABB(10,1000,1000,output_dir="data/tmp")
+
+        assert isinstance(out_path,str)
+        assert os.path.exists(out_path)
+
+        print(df)
+
+        os.remove(out_path)
+    
+    def test_toy_image(self):
+        df, _ = sampler.sample_image(5,"data/images/neom-Oj8w6hWC0dU-unsplash.jpg")
+
+        assert _ is None
+
+        print(df)
+
+    def test_toy_image_saving(self):
+        df,out_path = sampler.sample_image(10,"data/images/neom-Oj8w6hWC0dU-unsplash.jpg",output_dir="data/tmp")
 
         assert isinstance(out_path,str)
         assert os.path.exists(out_path)
