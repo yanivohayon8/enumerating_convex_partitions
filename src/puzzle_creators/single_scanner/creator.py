@@ -8,7 +8,7 @@ from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 import matplotlib.pyplot as plt
 from datetime import datetime
-from random import randint
+from random import randint,random
 
 # class CreatorState():
 
@@ -92,6 +92,23 @@ class Creator():
             
             polygons_start_at_point[str(first_point_str)].append(poly)
         
+
+        '''
+            In order to prevent the puzzles piece to be narrow and long
+        '''
+        def get_aspect_ratio(poly):
+            # minx, miny, maxx, maxy = poly.bounds
+            # return -(maxy-miny)/(maxx-minx+1e-4)
+            return -poly.area
+            # return poly.area
+        for key_ in polygons_start_at_point.keys():
+            polygons_start_at_point[key_] = sorted(polygons_start_at_point[key_],key=get_aspect_ratio)
+            polygons_start_at_point[key_] = polygons_start_at_point[key_][len(polygons_start_at_point[key_])//2:]
+        #     polygons_start_at_point[key_] = [poly for poly in polygons_start_at_point[key_] if poly.area > 400]
+
+
+
+
         possibilities = []
         num_iter = 0
         for poly in polygons_start_at_point[str(start_point)]:
@@ -273,6 +290,8 @@ class Creator():
                 points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
                 possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
 
+                # possible_polygons = [poly for poly in possible_polygons if poly.area > 50]
+
                 if len(possible_polygons) == 0:
                     puzzle.record_choice("n")
                     continue
@@ -307,7 +326,7 @@ class Creator():
 
         return puzzle
 
-    def sample_puzzle_space(self,num_puzzles=1,kernel_possiblities_iterations=2):        
+    def sample_puzzle_space(self,probability_skip_snapshot=0,num_puzzles=1,kernel_possiblities_iterations=2):        
         scanned_points,puzzle = self.initialize(self.board.space_points[0])
         curr_puzzle_i = 0 # if num_puzzles is -1 than compute all the permutations
 
@@ -342,13 +361,18 @@ class Creator():
                 # self.fig.savefig(self.output_dir+f"/failure/{str(puzzle.name)}.png")
                 # print("Plotted failure on failure directory")
                 # raise e
+                curr_puzzle_i-=1
                 continue
             
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
 
-                if not last_snap.is_tried_all_paths(self.history_manager.head_availiable(repr(last_snap))):
-                    break
+                if probability_skip_snapshot > 0:
+                    coin = random()
+
+                    if probability_skip_snapshot < coin:
+                        if not last_snap.is_tried_all_paths(self.history_manager.head_availiable(repr(last_snap))):
+                            break
 
                 self.snapshot_queue.pop()
 
