@@ -44,7 +44,7 @@ def plot_sampled_point(fig,ax,x_interior_points, y_interior_points,
     ax.add_patch(border_frame)
 
 
-class TestRgon(unittest.TestCase):
+class TestRgonInternal(unittest.TestCase):
 
     def test_load_csv_and_scatter(self):
         df_points_interior,df_points_border = load_sampling_csv("data/starting_points/old/sampling_002.csv")

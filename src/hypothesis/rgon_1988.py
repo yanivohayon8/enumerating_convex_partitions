@@ -1,7 +1,5 @@
 import numpy as np
 from src.data_structures.shapes import Polygon
-# from networkx import DiGraph
-# from src.data_structures import substract_points
 from src.data_structures.graph import Edge,Graph
 from src.data_structures import Point
 import random
