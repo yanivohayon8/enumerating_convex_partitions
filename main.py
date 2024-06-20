@@ -2,7 +2,6 @@ import argparse
 import os
 from src.seed_points import sampler
 from src.seed_points.board import Board
-from src.puzzle_creators.utils.creator import Creator
 from src.puzzle_creators.all_partition import AllPartitionsCreator
 import matplotlib.pyplot as plt
 
