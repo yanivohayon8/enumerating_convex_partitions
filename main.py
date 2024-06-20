@@ -3,6 +3,7 @@ import os
 from src.seed_points import sampler
 from src.seed_points.board import Board
 from src.puzzle_creators.utils.creator import Creator
+from src.puzzle_creators.all_partition import AllPartitionsCreator
 import matplotlib.pyplot as plt
 
 
@@ -32,7 +33,8 @@ if __name__ == "__main__":
             # if args.img_path != "":
             #     puzzles_dst_folder = puzzles_dst_folder+"/"+img_name
 
-            creator = Creator(board,puzzles_dst_folder)
+            # creator = Creator(board,puzzles_dst_folder)
+            creator = AllPartitionsCreator(board,puzzles_dst_folder)
             dirs_to_create = [puzzles_dst_folder,os.path.join(puzzles_dst_folder,"results")]
 
             for _dir in dirs_to_create:
