@@ -1,16 +1,9 @@
 import argparse
-from PIL import Image
 import os
 from src.seed_points import sampler
-from src.data_structures.shapes import Polygon
-from src.data_structures import Point
-from shapely.geometry import MultiPoint
-from datetime import datetime
 from src.seed_points.board import Board
 from src.puzzle_creators.single_scanner.creator import Creator
 import matplotlib.pyplot as plt
-import pandas as pd
-import shutil
 
 
 if __name__ == "__main__":
@@ -40,7 +33,7 @@ if __name__ == "__main__":
             #     puzzles_dst_folder = puzzles_dst_folder+"/"+img_name
 
             creator = Creator(board,puzzles_dst_folder)
-            dirs_to_create = [puzzles_dst_folder,puzzles_dst_folder+"/results"]
+            dirs_to_create = [puzzles_dst_folder,os.path.join(puzzles_dst_folder,"results")]
 
             for _dir in dirs_to_create:
                 if not os.path.exists(_dir):
