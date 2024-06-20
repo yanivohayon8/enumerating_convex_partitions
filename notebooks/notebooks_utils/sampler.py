@@ -11,7 +11,7 @@ def sample_points(width,height,n_points):
     x_min, y_min, x_max, y_max = frame_polygon.bounds
 
     
-    sampled_points = MultiPoint(sampler.sample_float(n_points,x_min, y_min, x_max, y_max))                
+    sampled_points = MultiPoint(sampler.sample_float_(n_points,x_min, y_min, x_max, y_max))                
     # convex_hull = 
     convex_hull = sampled_points.convex_hull
     interior_points = [point for point in sampled_points if not convex_hull.touches(point)]

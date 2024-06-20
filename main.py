@@ -42,7 +42,7 @@ if __name__ == "__main__":
         for puzzle_i in range(args.num_puzzles):
 
             if args.sampling_src_file == "":
-                sampled_points = MultiPoint(sampler.sample_float(number_sampled_points,x_min, y_min, x_max, y_max))                
+                sampled_points = MultiPoint(sampler.sample_float_(number_sampled_points,x_min, y_min, x_max, y_max))                
                 convex_hull = sampled_points.convex_hull
                 interior_points = [point for point in sampled_points if not convex_hull.touches(point)]
                 convex_hull_points = MultiPoint(list(Polygon(sampled_points.convex_hull).exterior.coords)[:-1])
@@ -53,8 +53,8 @@ if __name__ == "__main__":
                 file_name = f"{img_name}-CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
                 dst_file = args.sampling_dst_folder + "/"+file_name
 
-                sampler.write_sampling(dst_file,interior_points,
-                                    convex_hull_points,convex_hull_points)#,
+                sampler.arange_df_(dst_file,interior_points,
+                                    convex_hull_points)#,
                                                         #is_write=args.dst_folder != "")
             else:
                 dst_file = args.sampling_src_file
