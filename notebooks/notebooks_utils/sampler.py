@@ -1,4 +1,4 @@
-from src.puzzle_creators import sampler
+from src.seed_points import sampler
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from shapely.geometry import MultiPoint

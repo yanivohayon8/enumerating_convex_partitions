@@ -1,7 +1,6 @@
 import argparse
 from PIL import Image
 import os
-from src.puzzle_creators import sampler
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from shapely.geometry import MultiPoint

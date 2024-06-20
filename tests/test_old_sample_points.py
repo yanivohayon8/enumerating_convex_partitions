@@ -1,13 +1,13 @@
 import sys
 import os
+import unittest
 
 # from src.puzzle_creators import Direction
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-import unittest
-from src.puzzle_creators import sampler
+from src.seed_points import sampler
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
 from shapely.geometry import MultiPoint

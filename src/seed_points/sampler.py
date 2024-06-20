@@ -3,14 +3,6 @@ import random
 from src.data_structures import Point
 import pandas as pd
 
-# class Sampler():
-#     pass
-
-# class InternalSampler():
-
-#     def __init__(self,frame_anchor_points,frame_points) -> None:
-#         self.frame_anchor_points = frame_anchor_points
-#         self.frame_points = frame_points
 
 def sample_int(n_int_points,frame_polygon,epsilon = 5):
     x_min, y_min, x_max, y_max = frame_polygon.bounds
@@ -66,3 +58,9 @@ def write_sampling(output_file,internal_points,frame_points,frame_anchor_points,
     return df
 
 
+#     def _sort_points_role(self,sampled_points:MultiPoint):
+#         convex_hull = sampled_points.convex_hull
+#         interior_points = [point for point in sampled_points if not convex_hull.touches(point)]
+#         convex_hull_points = MultiPoint(list(Polygon(sampled_points.convex_hull).exterior.coords)[:-1])
+
+#         return interior_points,convex_hull_points
