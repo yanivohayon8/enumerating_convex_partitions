@@ -34,14 +34,14 @@ if __name__ == "__main__":
             #     puzzles_dst_folder = puzzles_dst_folder+"/"+img_name
 
             # creator = Creator(board,puzzles_dst_folder)
-            creator = AllPartitionsCreator(board,puzzles_dst_folder)
             dirs_to_create = [puzzles_dst_folder,os.path.join(puzzles_dst_folder,"results")]
 
             for _dir in dirs_to_create:
                 if not os.path.exists(_dir):
                     os.makedirs(_dir)
 
-            creator.create_puzzles(num_puzzles=9999999999)
+            creator = AllPartitionsCreator(board,puzzles_dst_folder)
+            creator.run()
 
             print(f"Iteration {puzzle_i}/{args.num_puzzles}", )
 

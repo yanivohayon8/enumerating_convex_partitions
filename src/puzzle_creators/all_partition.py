@@ -134,11 +134,11 @@ class AllPartitionsCreator():
         return puzzle
 
 
-    def create_puzzles(self,num_puzzles=-1):        
+    def run(self):        
         scanned_points,puzzle = self.initialize(self.board.space_points[0])
         curr_puzzle_i = 0 # if num_puzzles is -1 than compute all the permutations
 
-        while True and curr_puzzle_i < num_puzzles:
+        while True:
             curr_puzzle_i+=1
             puzzle = self.create_single(puzzle,scanned_points)
 
