@@ -12,7 +12,6 @@ import unittest
 # from src.puzzle_creators.skeleton import PuzzleCreator
 # from src.puzzle_creators.power_group.primary import PowerGroupCreator
 from src.puzzle_creators.utils.creator import Creator
-from src.puzzle_creators.utils.adjasments import transform_peleg_output
 from src.seed_points.board import Board
 
 import matplotlib.pyplot as plt
@@ -184,13 +183,6 @@ class TestSampledPointsCreator(unittest.TestCase):
         output_dir = self._output_dir(example_name)
         self._run(example_name,output_dir)
 
-    def test_save_trans_peleg_output_format(self):
-        example_name = "sample_range-10000-convex_hull-8-int-10-6475"
-        output_dir = self._output_dir(example_name)
-        puzzle_name = "1-66723_1-3_s_s_1-2112_n_n_1-485_s_1-125_1-45_n_s_s_n_s_"
-        first_df = pd.read_csv(f"{output_dir}/results/{puzzle_name}.csv")
-        puzzle_peleg = transform_peleg_output(first_df)
-        puzzle_peleg.to_csv(output_dir+f"/pelegoutput_{puzzle_name}.csv",index=False)
     
     def test_plot_board(self):
         example_name = "frame-4-frame_anchor-4-int-1-600"
