@@ -2,6 +2,7 @@ from numpy.random import randint
 import random
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
+from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry import MultiPoint
 import pandas as pd
 from datetime import datetime
@@ -65,11 +66,13 @@ def arange_df_(internal_points,frame_points):
 def sort_hull_interior_(sampled_points:list):
     sampled_points_ = MultiPoint(sampled_points)                
     convex_hull = sampled_points_.convex_hull
-    interior_points = [point for point in sampled_points_ if not convex_hull.touches(point)]
+
+    # For just the debugging of the refactoring use the custom point rather than shapely point
+    interior_points = [Point(point.x,point.y) for point in sampled_points_ if not convex_hull.touches(point)]
     # convex_hull_points = MultiPoint(list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1])
     
-    xs, ys = sampled_points_.convex_hull.exterior.xy
-    convex_hull_points = [Point(x,y) for x, y in zip(xs,ys)]
+    # xs, ys = sampled_points_.convex_hull.exterior.xy
+    convex_hull_points = [Point(p[0],p[1]) for p in list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1]]
 
     return interior_points,convex_hull_points
 

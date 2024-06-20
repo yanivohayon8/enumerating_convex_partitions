@@ -22,7 +22,7 @@ if __name__ == "__main__":
         for puzzle_i in range(args.num_puzzles):
 
             if args.sampling_src_file == "":
-                interior_points,convex_hull_points = sampler.sample_image(num_sampled_points,args.img_path)
+                interior_points,convex_hull_points,_ = sampler.sample_image(num_sampled_points,args.img_path)
                 board = Board(interior_points=interior_points,convex_hull_points=convex_hull_points)
             else:
                 board = Board(file_path=args.sampling_src_file)

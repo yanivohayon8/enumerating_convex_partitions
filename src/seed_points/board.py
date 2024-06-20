@@ -8,12 +8,16 @@ import pandas as pd
 class Board():
 
     def __init__(self,interior_points=None,convex_hull_points=None,file_path=None) -> None:
+        self.interior_points = []
+        self.frame_anchor_points = [] #frame anchor points
+        self.frame_polygon = None 
+        self.space_points = []
 
         if file_path:
             self.load_sampled_points(file_path)
         else:
-            self.interior_points =  interior_points if interior_points is not None else []
-            self.frame_anchor_points = convex_hull_points if convex_hull_points is not None else []
+            self.interior_points =  sorted(interior_points,key=lambda p: p.x) if interior_points is not None else []
+            self.frame_anchor_points = sorted(convex_hull_points,key=lambda p: p.x) if convex_hull_points is not None else []
             self.frame_polygon = Polygon(convex_hull_points) if  len(convex_hull_points) > 2 else None
             self.space_points = sorted(self.interior_points + self.frame_anchor_points, key=lambda p: p.x)
 
