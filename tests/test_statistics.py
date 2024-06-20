@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 import unittest
 import glob
 
-from src.puzzle_creators import statistics 
+from src import puzzles_statistics 
 
 
 class TestStatistics(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestStatistics(unittest.TestCase):
         current_working_dir = os.getcwd()
         example_path = os.path.join(current_working_dir,"data","puzzles",example_name)
         csvs = glob.glob(f"{example_path}/results/*.csv")
-        statistics.save_sample_poly_hist(csvs,f"{example_path}/polygon_type_hist.csv")
+        puzzles_statistics.save_sample_poly_hist(csvs,f"{example_path}/polygon_type_hist.csv")
     
     def test_save_all_puzzles_poly_hist(self):
         current_working_dir = os.getcwd()
@@ -32,4 +32,4 @@ class TestStatistics(unittest.TestCase):
         current_working_dir = os.getcwd()
         example_path = os.path.join(current_working_dir,"data","puzzles",example_name)
         csvs = glob.glob(f"{example_path}/results/*.csv")
-        statistics.save_sample_vert_degree_hist(csvs,f"{example_path}/vertecis_degree_hist.csv")
+        puzzles_statistics.save_sample_vert_degree_hist(csvs,f"{example_path}/vertecis_degree_hist.csv")
