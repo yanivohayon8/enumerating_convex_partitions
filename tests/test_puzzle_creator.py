@@ -11,8 +11,8 @@ import pandas as pd
 import unittest
 # from src.puzzle_creators.skeleton import PuzzleCreator
 # from src.puzzle_creators.power_group.primary import PowerGroupCreator
-from src.puzzle_creators.single_scanner.creator import Creator
-from src.puzzle_creators.single_scanner.adjasments import transform_peleg_output
+from src.puzzle_creators.utils.creator import Creator
+from src.puzzle_creators.utils.adjasments import transform_peleg_output
 from src.seed_points.board import Board
 
 import matplotlib.pyplot as plt

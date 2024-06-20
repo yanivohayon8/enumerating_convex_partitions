@@ -2,7 +2,7 @@ import argparse
 import os
 from src.seed_points import sampler
 from src.seed_points.board import Board
-from src.puzzle_creators.single_scanner.creator import Creator
+from src.puzzle_creators.utils.creator import Creator
 import matplotlib.pyplot as plt
 
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
                 if not os.path.exists(_dir):
                     os.makedirs(_dir)
 
-            creator.sample_puzzle_space(num_puzzles=1)
+            creator.create_puzzles(num_puzzles=9999999999)
 
             print(f"Iteration {puzzle_i}/{args.num_puzzles}", )
 

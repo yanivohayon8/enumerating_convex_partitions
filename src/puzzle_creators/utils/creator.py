@@ -1,19 +1,14 @@
 from functools import reduce
 import imp
 from turtle import pu
-from src.puzzle_creators.single_scanner.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
-from src.puzzle_creators.single_scanner.record import HistoryManager,Snapshot,Choice
-from src.puzzle_creators.single_scanner.puzzle_obj import Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
+from src.puzzle_creators.utils.surface import find_possible_rgons,get_stared_shaped_polygon,get_accessible_points
+from src.puzzle_creators.utils.record import HistoryManager,Snapshot,Choice
+from src.puzzle_creators.utils.puzzle_obj import Puzzle,PuzzleAreaErr,PuzzleEdgeAnglesErr
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 import matplotlib.pyplot as plt
 from datetime import datetime
 from random import randint,random
-
-# class CreatorState():
-
-#     def __init__(self) -> None:
-#         pass
 
 
 class Creator():

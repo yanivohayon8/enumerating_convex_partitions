@@ -3,7 +3,7 @@ from shapely.geometry import LineString
 from src.data_structures.graph import Edge
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point
-from src.puzzle_creators.single_scanner import puzzle_obj
+from src.puzzle_creators.utils import puzzle_obj
 from enum import Enum
 
 

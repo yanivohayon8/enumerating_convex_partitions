@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import unittest
 import glob
 
-from src.puzzle_creators.single_scanner.puzzle_obj import Puzzle
+from src.puzzle_creators.utils.puzzle_obj import Puzzle
 
 class TestRePAIRJune2022(unittest.TestCase):
 
