@@ -110,11 +110,10 @@ class Puzzle():
             for piece in pieces:
                 puzzle_mat_polygons.append(poly_as_matplotlib(piece, #self.polygons[piece_index]
                     color=PLOT_COLORS[color_index%len(PLOT_COLORS)],**kwargs))
-                ax.text(piece.centroid.x,
-                    piece.centroid.y,iter,style='italic',
-                bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
+                # ax.text(piece.centroid.x,piece.centroid.y,iter,style='italic', bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
                 # piece_index+=1
-            color_index+=1
+                color_index+=1
+            # color_index+=1
             snapshot_head_index=snapshot_head_index + 1
 
         # if piece_index != len(self.polygons)+1 :
