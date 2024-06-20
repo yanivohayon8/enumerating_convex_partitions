@@ -1,4 +1,4 @@
-from src.hypothesis import rgon_1988 as Rgon1988
+from src.hypothesis import internals as Rgon1988
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
 # from src.puzzle_creators import Direction

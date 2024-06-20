@@ -7,7 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import pandas as pd
-from src.hypothesis import rgon_1988 as Rgon1988
+from src.hypothesis import internals as Rgon1988Internals
 import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
 import matplotlib.patches as patches
@@ -72,8 +72,8 @@ class TestRgonInternal(unittest.TestCase):
 
         space_points = interior_points +  border_points
         interior_point = interior_points[0]
-        points_ahead = Rgon1988.get_points_horizontal_ahead(interior_point,space_points)            
-        stared_polygon = Rgon1988.get_stared_shape_polygon(interior_point,points_ahead)
+        points_ahead = Rgon1988Internals.get_points_horizontal_ahead(interior_point,space_points)            
+        stared_polygon = Rgon1988Internals.get_stared_shape_polygon(interior_point,points_ahead)
 
         fig, ax = plt.subplots()
         
@@ -94,22 +94,22 @@ class TestRgonInternal(unittest.TestCase):
 
         space_points =interior_points + border_points #interior_points 
         interior_point = interior_points[0]
-        points_ahead = Rgon1988.get_points_horizontal_ahead(interior_point,space_points)            
-        stared_polygon = Rgon1988.get_stared_shape_polygon(interior_point,points_ahead)
+        points_ahead = Rgon1988Internals.get_points_horizontal_ahead(interior_point,space_points)            
+        stared_polygon = Rgon1988Internals.get_stared_shape_polygon(interior_point,points_ahead)
 
         fig, axs = plt.subplots(1,3)
         # stared_polygon.plot(axs[0])
         axs[0].plot(*stared_polygon.exterior.xy)
         plot_sampled_point(fig,axs[0],x_interior_points,y_interior_points,x_border_length,y_border_length)
 
-        graph = Rgon1988.get_visualization_graph(interior_point,stared_polygon)
+        graph = Rgon1988Internals.get_visualization_graph(interior_point,stared_polygon)
         graph.plot_undirected(axs[1])
         graph.plot_directed(axs[2])
 
         fig_, axs_ = plt.subplots()
         plot_sampled_point(fig_,axs_,x_interior_points,y_interior_points,x_border_length,y_border_length)
 
-        graph = Rgon1988.get_visualization_graph(interior_point,stared_polygon)
+        graph = Rgon1988Internals.get_visualization_graph(interior_point,stared_polygon)
         # nx.draw(graph)
         graph.plot_directed(axs_)
         # plot_graph(graph)
