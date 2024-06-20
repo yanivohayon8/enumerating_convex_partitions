@@ -113,3 +113,11 @@ class TestSampler(unittest.TestCase):
         print("num CH points",len(convex_hull_points))
 
         os.remove(out_path)
+
+    def test_toy_manual(self):
+        interior_points,convex_hull_points, _ = sampler.sampler_manual()
+
+        assert _ is None
+
+        print("num interior points",len(interior_points))
+        print("num CH points",len(convex_hull_points))

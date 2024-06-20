@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime
 import os
 from PIL import Image
+from src.seed_points import manual_sampling_gui
 
 
 def sample_int_(n_int_points,frame_polygon,epsilon = 5):
@@ -115,3 +116,18 @@ def sample_image(num_points,img_path,output_dir=None):
 
     return interior_points,convex_hull_points,out_path
     
+def sampler_manual(canvas_width=4000, canvas_height=4000,output_dir=None):
+    sampled_points = manual_sampling_gui.create_click_tracker(canvas_width=canvas_width,canvas_height=canvas_height)
+
+    interior_points,convex_hull_points = sort_hull_interior_(sampled_points)
+
+    if not output_dir is None:
+        df = arange_df_(interior_points,convex_hull_points)
+        current_time = datetime.now().strftime("%H-%M-%S")
+        file_name = f"CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
+        out_path = os.path.join(output_dir,file_name)
+        df.to_csv(out_path,index=False)
+    else:
+        out_path = None
+
+    return interior_points,convex_hull_points,out_path
