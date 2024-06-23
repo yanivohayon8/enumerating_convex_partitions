@@ -1,1 +1,1 @@
-PLOT_COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w', 'orange', 'purple', 'brown', 'pink', 'lime', 'gold', 'teal', 'indigo', 'lavender', 'coral', 'olive', 'maroon'] # ["blue","green","red","black","yellow","magenta","cyan"]
+PLOT_COLORS = ['b', 'g', 'r', 'black','c', 'y', 'k', 'w', 'orange', 'purple', 'brown', 'pink', 'lime', 'gold', 'teal', 'indigo', 'lavender', 'coral', 'olive', 'maroon'] # ["blue","green","red","black","yellow","magenta","cyan"]

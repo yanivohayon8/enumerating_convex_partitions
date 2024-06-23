@@ -18,7 +18,7 @@ class Board():
         else:
             self.interior_points =  sorted(interior_points,key=lambda p: p.x) if interior_points is not None else []
             self.frame_anchor_points = sorted(convex_hull_points,key=lambda p: p.x) if convex_hull_points is not None else []
-            self.frame_polygon = Polygon(convex_hull_points) if  len(convex_hull_points) > 2 else None
+            self.frame_polygon = Polygon(Polygon(convex_hull_points).convex_hull) if  len(convex_hull_points) > 2 else None
             self.space_points = sorted(self.interior_points + self.frame_anchor_points, key=lambda p: p.x)
 
     def load_sampled_points(self,file_path):

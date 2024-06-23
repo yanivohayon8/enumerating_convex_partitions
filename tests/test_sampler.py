@@ -119,5 +119,15 @@ class TestSampler(unittest.TestCase):
 
         assert _ is None
 
+
+        print("num interior points",len(interior_points))
+        print("num CH points",len(convex_hull_points))
+    
+    def test_toy_manual_saving(self):
+        interior_points,convex_hull_points, out_path = sampler.sampler_manual(output_dir="data/tmp/manual_sampling")
+
+        assert isinstance(out_path,str)
+
+
         print("num interior points",len(interior_points))
         print("num CH points",len(convex_hull_points))
