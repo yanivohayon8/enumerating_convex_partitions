@@ -96,7 +96,8 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
     rgons = []
 
     for edge_str in list(continuity_edges.keys()):
-        traverses = [list(dict.fromkeys(tr)) for tr in _get_traverse(Edge(edge_str),continuity_edges)]
+        edge_ = Edge(edge_str)
+        traverses = [list(dict.fromkeys(tr)) for tr in _get_traverse(edge_,continuity_edges)]
         # find all sequential sub combinations:
         for trav in traverses:
             for index_start in range(len(trav)):
@@ -114,12 +115,17 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
                         raise ValueError(f"The created polygon {poly} by the kernel point {kernel_point} is not convex")
 
                     try:
-                        puzzle.check_sanity_polygon(poly)
+                        # TODO:
+                        # this should not be here. By the proof the new rgon should not intersect with existing polygons
+                        # If you want to make some sanity checks on the rgon itself (whether it does not contain duplicates etc) do it here...
+                        puzzle.check_sanity_polygon(poly) 
                         rgons.append(poly)
                     except puzzle_obj.PuzzleErr as err:
                         pass
+
     
     # Remove duplicates
+    # TODO:This is unneccessary if the algorithm and the writing is correct
     final_rgons = []
     for rgon in rgons:
         if all(not rgon.equals(poly) for poly in final_rgons):
@@ -143,13 +149,22 @@ def _get_traverse(origin_edge,continuity_edges):
     for next_edge in available_edges:
         cont_travs = _get_traverse(next_edge,continuity_edges)
 
-        if isinstance(cont_travs[0],list):
-            flat_travs = [item for sublist in cont_travs for item in sublist]
-            flat_travs.insert(0,str(origin_edge.dst_point))
-            flat_travs.insert(0,str(origin_edge.src_point))
+        # if isinstance(cont_travs[0],list):
+        #     flat_travs = [item for sublist in cont_travs for item in sublist]
+        #     flat_travs.insert(0,str(origin_edge.dst_point))
+        #     flat_travs.insert(0,str(origin_edge.src_point))
+        
+        # travs.append(flat_travs)
 
-        travs.append(flat_travs)
-    
+        for cnt_trv in cont_travs:
+            cnt_trv_ = cnt_trv[:]
+            cnt_trv_.insert(0,str(origin_edge.dst_point))
+            cnt_trv_.insert(0,str(origin_edge.src_point))
+            no_duplictes_cont_tr = []
+            [no_duplictes_cont_tr.append(vertex) for vertex in cnt_trv_ if not vertex in no_duplictes_cont_tr]
+
+            travs.append(no_duplictes_cont_tr)
+
     return travs
 
 
