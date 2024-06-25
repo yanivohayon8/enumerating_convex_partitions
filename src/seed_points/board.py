@@ -44,8 +44,8 @@ class Board():
         self.space_points = sorted(self.interior_points + self.frame_anchor_points,key=lambda p: p.x)
 
     def plot(self,ax):
-        scatter_points(ax,self.interior_points,color="blue")
-        scatter_points(ax,self.frame_anchor_points,color="red")
+        scatter_points(ax,self.interior_points,color="blue",s=60)
+        scatter_points(ax,self.frame_anchor_points,color="red",s=60)
         frame_mat_polygon = poly_as_matplotlib(self.frame_polygon,edgecolor="black",facecolor='white',lw=2)
         plot_polygons(ax,[frame_mat_polygon])
 
