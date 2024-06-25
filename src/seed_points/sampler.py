@@ -126,6 +126,10 @@ def sampler_manual(canvas_width=4000, canvas_height=4000,output_dir=None):
         current_time = datetime.now().strftime("%H-%M-%S")
         file_name = f"CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
         out_path = os.path.join(output_dir,file_name)
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            
         df.to_csv(out_path,index=False)
     else:
         out_path = None
