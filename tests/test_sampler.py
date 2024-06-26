@@ -1,6 +1,7 @@
 import sys
 import os
 import unittest
+import matplotlib.pyplot as plt
 
 # from src.puzzle_creators import Direction
 
@@ -124,10 +125,28 @@ class TestSampler(unittest.TestCase):
         print("num CH points",len(convex_hull_points))
     
     def test_toy_manual_saving(self):
-        interior_points,convex_hull_points, out_path = sampler.sampler_manual(output_dir="data/tmp/manual_sampling")
+        interior_points,convex_hull_points, out_path = sampler.sampler_manual(output_dir="data/thesis quantative results/manual_sampling")
 
         assert isinstance(out_path,str)
 
 
         print("num interior points",len(interior_points))
         print("num CH points",len(convex_hull_points))
+
+    
+    def test_on_circle(self):
+        interior_points,convex_hull_points, out_path = sampler.sample_points_on_circle(5,2,1000)
+
+        print("num interior points",len(interior_points))
+        print("num CH points",len(convex_hull_points))
+
+        int_xs = [point.x for point in interior_points]
+        int_ys = [point.y for point in interior_points]
+        plt.scatter(int_xs,int_ys,color="blue")
+
+        ch_xs = [point.x for point in convex_hull_points]
+        ch_ys = [point.y for point in convex_hull_points]
+        plt.scatter(ch_xs,ch_ys,color="red")
+
+        plt.show()
+        

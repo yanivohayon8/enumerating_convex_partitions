@@ -9,6 +9,7 @@ from datetime import datetime
 import os
 from PIL import Image
 from src.seed_points import manual_sampling_gui
+import numpy as np
 
 
 def sample_int_(n_int_points,frame_polygon,epsilon = 5):
@@ -120,6 +121,46 @@ def sampler_manual(canvas_width=4000, canvas_height=4000,output_dir=None):
     sampled_points = manual_sampling_gui.create_click_tracker(canvas_width=canvas_width,canvas_height=canvas_height)
 
     interior_points,convex_hull_points = sort_hull_interior_(sampled_points)
+
+    if not output_dir is None:
+        df = arange_df_(interior_points,convex_hull_points)
+        current_time = datetime.now().strftime("%H-%M-%S")
+        file_name = f"CH-{len(convex_hull_points)}-INT-{len(interior_points)}-{current_time}.csv"
+        out_path = os.path.join(output_dir,file_name)
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            
+        df.to_csv(out_path,index=False)
+    else:
+        out_path = None
+
+    return interior_points,convex_hull_points,out_path
+
+
+def sample_points_on_circle(num_convex_hull, num_interior,radius,output_dir=None):
+    # translate the points so they wont be centered by 0
+    translate_length = radius+0.1*radius
+    
+    ch_angles = []
+    for i in range(num_convex_hull):
+        third = i%3
+        angle = np.random.uniform(third/3*2*np.pi,(third+1)/3*2*np.pi)
+        ch_angles.append(angle)
+
+    convex_hull_xs = radius * np.cos(ch_angles)
+    convex_hull_ys = radius * np.sin(ch_angles)
+    convex_hull_polygon = Polygon(zip(convex_hull_xs,convex_hull_ys)).convex_hull
+    # deprected: transforming to old custom data type
+    convex_hull_points = [Point(p[0]+translate_length,p[1]+translate_length) for p in list(Polygon(convex_hull_polygon).exterior.coords)[:-1]]
+
+
+    interior_angles = np.random.uniform(0,2*np.pi,num_interior)
+    interior_radiuses = np.random.uniform(size=num_interior)*radius
+    interior_xs =  interior_radiuses* np.cos(interior_angles)
+    interior_ys =  interior_radiuses* np.sin(interior_angles)
+    interior_points = [Point(x+translate_length,y+translate_length) for x,y in zip(interior_xs,interior_ys)]
+
 
     if not output_dir is None:
         df = arange_df_(interior_points,convex_hull_points)

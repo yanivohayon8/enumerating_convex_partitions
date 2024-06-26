@@ -11,13 +11,16 @@ from src.seed_points.board import Board
 
 class AllPartitionsCreator():
 
-    def __init__(self,board:Board,output_dir,is_peleg_format=True) -> None:
+    def __init__(self,board:Board,output_dir,is_peleg_format=True,is_save_partitions_figures=True) -> None:
         self.board = board
         self.output_dir = output_dir
         self.snapshot_queue = []
         self.history_manager = HistoryManager()
-        self.fig, self.ax = plt.subplots()
         self.is_peleg_format = is_peleg_format
+        self.is_save_partitions_figures = is_save_partitions_figures
+        
+        if self.is_save_partitions_figures:
+            self.fig, self.ax = plt.subplots()
 
     def find_combinations(self,kernel_point,possible_polygons):
         connected_points = set()
@@ -145,14 +148,16 @@ class AllPartitionsCreator():
             try:
                 puzzle.is_completed()
                 dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
-                # my_time = datetime.now().strftime("%d-%m-%Y")
-                # rnd_int = randint(1,10000)
-                # dst_path = self.output_dir+f"/{my_time}_n_{len(scanned_points)+1}_rand_{rnd_int}.csv"
                 puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
                 
-                self.ax.cla()
-                puzzle.plot(self.ax,self.snapshot_queue)
-                self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+                if self.is_save_partitions_figures:
+                    # my_time = datetime.now().strftime("%d-%m-%Y")
+                    # rnd_int = randint(1,10000)
+                    # dst_path = self.output_dir+f"/{my_time}_n_{len(scanned_points)+1}_rand_{rnd_int}.csv"
+                    
+                    self.ax.cla()
+                    puzzle.plot(self.ax,self.snapshot_queue)
+                    self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
                 # self.ax.cla()
                 # puzzle.plot(self.ax,self.snapshot_queue)
