@@ -139,27 +139,44 @@ def sampler_manual(canvas_width=4000, canvas_height=4000,output_dir=None):
 
 
 def sample_points_on_circle(num_convex_hull, num_interior,radius,output_dir=None):
-    # translate the points so they wont be centered by 0
+    # translate the points so they wont be centered by 0 and would have positive value (to fit in an image)
     translate_length = radius+0.1*radius
+
+    while True:
     
-    ch_angles = []
-    for i in range(num_convex_hull):
-        third = i%3
-        angle = np.random.uniform(third/3*2*np.pi,(third+1)/3*2*np.pi)
-        ch_angles.append(angle)
+        ch_angles = []
+        for i in range(num_convex_hull):
+            third = i%3
+            angle = np.random.uniform(third/3*2*np.pi,(third+1)/3*2*np.pi)
+            ch_angles.append(angle)
 
-    convex_hull_xs = radius * np.cos(ch_angles)
-    convex_hull_ys = radius * np.sin(ch_angles)
-    convex_hull_polygon = Polygon(zip(convex_hull_xs,convex_hull_ys)).convex_hull
-    # deprected: transforming to old custom data type
-    convex_hull_points = [Point(p[0]+translate_length,p[1]+translate_length) for p in list(Polygon(convex_hull_polygon).exterior.coords)[:-1]]
+        convex_hull_xs = radius * np.cos(ch_angles)
+        convex_hull_ys = radius * np.sin(ch_angles)
+        convex_hull_polygon = Polygon(zip(convex_hull_xs,convex_hull_ys)).convex_hull
+        # deprected: transforming to old custom data type
+        convex_hull_points = [Point(p[0]+translate_length,p[1]+translate_length) for p in list(Polygon(convex_hull_polygon).exterior.coords)[:-1]]
 
 
-    interior_angles = np.random.uniform(0,2*np.pi,num_interior)
-    interior_radiuses = np.random.uniform(size=num_interior)*radius
-    interior_xs =  interior_radiuses* np.cos(interior_angles)
-    interior_ys =  interior_radiuses* np.sin(interior_angles)
-    interior_points = [Point(x+translate_length,y+translate_length) for x,y in zip(interior_xs,interior_ys)]
+        interior_angles = np.random.uniform(0,2*np.pi,num_interior)
+        interior_radiuses = np.random.uniform(size=num_interior)*radius*0.95
+        interior_xs =  interior_radiuses* np.cos(interior_angles)
+        interior_ys =  interior_radiuses* np.sin(interior_angles)
+        interior_points = [Point(x+translate_length,y+translate_length) for x,y in zip(interior_xs,interior_ys)]
+
+        total_convex_hull = Polygon(interior_points+convex_hull_points).convex_hull
+
+        total_coords = list(total_convex_hull.exterior.coords)
+
+        if  len(total_coords) != len(list(convex_hull_polygon.exterior.coords)):
+            continue
+        
+        is_listed = [(point.x,point.y) in total_coords  for point in convex_hull_points]
+
+        if not all(is_listed):
+            continue
+
+        break
+
 
 
     if not output_dir is None:

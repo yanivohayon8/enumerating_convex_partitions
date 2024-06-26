@@ -50,6 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("--number_sampled_points")
     parser.add_argument("--sampling_dst_folder")
     parser.add_argument("--puzzles_dst_folder")
+    parser.add_argument("--postfix_dst_folder_uuid",default="")
     parser.add_argument("--dst_folder_uuid",dest="dst_folder_uuid",action="store_true")
     parser.set_defaults(dst_folder_uuid=False)
     parser.add_argument("--num_puzzles",default=1,type=int)
@@ -64,6 +65,7 @@ if __name__ == "__main__":
         current_dateTime = datetime.now()
         random_dir_name = str(current_dateTime).split(".")[0]
         random_dir_name = random_dir_name.replace(":","-")
+        random_dir_name = random_dir_name + args.postfix_dst_folder_uuid
         args.puzzles_dst_folder = os.path.join(args.puzzles_dst_folder,random_dir_name)
 
     create_puzzle()
