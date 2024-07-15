@@ -67,7 +67,8 @@ if __name__ == "__main__":
 
         # if args.dst_folder_uuid:
         current_dateTime = datetime.now()
-        random_dir_name = str(current_dateTime).split(".")[0]
+        # random_dir_name = str(current_dateTime).split(".")[0]
+        random_dir_name = str(current_dateTime).replace(".","+")
         random_dir_name = random_dir_name.replace(":","-")
         random_dir_name = random_dir_name + args.postfix_dst_folder_uuid
         puzzles_dst_folder = os.path.join(puzzles_dst_folder,random_dir_name)
