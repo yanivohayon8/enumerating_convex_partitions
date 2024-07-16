@@ -4,8 +4,6 @@ from src.seed_points import sampler
 from src.seed_points.board import Board
 from src.puzzle_creators.all_partition import AllPartitionsCreator
 import matplotlib.pyplot as plt
-import random
-import uuid
 from datetime import datetime
 import shutil
 
@@ -45,36 +43,30 @@ def create_puzzle(puzzles_dst_folder):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sampling_src_file",default="")
-    parser.add_argument("--sampling_img_path",default="")
-    parser.add_argument("--manual_sampling_out_dir")
-    parser.add_argument("--number_sampled_points")
-    parser.add_argument("--sampling_dst_folder")
-    parser.add_argument("--puzzles_dst_folder")
-    parser.add_argument("--postfix_dst_folder_uuid",default="")
-    parser.add_argument("--dst_folder_uuid",dest="dst_folder_uuid",action="store_true")
-    parser.set_defaults(dst_folder_uuid=False)
-    parser.add_argument("--num_puzzles",default=1,type=int)
-    parser.add_argument("--no_save_partitions_figures",dest="save_partitions_figures",action="store_false")
+    parser.add_argument("--dst-folder",dest="puzzles_dst_folder")
+    parser.add_argument("--num-partitions-collections",dest="num_partitions_collections",default=1,type=int)
+    parser.add_argument("--disable-saving-partitions-figures",dest="save_partitions_figures",action="store_false")
     parser.set_defaults(save_partitions_figures=True)
-    parser.add_argument("--circle_num_interior",default=0,type=int)
-    parser.add_argument("--circle_num_ch",type=int)
-    parser.add_argument("--circle_radius",default=5000,type=float)
+    parser.add_argument("--postfix-dst-partitions-folder",dest="postfix_dst_folder_uuid",default="")
+    parser.add_argument("--sampling-src-file",dest="sampling_src_file",default="")
+    parser.add_argument("--sampling-img-path",dest="sampling_img_path",default="")
+    parser.add_argument("--sampling-img-num-points",dest="number_sampled_points")
+    parser.add_argument("--manual-sampling-out-dir",dest="manual_sampling_out_dir")
+    parser.add_argument("--sampling-circle-num-interior",default=0,dest="circle_num_interior",type=int)
+    parser.add_argument("--sampling-circle-num-ch",dest="circle_num_ch",type=int)
+    parser.add_argument("--sampling-circle-radius",default=5000,dest="circle_radius",type=float)
     args = parser.parse_args()
 
-    for creation_i in range(args.num_puzzles):
+    for creation_i in range(args.num_partitions_collections):
         puzzles_dst_folder = args.puzzles_dst_folder
-
-        # if args.dst_folder_uuid:
         current_dateTime = datetime.now()
-        # random_dir_name = str(current_dateTime).split(".")[0]
         random_dir_name = str(current_dateTime).replace(".","+")
         random_dir_name = random_dir_name.replace(":","-")
         random_dir_name = random_dir_name + args.postfix_dst_folder_uuid
         puzzles_dst_folder = os.path.join(puzzles_dst_folder,random_dir_name)
 
         try:
-            print(f"Start to create puzzle to {puzzles_dst_folder} ({creation_i+1}/{args.num_puzzles})")
+            print(f"Start to create puzzles to {puzzles_dst_folder} ({creation_i+1}/{args.num_partitions_collections})")
             create_puzzle(puzzles_dst_folder)
         except Exception as e:
             print(f"Error:{e}")
