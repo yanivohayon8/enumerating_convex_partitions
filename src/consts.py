@@ -1,1 +1,1 @@
-PLOT_COLORS = ["blue","green","red","black","yellow","magenta","cyan"]
+PLOT_COLORS = ['b', 'g', 'r', 'black','c', 'y',   'brown','orange', 'purple','lime', 'pink', 'gold', 'teal', 'indigo', 'lavender', 'coral', 'olive', 'maroon'] # ["blue","green","red","black","yellow","magenta","cyan"] 'k', 'w',
