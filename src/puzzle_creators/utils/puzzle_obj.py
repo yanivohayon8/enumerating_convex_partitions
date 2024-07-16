@@ -4,7 +4,6 @@ from src.data_structures import Point,poly_as_matplotlib,plot_polygons
 from src.consts import PLOT_COLORS
 from math import pi,atan2
 import numpy as np
-from functools import reduce
 
 
 class Puzzle():
@@ -16,7 +15,7 @@ class Puzzle():
         self.name = name
     
     def __repr__(self) -> str:
-        return self.name #str(reduce(lambda acc,x: acc + x.name + "_",self.pieces))
+        return self.name 
 
     def load_polygons(self,df_puzzle_csv:pd.DataFrame):
         self.pieces_area = 0
@@ -60,7 +59,7 @@ class Puzzle():
 
             pieces = snapshot_queue[snapshot_head_index].options[choice_index].val
             for piece in pieces:
-                puzzle_mat_polygons.append(poly_as_matplotlib(piece, #self.polygons[piece_index]
+                puzzle_mat_polygons.append(poly_as_matplotlib(piece, 
                     color=PLOT_COLORS[color_index%len(PLOT_COLORS)],**kwargs))
                 # ax.text(piece.centroid.x,piece.centroid.y,iter,style='italic', bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
                 # piece_index+=1
@@ -68,8 +67,6 @@ class Puzzle():
             # color_index+=1
             snapshot_head_index=snapshot_head_index + 1
 
-        # if piece_index != len(self.polygons)+1 :
-            # raise Exception("You did not printed all the pieces")
         plot_polygons(ax,puzzle_mat_polygons)
 
     def _count_piece(self,poly):
@@ -122,7 +119,6 @@ class Puzzle():
             df.columns = ["piece","x","y"]
 
         df.to_csv(output_path,index=False)
-        #df.to_csv(output_path)
 
     def _is_edges_angles_convex(self,center_point):
         '''Get pieces containing center point'''

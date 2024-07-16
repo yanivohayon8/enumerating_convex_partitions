@@ -4,11 +4,11 @@ from src.data_structures.shapes import Polygon
 
 class Edge(object):
     def __init__(self,*args):
-        if len(args)==2: # (src_point,dst_point)dsf
-            self.src_point = args[0]#.src_point
-            self.dst_point = args[1]#.dst_point
-        if len(args) == 1: # ("(x_src,y_src)->(x_dst,y_dst)")
-            vals = args[0].split(">>") #args[0].split("->")
+        if len(args)==2: 
+            self.src_point = args[0]
+            self.dst_point = args[1]
+        if len(args) == 1: 
+            vals = args[0].split(">>") 
             tuple_0 =  eval(vals[0])
             tuple_1 = eval(vals[1])
             self.src_point = Point(tuple_0[0],tuple_0[1])
@@ -18,17 +18,14 @@ class Edge(object):
             raise ValueError(f"Tried to create edge with the same src_point and dst_point value ({str(self.src_point)})")
     
     def plot(self,ax,**kwargs):
-        # ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],"o-")
         ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],**kwargs)
 
     def plot_directed(self,ax,**kwargs):
         dx = self.dst_point.x - self.src_point.x
         dy = self.dst_point.y - self.src_point.y
-        # ax.arrow(self.src_point.x,self.src_point.y,dx,dy,head_width=0.2,**kwargs)
         ax.arrow(self.src_point.x,self.src_point.y,dx,dy,head_width=3,**kwargs)
 
     def __str__(self):
-        # return str(self.src_point) + "->" + str(self.dst_point)
         return str(self.src_point) + ">>" + str(self.dst_point)
 
     def __eq__(self,edge):
@@ -175,10 +172,6 @@ class Graph(object):
         if isinstance(other,Graph):
             self.vertecies = self.vertecies.union(other.vertecies)
             self.edges = self.edges.union(other.edges)
-        # for vert in graph.vertecies:
-        #     self.insert_vertex(vert)
-        # for edge in graph.edges:
-        #     self.insert_edge(edge)
 
     def get_copy(self):
         grph = Graph()

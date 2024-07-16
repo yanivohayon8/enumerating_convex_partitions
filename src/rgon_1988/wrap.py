@@ -1,12 +1,8 @@
 from src.rgon_1988 import internals as Rgon1988Internals
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
-# from src.puzzle_creators import Direction
 from src.data_structures.graph import Graph,Edge
 import re
-
-
-# direction = Direction.left
 
 def mirror_y_axis(mirrored,direction):
     if direction.value == 1:
@@ -20,18 +16,15 @@ def mirror_y_axis(mirrored,direction):
         return Polygon(coords)
     if isinstance(mirrored,Graph):
         grph_mirr = Graph()
-        # for vert in list(mirrored.get_verticies()):
-        #     vert_mirr = mirror_y_axis(vert)
-        #     grph_mirr.insert_vertex(vert_mirr)
-
+        
         for edge in list(mirrored.get_edges()):
             edge_mirr = mirror_y_axis(edge,direction)
             grph_mirr.insert_edge(edge_mirr)
 
         return grph_mirr
     if isinstance(mirrored,Edge):
-        src_point = mirror_y_axis(mirrored.src_point,direction) #Point(-mirrored.src_point.x,mirrored.src_point.y)
-        dst_point = mirror_y_axis(mirrored.dst_point,direction) #Point(-mirrored.dst_point.x,mirrored.dst_point.y)
+        src_point = mirror_y_axis(mirrored.src_point,direction) 
+        dst_point = mirror_y_axis(mirrored.dst_point,direction) 
 
         return Edge(src_point,dst_point)
 

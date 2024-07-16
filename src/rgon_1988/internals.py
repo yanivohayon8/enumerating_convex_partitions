@@ -22,7 +22,7 @@ def sort_points_clockwise(center_point,subspace_points):
     neg_angle_points = []
     # epsilon = 0.00001
     for point in subspace_points: 
-        angle = calc_angle_around_point(center_point,point) #np.degrees(np.arctan((point.y- center_point.y)/abs(center_point.x-point.x + epsilon)))
+        angle = calc_angle_around_point(center_point,point) 
 
         if angle >0:
             pos_angles.append(angle)
@@ -61,9 +61,6 @@ def get_visualization_graph(kernel_point,stared_polygon):
 
     '''
 
-    # copy_polygon = stared_polygon.make_copy()
-    # copy_polygon.reverse_direction() # This is under the assumption it came from came stared polygon function above
-    # copy_polygon.remove_vertex(kernel_point)
     coords = list(stared_polygon.exterior.coords)
     # removing the kernel from the list
     coords.pop(0) 
@@ -85,11 +82,7 @@ def turn(_i,_j,_k):
     i_to_j  = _j -_i  
     i_to_k = _k - _i 
     determinant = i_to_j.x*i_to_k.y - i_to_k.x*i_to_j.y
-    # i_to_j_x = _j[0] - _i[0]
-    # i_to_j_y = _j[1] - _i[1]
-    # i_to_k_x = _k[0] - _i[0]
-    # i_to_k_y = _k[1] - _i[1]
-    # determinant = i_to_j_x * i_to_k_y - i_to_k_x*i_to_j_y
+
     return np.sign(determinant)
     
 def get_visualization_graph_proceed(i_index,j_index,coords,points_queues,grph):
@@ -103,9 +96,6 @@ def get_visualization_graph_proceed(i_index,j_index,coords,points_queues,grph):
         _i = Point(coords[i_index])
         _j = Point(coords[j_index])
         _k = Point(coords[k_index])
-        # _i = coords[i_index]
-        # _j = coords[j_index]
-        # _k = coords[k_index]
 
         if turn(_i,_j,_k) > 0:
             grph,points_queues = get_visualization_graph_proceed(k_index,j_index,
@@ -115,7 +105,6 @@ def get_visualization_graph_proceed(i_index,j_index,coords,points_queues,grph):
             break
 
     grph.insert_edge(Edge(Point(coords[i_index]),Point(coords[j_index])))
-    # grph.add_edge(coords[i_index],coords[j_index])
     points_queues[j_index] =  points_queues[j_index] + [i_index]
 
     return grph,points_queues
@@ -164,26 +153,7 @@ def get_convex_chain_connectivity_treat(junction_vertex,visual_graph,continuity_
                     
     return continuity_edges
 
-
-# def get_edges_max_chain_length(visual_graph,continuity_edges):
-#     '''
-#         This method implements the procedure for finding the longest convex chain for an edge L_e
-#     '''
-#     edges_max_chain_length = {}
-
-#     for edge in visual_graph.edges:
-#         edges_max_chain_length[str(edge)] = 0
-
-
-#     for vertex in visual_graph.vertecies:
-#         input_edges = visual_graph.get_input_edges(vertex)
-
-#         for input_edge in input_edges:
-#             max_length = max([0] + [edges_max_chain_length[str(out_e)] for out_e in continuity_edges[str(input_edge)]])
-#             edges_max_chain_length[str(input_edge)] = max_length + 1
-    
-#     return edges_max_chain_length
-    
+   
 def get_edges_max_chain_length_new(kernel_point,visual_graph,continuity_edges):
 
     edges_max_chain_length = {}

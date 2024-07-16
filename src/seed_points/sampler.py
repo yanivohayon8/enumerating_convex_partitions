@@ -98,7 +98,7 @@ def sample_image(num_points,img_path,output_dir=None):
     img = Image.open(img_path)
     width,height = img.size
 
-    frame_tuples = [(0,0),(0,height),(width,height),(width,0)] # because ofir asked these dimensions
+    frame_tuples = [(0,0),(0,height),(width,height),(width,0)] 
     frame_polygon = Polygon(frame_tuples)
     x_min, y_min, x_max, y_max = frame_polygon.bounds
 

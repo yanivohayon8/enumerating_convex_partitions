@@ -10,14 +10,14 @@ class Snapshot():
     
     @property
     def puzzle(self):
-        return self._puzzle#[repr(junction)]
+        return self._puzzle
 
     @property
     def options(self):
         return self._options
     
     def __repr__(self) -> str:
-        return repr(self.kernel_point)# + ";" +  repr(self.puzzle)
+        return repr(self.kernel_point)
 
     def is_tried_all_paths(self,next_choice_index):
         return next_choice_index >= len(self.options)
