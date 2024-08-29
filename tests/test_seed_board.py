@@ -34,8 +34,12 @@ class TestBoard(unittest.TestCase):
     
     def test_plot_board(self):
         # board = Board(file_path="data/thesis qualatative results/manual_sampling/CH-5-INT-2-14-28-21 to 4-2 to 3-3 v2.csv")
-        board = Board(file_path="data/thesis qualatative results/manual_sampling/CH-5-INT-2-14-28-21 to 4-2 to 3-3.csv")
+        #board = Board(file_path="data/thesis qualatative results/manual_sampling/CH-5-INT-2-14-28-21 to 4-2 to 3-3.csv")
         # board = Board(file_path="data/thesis qualatative results/stam manual3 pertubed/CH-5-INT-2-19-41-56.csv")
+        # board = Board(file_path="data/thesis quantative results/2024-06-26 12-01-36 on-circle/CH-6-INT-1-12-01-36.csv")
+        # board = Board(file_path="data/thesis qualatative results/input sensitivity/CH-5-INT-1-13-32-33 V2.csv")
+        # board = Board(file_path="data/thesis qualatative results/input sensitivity/4-1/CH-4-INT-1-13-28-21.csv")
+        board = Board(file_path="data/thesis qualatative results/input sensitivity/3-1/CH-3-INT-0-12-01-11.csv")
         ax = plt.subplot()
 
         y_min = 120
@@ -44,11 +48,13 @@ class TestBoard(unittest.TestCase):
         x_max = 1180
 
         board.plot(ax)
-        ax.set_xlim([x_min,x_max])
-        ax.set_ylim([y_min,y_max])
+        # ax.set_xlim([x_min,x_max])
+        # ax.set_ylim([y_min,y_max])
         ax.set_aspect("equal")
 
         plt.show()
+
+        print()
 
     def test_plot_boards_pertubated_as_grid(self):
         board6_0 = Board(file_path="data/thesis qualatative results/manual_sampling/CH-5-INT-2-14-28-21 to 6-0.csv")
