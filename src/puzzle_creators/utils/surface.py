@@ -178,4 +178,7 @@ def find_possible_rgons(kernel_point,puzzle,points_to_connect,scan_direction=Dir
     possible_rgons = _find_rgons_comb(kernel_point,continuity_edges,puzzle)
     possible_rgons_filtered = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in polygons),possible_rgons))
 
+    # Hack for voronoi test
+    possible_rgons_filtered = sorted(possible_rgons_filtered,key= lambda p: len(list(p.exterior.coords)),reverse=True)
+
     return possible_rgons_filtered
