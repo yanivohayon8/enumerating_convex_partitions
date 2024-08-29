@@ -1,7 +1,7 @@
 import pandas as pd
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point,poly_as_matplotlib,plot_polygons
-from src.consts import PLOT_COLORS
+from src.consts import PLOT_COLORS,generate_blue_shades
 from math import pi,atan2
 import numpy as np
 
@@ -66,6 +66,14 @@ class Puzzle():
                 color_index+=1
             # color_index+=1
             snapshot_head_index=snapshot_head_index + 1
+
+        plot_polygons(ax,puzzle_mat_polygons)
+
+    def plot_shades(self,ax,**kwargs):
+        self.board.plot(ax)
+
+        colors = generate_blue_shades(len(self.polygons))
+        puzzle_mat_polygons = [poly_as_matplotlib(poly, color=color,**kwargs)for color,poly in zip(colors,self.polygons)]
 
         plot_polygons(ax,puzzle_mat_polygons)
 

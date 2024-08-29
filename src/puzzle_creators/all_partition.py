@@ -154,7 +154,8 @@ class AllPartitionsCreator():
                     # dst_path = self.output_dir+f"/{my_time}_n_{len(scanned_points)+1}_rand_{rnd_int}.csv"
                     
                     self.ax.cla()
-                    puzzle.plot(self.ax,self.snapshot_queue)
+                    # puzzle.plot(self.ax,self.snapshot_queue)
+                    puzzle.plot_shades(self.ax)
                     self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
                 # self.ax.cla()
