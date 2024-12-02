@@ -44,7 +44,7 @@ def plot_sampled_point(fig,ax,x_interior_points, y_interior_points,
     ax.add_patch(border_frame)
 
 
-class TestRgonInternal(unittest.TestCase):
+class TestRgonInternalOLD(unittest.TestCase):
 
     def test_load_csv_and_scatter(self):
         df_points_interior,df_points_border = load_sampling_csv("data/starting_points/old/sampling_002.csv")
@@ -115,6 +115,30 @@ class TestRgonInternal(unittest.TestCase):
         # plot_graph(graph)
 
         plt.show()
+
+
+class TestRgonStarShapedPolygon(unittest.TestCase):
+
+    def test_example1(self):
+        kernel = Point(474.0,320.0)
+
+        _, axs = plt.subplots(1,2)
+        axs[0].scatter([kernel.x],[kernel.y],color="green",marker="o")
+        axs[1].scatter([kernel.x],[kernel.y],color="green",marker="o")
+
+        candidates1 = [Point(1107.0,314.0),Point(593.0,707.0),Point(1410.0,661.0)] 
+        star_polygon1 = Rgon1988Internals.get_stared_shape_polygon(kernel,candidates1)
+        xs,ys = star_polygon1.exterior.coords.xy
+        axs[0].plot(xs,ys,color="red")
+
+        candidates2 = [Point(593.0,707.0),Point(1107.0,314.0),Point(1410.0,661.0)] 
+        star_polygon2 = Rgon1988Internals.get_stared_shape_polygon(kernel,candidates2)
+        xs,ys = star_polygon2.exterior.coords.xy
+        axs[1].plot(xs,ys,color="red")
+
+        plt.show()
+
+        assert star_polygon1 == star_polygon2
 
 
 if __name__ == "__main__":
