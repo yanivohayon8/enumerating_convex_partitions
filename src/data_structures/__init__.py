@@ -30,6 +30,16 @@ def scatter_points(ax,points,**kwargs):
 def point_to_np(point):
     return np.asarray([point.x,point.y])
 
+
+def remove_prefix_(point_str:str):
+    # To adjust shapely 2.0
+    paranthesis_index = point_str.index("(")
+    no_prefix = point_str[paranthesis_index:]
+    no_prefix = no_prefix.replace(" ",",")
+    
+    return no_prefix
+
+
 '''Polygon '''
 
 def plot_polygons(ax,polygons:List[MatplotlibPolygon]):

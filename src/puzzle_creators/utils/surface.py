@@ -2,7 +2,7 @@ from src.rgon_1988 import wrap as Rgon1988
 from shapely.geometry import LineString
 from src.data_structures.graph import Edge
 from src.data_structures.shapes import Polygon
-from src.data_structures import Point
+from src.data_structures import Point,remove_prefix_
 from src.puzzle_creators.utils import puzzle_obj
 from enum import Enum
 
@@ -104,7 +104,7 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
                 for index_end in range(index_start+1,len(trav)):
                     sub_trav = trav[index_start:index_end+1]
                     sub_trav.insert(0,str(kernel_point))
-                    poly = Polygon([Point(eval(point_str)) for point_str in sub_trav])
+                    poly = Polygon([Point(eval(remove_prefix_(point_str))) for point_str in sub_trav])
 
                     if not poly.is_simple:
                         print("error: The traversing of the visibility graph..")

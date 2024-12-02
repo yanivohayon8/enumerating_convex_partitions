@@ -1,4 +1,4 @@
-from src.data_structures import Point
+from src.data_structures import Point,remove_prefix_
 from src.data_structures.lines import Line
 from src.data_structures.shapes import Polygon
 
@@ -9,14 +9,19 @@ class Edge(object):
             self.dst_point = args[1]
         if len(args) == 1: 
             vals = args[0].split(">>") 
-            tuple_0 =  eval(vals[0])
-            tuple_1 = eval(vals[1])
+            # tuple_0 =  eval(vals[0])
+            # tuple_1 = eval(vals[1])
+
+            point0_str = remove_prefix_(vals[0])
+            tuple_0 =  eval(point0_str)
+            point1_str = remove_prefix_(vals[1])
+            tuple_1 = eval(point1_str)
             self.src_point = Point(tuple_0[0],tuple_0[1])
             self.dst_point = Point(tuple_1[0],tuple_1[1])
 
         if self.src_point == self.dst_point:
             raise ValueError(f"Tried to create edge with the same src_point and dst_point value ({str(self.src_point)})")
-    
+
     def plot(self,ax,**kwargs):
         ax.plot([self.src_point.x,self.dst_point.x], [self.src_point.y,self.dst_point.y],**kwargs)
 
