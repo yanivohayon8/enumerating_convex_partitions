@@ -74,16 +74,6 @@ def _get_surface(kernel_point,pieces,points_to_connect,scan_direction=Direction.
                 if line.within(piece):
                     visual_graph_polygon.remove_edge(edge)
                     break
-        
-        # if self.is_debug:
-        #     # fig,ax = plt.subplots()
-        #     fig,ax = self.fig,self.ax
-        #     ax.cla()
-        #     self.plot_puzzle(fig,ax)
-        #     [Edge(kernel_point,p).plot(ax,color='black', linestyle='dotted') for p in list(visual_graph_polygon.get_verticies())]
-        #     visual_graph_polygon.plot_directed(ax) # way to plot the graph
-        #     fig.savefig(self.debug_dir + f"/visibility-graph-filtered/{fig_prefix}{str(self.n_iter)}.png")
-        #     # plt.close(fig)
 
         if len(list(visual_graph_polygon.get_edges())) == 0:
             raise ValueError("Not enough edge to iterate on the visibility graph")
