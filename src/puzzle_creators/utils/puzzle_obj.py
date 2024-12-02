@@ -73,7 +73,7 @@ class Puzzle():
         self.board.plot(ax)
 
         colors = generate_blue_shades(len(self.polygons))
-        puzzle_mat_polygons = [poly_as_matplotlib(poly, color=color,**kwargs)for color,poly in zip(colors,self.polygons)]
+        puzzle_mat_polygons = [poly_as_matplotlib(poly, facecolor=color,**kwargs)for color,poly in zip(colors,self.polygons)]
 
         plot_polygons(ax,puzzle_mat_polygons)
 

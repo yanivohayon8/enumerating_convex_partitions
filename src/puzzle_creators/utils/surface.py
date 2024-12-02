@@ -107,11 +107,13 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
                     poly = Polygon([Point(eval(point_str)) for point_str in sub_trav])
 
                     if not poly.is_simple:
+                        print("error: The traversing of the visibility graph..")
                         raise ValueError(f"The traversing of the visibility graph {sub_trav} (the kernel is {kernel_point}) does not yield a simple polygon. Check it.")
                 
                     is_convex = set(list(poly.exterior.coords)) == set(list(poly.convex_hull.exterior.coords))
 
                     if not is_convex:
+                        print("The created polygon...")
                         raise ValueError(f"The created polygon {poly} by the kernel point {kernel_point} is not convex")
 
                     try:
@@ -122,6 +124,7 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
                         rgons.append(poly)
                     except puzzle_obj.PuzzleErr as err:
                         pass
+                        print("In surface: " +err)
 
     
     # Remove duplicates
