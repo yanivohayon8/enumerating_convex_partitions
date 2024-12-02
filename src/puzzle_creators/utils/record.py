@@ -17,7 +17,7 @@ class Snapshot():
         return self._options
     
     def __repr__(self) -> str:
-        return repr(self.kernel_point)
+        return str(self.kernel_point)
 
     def is_tried_all_paths(self,next_choice_index):
         return next_choice_index >= len(self.options)

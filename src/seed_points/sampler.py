@@ -70,7 +70,7 @@ def sort_hull_interior_(sampled_points:list):
     convex_hull = sampled_points_.convex_hull
 
     # For just the debugging of the refactoring use the custom point rather than shapely point
-    interior_points = [Point(point.x,point.y) for point in sampled_points_ if not convex_hull.touches(point)]
+    interior_points = [Point(point.x,point.y) for point in sampled_points if not convex_hull.touches(point)]
     # convex_hull_points = MultiPoint(list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1])
     
     # xs, ys = sampled_points_.convex_hull.exterior.xy

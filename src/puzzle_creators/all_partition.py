@@ -101,14 +101,14 @@ class AllPartitionsCreator():
                 n = len(total_poss)
                 options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(total_poss)]
                 
-                if not self.history_manager.is_recorded(repr(kernel_point)):
+                if not self.history_manager.is_recorded(str(kernel_point)):
                     copy_polygons = [Polygon(poly.exterior.coords) for poly in puzzle.polygons]
                     snapshot = Snapshot(kernel_point,
                                         Puzzle(self.board,copy_polygons,puzzle.name,puzzle.pieces_area),
                                         options)
                     self.snapshot_queue.append(snapshot)
 
-                next_choice_index = self.history_manager.next_availiable(repr(kernel_point))
+                next_choice_index = self.history_manager.next_availiable(str(kernel_point))
                 curr_choice = options[next_choice_index]
                 
                 if isinstance(curr_choice.val,list):
@@ -167,8 +167,9 @@ class AllPartitionsCreator():
             
             while len(self.snapshot_queue) > 0:
                 last_snap = self.snapshot_queue[-1]
-
-                if not last_snap.is_tried_all_paths(self.history_manager.head_availiable(repr(last_snap))):
+                next_option = self.history_manager.head_availiable(repr(last_snap))
+                
+                if not last_snap.is_tried_all_paths(next_option):
                     break
 
                 self.snapshot_queue.pop()

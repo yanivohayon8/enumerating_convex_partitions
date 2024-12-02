@@ -7,19 +7,19 @@ import numpy as np
 
 class Point(ShapelyPoint):
 
-    def __hash__(self) -> int:
-        # return super().__hash__()
-        return hash((self.x,self.y))
+    # def __hash__(self) -> int:
+    #     # return super().__hash__()
+    #     return hash((self.x,self.y))
 
     def __sub__(self,other):
         return Point(self.x-other.x,self.y-other.y)
     
-    # Changing str might be dangerous
-    def __str__(self):
-        return "({0},{1})".format(self.x,self.y) 
+    # # Changing str might be dangerous
+    # def __str__(self):
+    #     return "({0},{1})".format(self.x,self.y) 
 
-    def __repr__(self) -> str:
-        return str(self)
+    # def __repr__(self) -> str:
+    #     return str(self)
 
 def scatter_points(ax,points,**kwargs):
     xs = [point.x for point in points]
