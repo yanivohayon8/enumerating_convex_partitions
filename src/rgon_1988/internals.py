@@ -79,9 +79,17 @@ def turn(_i,_j,_k):
         The turn method described in the paper:
         Determines wheter point k is in the right or the left of the vector i ot j
     '''
-    i_to_j  = _j -_i  
-    i_to_k = _k - _i 
-    determinant = i_to_j.x*i_to_k.y - i_to_k.x*i_to_j.y
+    # i_to_j  = _j -_i  
+    # i_to_k = _k - _i 
+    # determinant = i_to_j.x*i_to_k.y - i_to_k.x*i_to_j.y
+
+    # Extract coordinates
+    ix, iy = _i.x, _i.y
+    jx, jy = _j.x, _j.y
+    kx, ky = _k.x, _k.y
+    
+    # Calculate the cross product
+    determinant = (jx - ix) * (ky - iy) - (jy - iy) * (kx - ix)
 
     return np.sign(determinant)
     
@@ -97,8 +105,8 @@ def get_visualization_graph_proceed(i_index,j_index,coords,points_queues,grph):
         _j = Point(coords[j_index])
         _k = Point(coords[k_index])
 
-        # if turn(_i,_j,_k) > 0:
-        if turn(_i,_k,_j) > 0:
+        if turn(_i,_j,_k) > 0:
+        # if turn(_j,_i,_k) > 0:
             grph,points_queues = get_visualization_graph_proceed(k_index,j_index,
                                                         coords,points_queues,grph)
             points_queues[i_index].pop(0)

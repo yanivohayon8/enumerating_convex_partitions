@@ -156,11 +156,16 @@ class TestInternals(unittest.TestCase):
 
         plt.show()
 
+        assert len(visibility_graph.get_edges())==3
+
     def test_convex_chain_connectivity(self):
         visibility_graph = Graph()
-        visibility_graph.insert_edge(Edge(Point(1107.0,314.0),Point(593.0,707.0)))
-        visibility_graph.insert_edge(Edge(Point(1107.0,314.0),Point(1410.0,661.0)))
-        visibility_graph.insert_edge(Edge(Point(1410.0,661.0),Point(593.0,707.0)))
+        e1 = Edge(Point(1107.0,314.0),Point(593.0,707.0))
+        visibility_graph.insert_edge(e1)
+        e2 = Edge(Point(1107.0,314.0),Point(1410.0,661.0))
+        visibility_graph.insert_edge(e2)
+        e3 = Edge(Point(1410.0,661.0),Point(593.0,707.0))
+        visibility_graph.insert_edge(e3)
 
         continuity_edges = Rgon1988Internals.get_convex_chain_connectivity(visibility_graph)
         print(continuity_edges)
@@ -169,9 +174,29 @@ class TestInternals(unittest.TestCase):
         visibility_graph.plot_directed(ax,linewidth=1.5)
         plt.show()
 
+        assert len(continuity_edges[str(e1)])==0
+        assert continuity_edges[str(e2)]==[e3]
+        assert len(continuity_edges[str(e3)])==0
+
 
 class TestSurface(unittest.TestCase):
     
+    def test_compute_visibility_graph(self):
+        kernel = Point(467.0,477.0)
+        candidates = [Point(961.0,167.0),Point(600.0,213.0),Point(779.0,693.0),Point(1049.0,661.0),Point(1154.0,322.0)]
+        star_shaped_polygon = Rgon1988Internals.get_stared_shape_polygon(kernel,candidates)
+        visibility_graph = Rgon1988Internals.get_visualization_graph(kernel,star_shaped_polygon)
+
+        ax = plt.subplot()
+        star_xs,star_ys = star_shaped_polygon.exterior.coords.xy
+        ax.plot(star_xs,star_ys,"r--")
+        ax.scatter(star_xs,star_ys,color="blue")
+        visibility_graph.plot_directed(ax,linewidth=3)
+
+        plt.show()
+
+        assert len(visibility_graph.get_edges())==10 # = 5 choose 2
+
     def test_traverses(self):
         continuity_edges = {
             'POINT (1107 314)>>POINT (593 707)': [],
