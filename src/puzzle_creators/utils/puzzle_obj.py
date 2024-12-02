@@ -181,7 +181,8 @@ class Puzzle():
     
 
     def is_filled(self):
-        return round(self.pieces_area,5) >= round(self.board.frame_polygon.area,5)
+        # return round(self.pieces_area,5) >= round(self.board.frame_polygon.area,5)
+        return abs(self.pieces_area- self.board.frame_polygon.area)<=1e-3
 
     def is_completed(self):
         if not self.is_filled():
