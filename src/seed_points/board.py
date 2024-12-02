@@ -1,8 +1,28 @@
 from src.data_structures import Point, plot_polygons, poly_as_matplotlib, scatter_points
 from src.data_structures.shapes import Polygon
+from shapely.geometry import LineString
 
 
 import pandas as pd
+
+def collinear_(x1, y1, x2, y2, x3, y3,threshold=1e-3):
+    """ Calculation the area of  
+        triangle. We have skipped 
+        multiplication with 0.5 to
+        avoid floating point computations """
+    a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)
+    a = abs(a)
+ 
+    if a < threshold:
+        return True
+    
+    return False
+
+def collinear_shapely_(p1,p2,p3,threshold=1e-3):
+    # Create a LineString from the first two points
+    line = LineString([p1, p2])
+    # Check if the third point is on the line
+    return line.distance(Point(p3)) < threshold
 
 
 class Board():
@@ -20,6 +40,22 @@ class Board():
             self.frame_anchor_points = sorted(convex_hull_points,key=lambda p: p.x) if convex_hull_points is not None else []
             self.frame_polygon = Polygon(Polygon(convex_hull_points).convex_hull) if  len(convex_hull_points) > 2 else None
             self.space_points = sorted(self.interior_points + self.frame_anchor_points, key=lambda p: p.x)
+
+        ''' Validity check '''
+        # frame_anchor_points_cycle = self.frame_anchor_points + [self.frame_anchor_points[0]]
+
+        # for i,ch_point_i in enumerate(self.frame_anchor_points):
+        #     for ch_point_j in frame_anchor_points_cycle[i+1:]:
+
+        #         for int_point in self.interior_points:
+        #             collinear_simple = collinear_(ch_point_i.x,ch_point_i.y,ch_point_j.x,ch_point_j.y,int_point.x,int_point.y)
+        #             collinear_shapely = collinear_shapely_(ch_point_i,ch_point_j,int_point)
+
+        #             if collinear_simple or collinear_shapely:
+        #                 raise ValueError(f"The points {ch_point_i},{ch_point_j},{int_point} collinear")
+
+        
+
 
     def load_sampled_points(self,file_path):
         frame_points = []

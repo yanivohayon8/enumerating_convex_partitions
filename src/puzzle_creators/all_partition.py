@@ -118,8 +118,8 @@ class AllPartitionsCreator():
 
                 puzzle.record_choice(curr_choice.name)
 
-                if puzzle.is_filled():
-                    return puzzle
+                # if puzzle.is_filled():
+                #     return puzzle
 
             # except ValueError as err:
             #     raise err
