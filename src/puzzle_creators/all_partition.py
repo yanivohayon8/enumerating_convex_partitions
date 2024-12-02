@@ -138,6 +138,7 @@ class AllPartitionsCreator():
 
 
     def run(self):        
+        count_puzzles = 0
         scanned_points,puzzle = self.initialize(self.board.space_points[0])
 
         while True:
@@ -147,11 +148,13 @@ class AllPartitionsCreator():
                 puzzle.is_completed()
                 dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
                 puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
+                count_puzzles+=1
                 
                 if self.is_save_partitions_figures:                    
                     self.ax.cla()
                     puzzle.plot_shades(self.ax,linewidth=3,edgecolor="0")
                     self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
                 # self.ax.cla()
                 # puzzle.plot(self.ax,self.snapshot_queue)
@@ -172,6 +175,8 @@ class AllPartitionsCreator():
                 break
 
             scanned_points,puzzle = self.initialize(last_snap.kernel_point,last_snap.puzzle)
+        
+        print(f"Created {count_puzzles} puzzles")
     
     def initialize(self,start_kernel_point,puzzle=None):
         start_point_index = self.board.space_points.index(start_kernel_point)
