@@ -25,14 +25,22 @@ class Snapshot():
 class HistoryManager():
     def __init__(self):
         self.choices_history_at_snap = {}
+        self.tilings_at_snap = {}
 
     def is_recorded(self,snap_repr):
         return snap_repr in self.choices_history_at_snap.keys()
 
     def head_availiable(self,snap_repr):
+
         if not self.is_recorded(snap_repr):
             self.choices_history_at_snap[snap_repr] = 0
-        return self.choices_history_at_snap[snap_repr]
+        #     tiling = None
+        # else:
+        #     tiling = self.tilings_at_snap[snap_repr]
+
+        tiling_index = self.choices_history_at_snap[snap_repr]
+        
+        return tiling_index#,tiling
 
     def next_availiable(self,snap_repr):
         choice = self.head_availiable(snap_repr)
@@ -40,12 +48,22 @@ class HistoryManager():
         return choice
 
     def clear(self,remember_keys):
-        new_dict = {}
+        new_choices_dict = {}
+        new_tiling_dict = {}
+
         for _key in remember_keys:
-            if _key in self.choices_history_at_snap.keys():
-                new_dict[_key] = self.choices_history_at_snap[_key]
+            if _key in self.choices_history_at_snap.keys() and _key in self.tilings_at_snap.keys():
+                new_choices_dict[_key] = self.choices_history_at_snap[_key]
+                new_tiling_dict[_key] = self.tilings_at_snap[_key]
         
-        self.choices_history_at_snap = new_dict
+        self.choices_history_at_snap = new_choices_dict
+        self.tilings_at_snap = new_tiling_dict
+    
+    def record_tilings(self,snap_repr,tilings:list):
+        self.tilings_at_snap[snap_repr] = tilings
+    
+    def get_recorded_tilings(self,snap_repr):
+        return self.tilings_at_snap[snap_repr]
 
 
 class Choice():

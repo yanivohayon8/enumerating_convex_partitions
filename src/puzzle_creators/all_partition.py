@@ -88,25 +88,30 @@ class AllPartitionsCreator():
         
         for kernel_point in scanned_points:
             try:
-                potential_points = self.board.potential_points(kernel_point,self.board.space_points)
-                points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
-                possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
-
-                if len(possible_polygons) == 0:
-                    puzzle.record_choice("n")
-                    continue
-
-                possible_polygons_combs = self.find_combinations(kernel_point,possible_polygons)
-                total_poss = possible_polygons_combs
-                n = len(total_poss)
-                options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(total_poss)]
-                
                 if not self.history_manager.is_recorded(str(kernel_point)):
+                    potential_points = self.board.potential_points(kernel_point,self.board.space_points)
+                    points_to_connect = get_accessible_points(kernel_point,puzzle.polygons,potential_points)
+                    possible_polygons = find_possible_rgons(kernel_point,puzzle,points_to_connect)
+
+                    if len(possible_polygons) == 0:
+                        puzzle.record_choice("n")
+                        continue
+
+                    possible_polygons_combs = self.find_combinations(kernel_point,possible_polygons)
+                    n = len(possible_polygons_combs)
+                    options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(possible_polygons_combs)]
+                
+                # if not self.history_manager.is_recorded(str(kernel_point)):
                     copy_polygons = [Polygon(poly.exterior.coords) for poly in puzzle.polygons]
                     snapshot = Snapshot(kernel_point,
                                         Puzzle(self.board,copy_polygons,puzzle.name,puzzle.pieces_area),
                                         options)
                     self.snapshot_queue.append(snapshot)
+
+                    self.history_manager.record_tilings(repr(snapshot),options)
+                else:
+                    last_snapshot = self.snapshot_queue[-1]
+                    options = self.history_manager.get_recorded_tilings(repr(last_snapshot))
 
                 next_choice_index = self.history_manager.next_availiable(str(kernel_point))
                 curr_choice = options[next_choice_index]
