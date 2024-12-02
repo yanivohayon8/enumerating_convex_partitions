@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
 import matplotlib.patches as patches
 from src.data_structures import Point
+from src.data_structures.shapes import Polygon
 
 
 
@@ -117,9 +118,9 @@ class TestRgonInternalOLD(unittest.TestCase):
         plt.show()
 
 
-class TestRgonStarShapedPolygon(unittest.TestCase):
+class TestInternals(unittest.TestCase):
 
-    def test_example1(self):
+    def test_star_shaped_polygon_1(self):
         kernel = Point(474.0,320.0)
 
         _, axs = plt.subplots(1,2)
@@ -139,6 +140,20 @@ class TestRgonStarShapedPolygon(unittest.TestCase):
         plt.show()
 
         assert star_polygon1 == star_polygon2
+
+    def test_visualization_graph_1(self):
+        kernel = Point(474.0,320.0)
+        star_shaped_polygon = Polygon([Point(474.0,320.0),Point(593.0,707.0),Point(1410.0,661.0),Point(1107.0,314.0)])
+
+        visibility_graph = Rgon1988Internals.get_visualization_graph(kernel,star_shaped_polygon)
+
+        ax = plt.subplot()
+        star_xs,star_ys = star_shaped_polygon.exterior.coords.xy
+        ax.plot(star_xs,star_ys,"r--")
+        ax.scatter(star_xs,star_ys,color="blue")
+        visibility_graph.plot_directed(ax,linewidth=3)
+
+        plt.show()
 
 
 if __name__ == "__main__":
