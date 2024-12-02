@@ -16,8 +16,8 @@ shades_of_blue = [
 PLOT_COLORS = shades_of_blue
 
 def generate_blue_shades(num_shades):
-    blue_values = np.linspace(0, 255, num_shades).astype(int)
-    # blue_values = np.linspace(0, 210, num_shades).astype(int)
+    # blue_values = np.linspace(0, 255, num_shades).astype(int)
+    blue_values = np.linspace(0, 220, num_shades).astype(int)
 
     # shades_of_blue = [(0, 0, blue_value/255) for blue_value in blue_values]
     shades_of_blue = [(blue_value/255, blue_value/255, blue_value/255) for blue_value in blue_values]
