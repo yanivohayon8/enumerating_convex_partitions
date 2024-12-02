@@ -97,7 +97,8 @@ def get_visualization_graph_proceed(i_index,j_index,coords,points_queues,grph):
         _j = Point(coords[j_index])
         _k = Point(coords[k_index])
 
-        if turn(_i,_j,_k) > 0:
+        # if turn(_i,_j,_k) > 0:
+        if turn(_i,_k,_j) > 0:
             grph,points_queues = get_visualization_graph_proceed(k_index,j_index,
                                                         coords,points_queues,grph)
             points_queues[i_index].pop(0)

@@ -13,7 +13,8 @@ from  src.consts import PLOT_COLORS
 import matplotlib.patches as patches
 from src.data_structures import Point
 from src.data_structures.shapes import Polygon
-
+from src.data_structures.graph import Graph,Edge
+from src.puzzle_creators.utils import surface
 
 
 def load_sampling_csv(path):
@@ -154,6 +155,45 @@ class TestInternals(unittest.TestCase):
         visibility_graph.plot_directed(ax,linewidth=3)
 
         plt.show()
+
+    def test_convex_chain_connectivity(self):
+        visibility_graph = Graph()
+        visibility_graph.insert_edge(Edge(Point(1107.0,314.0),Point(593.0,707.0)))
+        visibility_graph.insert_edge(Edge(Point(1107.0,314.0),Point(1410.0,661.0)))
+        visibility_graph.insert_edge(Edge(Point(1410.0,661.0),Point(593.0,707.0)))
+
+        continuity_edges = Rgon1988Internals.get_convex_chain_connectivity(visibility_graph)
+        print(continuity_edges)
+
+        ax = plt.subplot()
+        visibility_graph.plot_directed(ax,linewidth=1.5)
+        plt.show()
+
+
+class TestSurface(unittest.TestCase):
+    
+    def test_traverses(self):
+        continuity_edges = {
+            'POINT (1107 314)>>POINT (593 707)': [],
+            'POINT (1107 314)>>POINT (1410 661)': [Edge(Point(1410,661),Point(593,707))],
+              'POINT (1410 661)>>POINT (593 707)': []
+        }
+
+        edges = [Edge(Point(1107.0,314.0),Point(593.0,707.0)),
+                 Edge(Point(1107.0,314.0),Point(1410.0,661.0)),
+                    Edge(Point(1410.0,661.0),Point(593.0,707.0))]
+
+        for edge in edges:
+            traverses = surface._get_traverse(edge,continuity_edges)
+
+            print(f"for edge {edge} the traverses are the following")
+            [print(f"\t{trav}") for trav in traverses]
+
+
+
+
+        
+
 
 
 if __name__ == "__main__":
