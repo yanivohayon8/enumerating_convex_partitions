@@ -158,7 +158,7 @@ def sample_points_on_circle(num_convex_hull, num_interior,radius,output_dir=None
 
 
         interior_angles = np.random.uniform(0,2*np.pi,num_interior)
-        interior_radiuses = np.random.uniform(size=num_interior)*radius*0.95
+        interior_radiuses = np.random.uniform(size=num_interior)*radius*0.9#5
         interior_xs =  interior_radiuses* np.cos(interior_angles)
         interior_ys =  interior_radiuses* np.sin(interior_angles)
         interior_points = [Point(x+translate_length,y+translate_length) for x,y in zip(interior_xs,interior_ys)]
