@@ -7,6 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import pandas as pd
+from io import StringIO
 from src.rgon_1988 import internals as Rgon1988Internals
 import matplotlib.pyplot as plt
 from  src.consts import PLOT_COLORS
@@ -197,6 +198,8 @@ class TestSurface(unittest.TestCase):
 
         assert len(visibility_graph.get_edges())==10 # = 5 choose 2
 
+    
+
     def test_traverses(self):
         continuity_edges = {
             'POINT (1107 314)>>POINT (593 707)': [],
@@ -215,7 +218,61 @@ class TestSurface(unittest.TestCase):
             [print(f"\t{trav}") for trav in traverses]
 
 
+    def test_integration_1(self):
+        data = """x,y,role
+            8602.172742036284,12398.753860212082,interior
+            9567.124866566195,7513.125500508344,interior
+            10964.177943347035,5551.88483166467,interior
+            10292.612871704201,1197.818943041213,frame_anchor
+            1204.084754454855,5091.727559725754,frame_anchor
+            1233.9791202773722,10381.524563189942,frame_anchor
+            4714.072229776473,14031.211207265791,frame_anchor
+            12199.060080119349,13062.691338821998,frame_anchor
+            14203.976117276616,10288.106386123916,frame_anchor
+            12196.718372881292,2335.344943522293,frame_anchor
+            10292.612871704201,1197.818943041213,frame
+            1204.084754454855,5091.727559725754,frame
+            1233.9791202773722,10381.524563189942,frame
+            4714.072229776473,14031.211207265791,frame
+            12199.060080119349,13062.691338821998,frame
+            14203.976117276616,10288.106386123916,frame
+            12196.718372881292,2335.344943522293,frame"""
+        # Load the data into a pandas DataFrame
+        df = pd.read_csv(StringIO(data))
 
+        # Preprocessing: Remove points with the role "frame_anchor"
+        df = df[df['role'] != 'frame_anchor']
+
+        df = df.drop("role",axis=1)
+        # Find the point with the lowest X-coordinate
+        min_x_point = df.loc[df['x'].idxmin()]
+
+        # Remove the point with the lowest X-coordinate from the DataFrame
+        rest_of_points = df.drop(df['x'].idxmin())
+
+        kernel = Point(min_x_point["x"],min_x_point["y"])
+        candidates = [Point(p) for p in rest_of_points.values.tolist()]
+        star_shaped_polygon = Rgon1988Internals.get_stared_shape_polygon(kernel,candidates)
+        visibility_graph = Rgon1988Internals.get_visualization_graph(kernel,star_shaped_polygon)
+
+        ax = plt.subplot()
+        star_xs,star_ys = star_shaped_polygon.exterior.coords.xy
+        ax.plot(star_xs,star_ys,"r--")
+        ax.scatter(star_xs,star_ys,color="blue")
+        visibility_graph.plot_directed(ax,linewidth=3)
+
+        continuity_edges = Rgon1988Internals.get_convex_chain_connectivity(visibility_graph)
+
+        for edge_ in continuity_edges.keys():
+            print(f"{edge_}::")
+            for edge_2 in continuity_edges[edge_]:
+                print(f"\t{edge_2}")
+        
+        # print(continuity_edges)
+
+        plt.show()
+
+        
 
         
 
