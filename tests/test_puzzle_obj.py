@@ -10,15 +10,17 @@ from src.seed_points.board import Board
 class TestPuzzleObj(unittest.TestCase):
 
     def test_loading_for_ploting(self):
-        puzzle = Puzzle(None)
+        
+        board = Board(file_path="data/paper/panelC/2024-12-03 07-55-29+865589/CH-7-INT-3-07-55-29.csv",skip_validity=True)
+        puzzle = Puzzle(board)
 
-        df = pd.read_csv("games/chris old puzzles/christian-spasov-JhT5z93iSOY-unsplash_0.csv")
+        df = pd.read_csv("data/paper/panelC/2024-12-03 07-55-29+865589/1-297_s_24-29_n_1-3_.csv")
         df.columns = ["id","x","y"]
         puzzle.load_polygons(df)
 
         ax = plt.subplot()
 
-        puzzle.plot(ax)
+        puzzle.plot_shades(ax)
 
         plt.show()
     
