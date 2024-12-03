@@ -37,6 +37,7 @@ def create_puzzle(puzzles_dst_folder):
         board = Board(interior_points=interior_points,convex_hull_points=convex_hull_points)
 
     try:
+        
         creator = AllPartitionsCreator(board,puzzles_dst_folder,is_save_partitions_figures=args.save_partitions_figures)
         creator.run()
         
@@ -64,7 +65,11 @@ if __name__ == "__main__":
     parser.add_argument("--sampling-aabb-size",default=None,dest="aabb_size",type=float)
     args = parser.parse_args()
 
-    for creation_i in range(args.num_partitions_collections):
+    creation_i = 1
+    num_failed_attempts = 0
+    max_failed_attempts = args.num_partitions_collections*100
+
+    while num_failed_attempts < max_failed_attempts and creation_i <= args.num_partitions_collections:
         puzzles_dst_folder = args.puzzles_dst_folder
         current_dateTime = datetime.now()
         random_dir_name = str(current_dateTime).replace(".","+")
@@ -73,8 +78,11 @@ if __name__ == "__main__":
         puzzles_dst_folder = os.path.join(puzzles_dst_folder,random_dir_name)
 
         try:
-            print(f"Start to create puzzles to {puzzles_dst_folder} ({creation_i+1}/{args.num_partitions_collections})")
+            print(f"Start to create puzzles to {puzzles_dst_folder} ({creation_i}/{args.num_partitions_collections})")
             create_puzzle(puzzles_dst_folder)
+            creation_i+=1
+            num_failed_attempts = 0
         except Exception as e:
             print(f"Error:{e}")
+            num_failed_attempts+=1
             shutil.rmtree(puzzles_dst_folder,ignore_errors=True) # be carefull not to delete the entire dataset!
