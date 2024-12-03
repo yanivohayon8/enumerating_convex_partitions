@@ -42,17 +42,17 @@ class Board():
             self.space_points = sorted(self.interior_points + self.frame_anchor_points, key=lambda p: p.x)
 
         ''' Validity check '''
-        # frame_anchor_points_cycle = self.frame_anchor_points + [self.frame_anchor_points[0]]
+        frame_anchor_points_cycle = self.frame_anchor_points + [self.frame_anchor_points[0]]
 
-        # for i,ch_point_i in enumerate(self.frame_anchor_points):
-        #     for ch_point_j in frame_anchor_points_cycle[i+1:]:
+        for i,ch_point_i in enumerate(self.frame_anchor_points):
+            for ch_point_j in frame_anchor_points_cycle[i+1:]:
 
-        #         for int_point in self.interior_points:
-        #             collinear_simple = collinear_(ch_point_i.x,ch_point_i.y,ch_point_j.x,ch_point_j.y,int_point.x,int_point.y)
-        #             collinear_shapely = collinear_shapely_(ch_point_i,ch_point_j,int_point)
+                for int_point in self.interior_points:
+                    collinear_simple = collinear_(ch_point_i.x,ch_point_i.y,ch_point_j.x,ch_point_j.y,int_point.x,int_point.y)
+                    collinear_shapely = collinear_shapely_(ch_point_i,ch_point_j,int_point)
 
-        #             if collinear_simple or collinear_shapely:
-        #                 raise ValueError(f"The points {ch_point_i},{ch_point_j},{int_point} collinear")
+                    if collinear_simple or collinear_shapely:
+                        raise ValueError(f"The points {ch_point_i},{ch_point_j},{int_point} collinear")
 
         
 

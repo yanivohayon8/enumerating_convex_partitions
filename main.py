@@ -21,6 +21,12 @@ def create_puzzle(puzzles_dst_folder):
         num_sampled_points = int(args.number_sampled_points)
         interior_points,convex_hull_points,_ = sampler.sample_image(num_sampled_points,args.sampling_img_path,output_dir=puzzles_dst_folder)
         board = Board(interior_points=interior_points,convex_hull_points=convex_hull_points)
+    elif not args.aabb_size is None:
+        num_sampled_points = int(args.number_sampled_points)
+        interior_points,convex_hull_points,out_path = sampler.sample_AABB(num_sampled_points,args.aabb_size,args.aabb_size,0,0,
+                                                                          output_dir=puzzles_dst_folder)
+        board = Board(interior_points=interior_points,convex_hull_points=convex_hull_points)
+
     elif not args.circle_num_ch is None:
         interior_points,convex_hull_points,_ = sampler.sample_points_on_circle(args.circle_num_ch,args.circle_num_interior,
                                                                                args.circle_radius,output_dir=puzzles_dst_folder)
@@ -55,6 +61,7 @@ if __name__ == "__main__":
     parser.add_argument("--sampling-circle-num-interior",default=0,dest="circle_num_interior",type=int)
     parser.add_argument("--sampling-circle-num-ch",dest="circle_num_ch",type=int)
     parser.add_argument("--sampling-circle-radius",default=5000,dest="circle_radius",type=float)
+    parser.add_argument("--sampling-aabb-size",default=None,dest="aabb_size",type=float)
     args = parser.parse_args()
 
     for creation_i in range(args.num_partitions_collections):
