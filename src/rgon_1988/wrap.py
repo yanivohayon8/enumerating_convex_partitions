@@ -4,29 +4,35 @@ from src.data_structures.shapes import Polygon
 from src.data_structures.graph import Graph,Edge
 import re
 
+'''
+    Deprecated module
+'''
+
+# old - to delete
 def mirror_y_axis(mirrored,direction):
-    if direction.value == 1:
-        return mirrored
+    return mirrored
+    # if direction.value == 1:
+    #     return mirrored
 
-    if isinstance(mirrored,Point):
-        return Point(-mirrored.x,mirrored.y)
-    if isinstance(mirrored,Polygon):
-        coords = list(mirrored.exterior.coords)
-        coords = [(-coor[0],coor[1]) for coor in coords]
-        return Polygon(coords)
-    if isinstance(mirrored,Graph):
-        grph_mirr = Graph()
+    # if isinstance(mirrored,Point):
+    #     return Point(-mirrored.x,mirrored.y)
+    # if isinstance(mirrored,Polygon):
+    #     coords = list(mirrored.exterior.coords)
+    #     coords = [(-coor[0],coor[1]) for coor in coords]
+    #     return Polygon(coords)
+    # if isinstance(mirrored,Graph):
+    #     grph_mirr = Graph()
         
-        for edge in list(mirrored.get_edges()):
-            edge_mirr = mirror_y_axis(edge,direction)
-            grph_mirr.insert_edge(edge_mirr)
+    #     for edge in list(mirrored.get_edges()):
+    #         edge_mirr = mirror_y_axis(edge,direction)
+    #         grph_mirr.insert_edge(edge_mirr)
 
-        return grph_mirr
-    if isinstance(mirrored,Edge):
-        src_point = mirror_y_axis(mirrored.src_point,direction) 
-        dst_point = mirror_y_axis(mirrored.dst_point,direction) 
+    #     return grph_mirr
+    # if isinstance(mirrored,Edge):
+    #     src_point = mirror_y_axis(mirrored.src_point,direction) 
+    #     dst_point = mirror_y_axis(mirrored.dst_point,direction) 
 
-        return Edge(src_point,dst_point)
+    #     return Edge(src_point,dst_point)
 
 def get_stared_shape_polygon(kernel_point,subspace_points,direction):
     kernel_point_mirr = mirror_y_axis(kernel_point,direction)

@@ -13,13 +13,13 @@ from random import randint,random
 
 class SubsetPartitionCreator():
 
-    def __init__(self,board,output_dir,is_peleg_format=True) -> None:
+    def __init__(self,board,output_dir,is_plg_format=True) -> None:
         self.board = board
         self.output_dir = output_dir
         self.snapshot_queue = []
         self.history_manager = HistoryManager()
         self.fig, self.ax = plt.subplots()
-        self.is_peleg_format = is_peleg_format
+        self.is_plg_format = is_plg_format
 
     def find_combinations_limited(self,kernel_point,possible_polygons,num_iteration_possible_polys=1):
         connected_points = set()
@@ -181,18 +181,11 @@ class SubsetPartitionCreator():
 
                 file_name = f"numPieces_{len(puzzle.polygons)}_rand_{rnd_int}"
                 dst_path = self.output_dir+f"/{file_name}.csv"
-                puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
+                puzzle.write_results(dst_path,is_plg_format=self.is_plg_format)
                 self.ax.cla()
                 puzzle.plot(self.ax,self.snapshot_queue)
                 self.fig.savefig(self.output_dir+f"/results/{file_name}.png")
-                
-                # puzzle.is_completed()
-                # dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
-                
-                # puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
-                # self.ax.cla()
-                # puzzle.plot(self.ax,self.snapshot_queue)
-                # self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
+               
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
                 # self.ax.cla()
                 # puzzle.plot(self.ax,self.snapshot_queue)

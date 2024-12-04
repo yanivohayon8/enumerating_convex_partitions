@@ -8,6 +8,8 @@ data/sampled_points
 data/thesis qualatative results/
 data/thesis quantative results
 data/tmp
+data/paper/
+data/paper__/
 !data/quick start/
 
 **.pyc

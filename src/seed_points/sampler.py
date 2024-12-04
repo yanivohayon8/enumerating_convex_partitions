@@ -70,7 +70,7 @@ def sort_hull_interior_(sampled_points:list):
     convex_hull = sampled_points_.convex_hull
 
     # For just the debugging of the refactoring use the custom point rather than shapely point
-    interior_points = [Point(point.x,point.y) for point in sampled_points_ if not convex_hull.touches(point)]
+    interior_points = [Point(point.x,point.y) for point in sampled_points if not convex_hull.touches(point)]
     # convex_hull_points = MultiPoint(list(Polygon(sampled_points_.convex_hull).exterior.coords)[:-1])
     
     # xs, ys = sampled_points_.convex_hull.exterior.xy
@@ -158,7 +158,7 @@ def sample_points_on_circle(num_convex_hull, num_interior,radius,output_dir=None
 
 
         interior_angles = np.random.uniform(0,2*np.pi,num_interior)
-        interior_radiuses = np.random.uniform(size=num_interior)*radius*0.95
+        interior_radiuses = np.random.uniform(size=num_interior)*radius*0.9#5
         interior_xs =  interior_radiuses* np.cos(interior_angles)
         interior_ys =  interior_radiuses* np.sin(interior_angles)
         interior_points = [Point(x+translate_length,y+translate_length) for x,y in zip(interior_xs,interior_ys)]

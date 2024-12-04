@@ -1,7 +1,7 @@
 import pandas as pd
 from src.data_structures.shapes import Polygon
 from src.data_structures import Point,poly_as_matplotlib,plot_polygons
-from src.consts import PLOT_COLORS
+from src.consts import PLOT_COLORS,generate_blue_shades
 from math import pi,atan2
 import numpy as np
 
@@ -69,6 +69,14 @@ class Puzzle():
 
         plot_polygons(ax,puzzle_mat_polygons)
 
+    def plot_shades(self,ax,**kwargs):
+        self.board.plot(ax)
+
+        colors = generate_blue_shades(len(self.polygons))
+        puzzle_mat_polygons = [poly_as_matplotlib(poly, facecolor=color,**kwargs)for color,poly in zip(colors,self.polygons)]
+
+        plot_polygons(ax,puzzle_mat_polygons)
+
     def _count_piece(self,poly):
         # if isinstance(choice.val,Piece):
         self.polygons.append(poly)
@@ -103,7 +111,7 @@ class Puzzle():
             if inter_point.within(curr_polygon):
                 raise PuzzleErr(f"Piece {str(curr_polygon)} created contains interior point {str(inter_point)}")
 
-    def write_results(self,output_path,is_peleg_format=True):
+    def write_results(self,output_path,is_plg_format=True):
         xs = []
         ys = []
         piece_id = []
@@ -115,7 +123,7 @@ class Puzzle():
         
         df = pd.DataFrame({"piece":piece_id,"x":xs,"y":ys})
 
-        if is_peleg_format:
+        if is_plg_format:
             df.columns = ["piece","x","y"]
 
         df.to_csv(output_path,index=False)
@@ -173,7 +181,8 @@ class Puzzle():
     
 
     def is_filled(self):
-        return round(self.pieces_area,5) >= round(self.board.frame_polygon.area,5)
+        # return round(self.pieces_area,5) >= round(self.board.frame_polygon.area,5)
+        return abs(self.pieces_area- self.board.frame_polygon.area)<=1e-3
 
     def is_completed(self):
         if not self.is_filled():
