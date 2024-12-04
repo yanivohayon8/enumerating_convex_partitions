@@ -9,9 +9,6 @@ class Edge(object):
             self.dst_point = args[1]
         if len(args) == 1: 
             vals = args[0].split(">>") 
-            # tuple_0 =  eval(vals[0])
-            # tuple_1 = eval(vals[1])
-
             point0_str = remove_prefix_(vals[0])
             tuple_0 =  eval(point0_str)
             point1_str = remove_prefix_(vals[1])
