@@ -11,12 +11,12 @@ from src.seed_points.board import Board
 
 class AllPartitionsCreator():
 
-    def __init__(self,board:Board,output_dir,is_peleg_format=True,is_save_partitions_figures=True) -> None:
+    def __init__(self,board:Board,output_dir,is_plg_format=True,is_save_partitions_figures=True) -> None:
         self.board = board
         self.output_dir = output_dir
         self.snapshot_queue = []
         self.history_manager = HistoryManager()
-        self.is_peleg_format = is_peleg_format
+        self.is_plg_format = is_plg_format
         self.is_save_partitions_figures = is_save_partitions_figures
         
         if self.is_save_partitions_figures:
@@ -140,7 +140,7 @@ class AllPartitionsCreator():
             try:
                 puzzle.is_completed()
                 dst_path = self.output_dir+f"/{str(puzzle.name)}.csv"
-                puzzle.write_results(dst_path,is_peleg_format=self.is_peleg_format)
+                puzzle.write_results(dst_path,is_plg_format=self.is_plg_format)
                 count_puzzles+=1
                 
                 if self.is_save_partitions_figures:                    

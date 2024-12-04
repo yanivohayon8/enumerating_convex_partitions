@@ -111,7 +111,7 @@ class Puzzle():
             if inter_point.within(curr_polygon):
                 raise PuzzleErr(f"Piece {str(curr_polygon)} created contains interior point {str(inter_point)}")
 
-    def write_results(self,output_path,is_peleg_format=True):
+    def write_results(self,output_path,is_plg_format=True):
         xs = []
         ys = []
         piece_id = []
@@ -123,7 +123,7 @@ class Puzzle():
         
         df = pd.DataFrame({"piece":piece_id,"x":xs,"y":ys})
 
-        if is_peleg_format:
+        if is_plg_format:
             df.columns = ["piece","x","y"]
 
         df.to_csv(output_path,index=False)
