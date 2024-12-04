@@ -39,10 +39,6 @@ def get_stared_shaped_polygon(kernel_point,points_to_connect,scan_direction=Dire
     return Rgon1988.get_stared_shape_polygon(kernel_point,points_to_connect,scan_direction)
 
 def _get_surface(kernel_point,pieces,points_to_connect,scan_direction=Direction.left,fig_prefix=""):
-        # observe surface data
-        # points_to_connect = self._get_points_ahead(kernel_point,direction=scan_direction.value)            
-        # points_to_connect = get_accessible_points(kernel_point,pieces,potential_points)            
-
         if len(points_to_connect) < 2:
             raise ValueError(f"Not enough points to connect ({len(points_to_connect)} < 2)")
         
@@ -60,7 +56,6 @@ def _get_surface(kernel_point,pieces,points_to_connect,scan_direction=Direction.
         #     fig.savefig(self.debug_dir + f"/visibility-graph-before-filter/{fig_prefix}{str(self.n_iter)}.png")
         #     # plt.close(fig)
 
-        # Remove edges that are covered by polygons - do it more elegant less naive
         vs_grph_edges = list(visual_graph_polygon.get_edges()).copy()
         lines =  [LineString([edge.src_point,edge.dst_point]) for edge in vs_grph_edges]
 
@@ -107,18 +102,12 @@ def _find_rgons_comb(kernel_point,continuity_edges,puzzle):
                         raise ValueError(f"The created polygon {poly} by the kernel point {kernel_point} is not convex")
 
                     try:
-                        # TODO:
-                        # this should not be here. By the proof the new rgon should not intersect with existing polygons
-                        # If you want to make some sanity checks on the rgon itself (whether it does not contain duplicates etc) do it here...
                         puzzle.check_sanity_polygon(poly) 
                         rgons.append(poly)
                     except puzzle_obj.PuzzleErr as err:
                         pass
                         print("In surface: " +err)
 
-    
-    # Remove duplicates
-    # TODO:This is unneccessary if the algorithm and the writing is correct
     final_rgons = []
     for rgon in rgons:
         if all(not rgon.equals(poly) for poly in final_rgons):
@@ -171,7 +160,6 @@ def find_possible_rgons(kernel_point,puzzle,points_to_connect,scan_direction=Dir
     possible_rgons = _find_rgons_comb(kernel_point,continuity_edges,puzzle)
     possible_rgons_filtered = list(filter(lambda pc:all(pc.disjoint(pc2) or pc.touches(pc2) for pc2 in polygons),possible_rgons))
 
-    # Hack for voronoi test
     # possible_rgons_filtered = sorted(possible_rgons_filtered,key= lambda p: len(list(p.exterior.coords)),reverse=True)
 
     return possible_rgons_filtered

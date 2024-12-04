@@ -32,8 +32,6 @@ class AllPartitionsCreator():
                     connected_points.add(Point(cor))
 
         connected_points = list(connected_points)
-        # connected_points = list(reduce(lambda acc,lst: acc+lst.exterior.coords,possible_polygons,[]))
-        # connected_points = [Point(cor) for cor in connected_points]
         stared_polygon_coords = get_stared_shaped_polygon(kernel_point,connected_points).exterior.coords
         start_point,end_point = stared_polygon_coords[-2],stared_polygon_coords[1]
 
@@ -54,12 +52,7 @@ class AllPartitionsCreator():
             comb = [poly]
             poly_end_point = poly.exterior.coords[1]
             poss_start_with_poly = self.combs_rec(poly_end_point,end_point,polygons_start_at_point,comb)
-            # acc = []
-            # self.combs_rec(poly_end_point,end_point,polygons_start_at_point,comb,acc)
-
-            # possibilities.append(poss_start_with_poly)
             possibilities = possibilities + poss_start_with_poly
-            # possibilities = possibilities + acc
 
         return possibilities
 
@@ -75,11 +68,7 @@ class AllPartitionsCreator():
             next_end_point = next_poly.exterior.coords[1]
             next_combs = self.combs_rec(next_end_point,end_point,
                                         polygons_start_at_point,comb_copy)
-            
-            # for _ in next_combs:
-            #     poss.append(_)
             poss = poss + next_combs
-            # poss.append(next_combs)
         
         return poss
     
@@ -101,7 +90,6 @@ class AllPartitionsCreator():
                     n = len(possible_polygons_combs)
                     options = [Choice(c,f"{index+1}-{n}",is_single=n==1) for index,c in enumerate(possible_polygons_combs)]
                 
-                # if not self.history_manager.is_recorded(str(kernel_point)):
                     copy_polygons = [Polygon(poly.exterior.coords) for poly in puzzle.polygons]
                     snapshot = Snapshot(kernel_point,
                                         Puzzle(self.board,copy_polygons,puzzle.name,puzzle.pieces_area),
@@ -161,10 +149,6 @@ class AllPartitionsCreator():
                     self.fig.savefig(self.output_dir+f"/results/{str(puzzle.name)}.png")
 
             except (PuzzleAreaErr,PuzzleEdgeAnglesErr) as e:
-                # self.ax.cla()
-                # puzzle.plot(self.ax,self.snapshot_queue)
-                # self.fig.savefig(self.output_dir+f"/failure/{str(puzzle.name)}.png")
-                # print("Plotted failure on failure directory")
                 raise e
             
             while len(self.snapshot_queue) > 0:
