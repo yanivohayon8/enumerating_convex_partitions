@@ -6,10 +6,6 @@ from shapely.geometry import LineString
 import pandas as pd
 
 def collinear_(x1, y1, x2, y2, x3, y3,threshold):
-    """ Calculation the area of  
-        triangle. We have skipped 
-        multiplication with 0.5 to
-        avoid floating point computations """
     a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)
     a = abs(a)
  
@@ -20,9 +16,7 @@ def collinear_(x1, y1, x2, y2, x3, y3,threshold):
     return False
 
 def collinear_shapely_(p1,p2,p3,threshold):
-    # Create a LineString from the first two points
     line = LineString([p1, p2])
-    # Check if the third point is on the line
     return line.distance(Point(p3)) < threshold
 
 
